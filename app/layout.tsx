@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 
-
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -27,7 +26,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1, // 확대 방지
   userScalable: false, // 핀치 줌 방지
-}
+};
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -36,13 +35,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-100 flex justify-center items-center h-dvh w-screen overflow-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} flex h-dvh w-screen items-center justify-center overflow-hidden bg-gray-100 antialiased`}
       >
-        <div className="w-full max-w-[393px] max-h-[852px] h-full bg-white shadow-md overflow-y-auto scrollbar-hide rounded-4xl p-3">
-        {children}
+        <div className="scrollbar-hide h-full max-h-[852px] w-full max-w-[393px] overflow-y-auto rounded-4xl bg-white p-3 shadow-md">
+          {children}
         </div>
       </body>
     </html>
   );
 }
-0
+0;

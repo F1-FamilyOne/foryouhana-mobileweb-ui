@@ -49,5 +49,4 @@ next-env.d.ts
 #storybook-static
 
 # IDE
-/.vscode
 /lib/generated/prisma
