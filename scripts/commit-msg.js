@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 
 const msgFile = process.argv[2];
 const message = fs.readFileSync(msgFile, 'utf8').trim();
