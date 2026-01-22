@@ -1,0 +1,22 @@
+{
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.formatOnSave": true,
+  "editor.fontFamily": "Fira Code",
+  "editor.codeActionsOnSave": {
+    "source.sortImports": "explicit",
+    "source.removeUnusedImports": "explicit",
+    "source.organizeImports.biome": "explicit",
+    "source.fixAll.biome": "explicit"
+  },
+  // cf. vscode make no suggest
+  "typescript.preferences.autoImportFileExcludePatterns": [
+    "**/node_modules/next/router*",
+    "**/node_modules/next/dist/**",
+    "@radix-ui/*",
+    "recharts"
+  ],
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "files.watcherExclude": {
+    "**/.next/**": true
+  }
+}

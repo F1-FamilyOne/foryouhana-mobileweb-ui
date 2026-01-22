@@ -1,0 +1,4 @@
+#!/bin/sh
+
+pnpm biome format . --write
+pnpm biome check .
