@@ -1,2 +1,10 @@
 # foryouhana-mobileweb-ui
-아이앞으로 모바일 웹 프론트엔드 — React/Next.js 기반 반응형 UI 및 인터랙션 컴포넌트!
+너하나를위해 모바일 웹 프론트엔드 — React/Next.js 기반 반응형 UI 및 인터랙션 컴포넌트
+팀명 : F1d
+horim
+승빈
+하임
+지예
+
+
+정수
