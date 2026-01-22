@@ -139,10 +139,10 @@
   body {
     @apply bg-background text-foreground;
   }
-  html, body {
-  height: 100%;
-  overflow: hidden; /* 전체 페이지 스크롤 방지 (앱처럼 보이게) */
-  touch-action: manipulation; /* 더블탭 줌 방지 */
+  html,
+  body {
+    height: 100%;
+    overflow: hidden; /* 전체 페이지 스크롤 방지 (앱처럼 보이게) */
+    touch-action: manipulation; /* 더블탭 줌 방지 */
+  }
 }
-}
-
