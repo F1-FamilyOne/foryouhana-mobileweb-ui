@@ -1,14 +1,141 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../lib/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
 }
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model account {
+  id                                         Int               @id @default(autoincrement()) @db.UnsignedInt
+  child_id                                   Int               @db.UnsignedInt
+  fund_id                                    Int?              @db.UnsignedInt
+  acc_num                                    String?           @db.VarChar(30)
+  acc_type                                   account_acc_type?
+  opened_at                                  DateTime?         @db.Date
+  closed_at                                  DateTime?         @db.Date
+  deposit                                    BigInt?           @default(0) @db.UnsignedBigInt
+  in_type                                    Boolean?
+  plus_rate                                  Decimal?          @db.Decimal(5, 2)
+  plus_money                                 BigInt?           @default(0) @db.UnsignedBigInt
+  in_month                                   Int?              @db.TinyInt
+  child                                      child             @relation(fields: [child_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_account_child")
+  fund                                       fund?             @relation(fields: [fund_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_account_fund")
+  history_history_source_account_idToaccount history[]         @relation("history_source_account_idToaccount")
+  history_history_target_account_idToaccount history[]         @relation("history_target_account_idToaccount")
+
+  @@index([child_id], map: "fk_account_child")
+  @@index([fund_id], map: "fk_account_fund")
+}
+
+model chatlog {
+  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  child_id   Int?      @db.UnsignedInt
+  log        String?   @db.VarChar(500)
+  created_at DateTime? @default(now()) @db.DateTime(6)
+  is_sent    Boolean?  @default(false)
+  child      child?    @relation(fields: [child_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_chatlog_child")
+
+  @@index([child_id], map: "fk_chatlog_child")
+}
+
+model child {
+  id               Int       @id @default(autoincrement()) @db.UnsignedInt
+  parent_id        Int       @db.UnsignedInt
+  born_date        DateTime? @db.Date
+  name             String?   @db.VarChar(50)
+  profile_pic      String?   @db.VarChar(255)
+  goal_money       BigInt?   @db.UnsignedBigInt
+  monthly_money    BigInt?   @db.UnsignedBigInt
+  is_promise_fixed Boolean?  @default(false)
+  invest_type      String?   @db.VarChar(20)
+  identity_hash    String?   @db.VarChar(255)
+  account          account[]
+  alert            alert[]
+  chatlog          chatlog[]
+  parent           parent    @relation(fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_child_parent")
+
+  @@index([parent_id], map: "fk_child_parent")
+}
+
+model fund {
+  id          Int          @id @default(autoincrement()) @db.UnsignedInt
+  name        String?      @db.VarChar(255)
+  danger      fund_danger?
+  type        fund_type?
+  company     String?      @db.VarChar(50)
+  total_fee   Decimal?     @db.Decimal(5, 4)
+  sell_fee    Decimal?     @db.Decimal(5, 4)
+  set_date    DateTime?    @db.Date
+  plus_1      Decimal?     @db.Decimal(7, 2)
+  plus_5      Decimal?     @db.Decimal(7, 2)
+  plus_10     Decimal?     @db.Decimal(7, 2)
+  total_money BigInt?      @db.UnsignedBigInt
+  image       String?      @db.VarChar(255)
+  account     account[]
+}
+
+model history {
+  id                                         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  created_at                                 DateTime? @default(now()) @db.DateTime(6)
+  money                                      BigInt?   @db.UnsignedBigInt
+  source_account_id                          Int?      @db.UnsignedInt
+  target_account_id                          Int?      @db.UnsignedInt
+  account_history_source_account_idToaccount account?  @relation("history_source_account_idToaccount", fields: [source_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_history_source")
+  account_history_target_account_idToaccount account?  @relation("history_target_account_idToaccount", fields: [target_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_history_target")
+
+  @@index([source_account_id], map: "fk_history_source")
+  @@index([target_account_id], map: "fk_history_target")
+}
+
+model mydata {
+  id     Int      @id @default(autoincrement()) @db.UnsignedInt
+  parent parent[]
+}
+
+model parent {
+  id        Int     @id @default(autoincrement()) @db.UnsignedInt
+  mydata_id Int?    @db.UnsignedInt
+  child     child[]
+  mydata    mydata? @relation(fields: [mydata_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_parent_mydata")
+
+  @@index([mydata_id], map: "fk_parent_mydata")
+}
+
+model alert {
+  id          Int       @id @default(autoincrement()) @db.UnsignedInt
+  child_id    Int       @db.UnsignedInt
+  type        String    @db.VarChar(25)
+  title       String    @db.VarChar(25)
+  description String?   @db.Text
+  button_text String?   @default("확인") @db.VarChar(20)
+  status      Boolean?  @default(false)
+  priority    Int?      @default(0) @db.UnsignedTinyInt
+  created_at  DateTime? @default(now()) @db.DateTime(6)
+  child       child     @relation(fields: [child_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_alert_child")
+
+  @@index([child_id], map: "fk_alert_child")
+}
+
+enum fund_danger {
+  LOW
+  MID
+  HIGH
+}
+
+enum fund_type {
+  MIXED
+  ETF
+}
+
+enum account_acc_type {
+  DEPOSIT
+  FUND
+  PENSION
+}
+
+/**
+ * alert (팝업) 테이블 enum은 안했어요
+ */
