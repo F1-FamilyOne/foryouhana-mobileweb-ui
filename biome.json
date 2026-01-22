@@ -9,6 +9,7 @@
     "ignoreUnknown": true,
     "includes": [
       "**",
+      "!**/*.css",
       "!node_modules",
       "!.next",
       "!dist",
