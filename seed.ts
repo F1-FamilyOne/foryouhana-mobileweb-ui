@@ -1,5 +1,6 @@
-import { prisma } from './lib/prisma';
-import { account_acc_type, fund_danger, fund_type } from './lib/generated/prisma/client';
+import { PrismaClient, account_acc_type, fund_danger, fund_type } from './lib/generated/prisma';
+
+const prisma = new PrismaClient();
 
 async function main() {
   console.log('🚀 시딩 시작: 부모, 자녀, 계좌 및 이력 데이터...');
@@ -136,4 +137,6 @@ main()
     console.error('❌ 시딩 중 에러 발생:', e);
     process.exit(1);
   })
-  .finally(() => prisma.$disconnect());
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
