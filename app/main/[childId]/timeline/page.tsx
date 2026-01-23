@@ -1,5 +1,3 @@
 export default function timeLine() {
-  return (
-    <div>timeLine</div>
-  );
+  return <div>timeLine</div>;
 }

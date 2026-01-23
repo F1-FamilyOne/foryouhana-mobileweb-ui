@@ -4,7 +4,7 @@
     "prefix": "doc",
     "body": [
       "/**",
-	  " * @page: ${1:페이지명}",
+      " * @page: ${1:페이지명}",
       " * @description: ${1:설명을 입력하세요}",
       " * @author: ${3:작성자명}",
       " * @date: $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE",

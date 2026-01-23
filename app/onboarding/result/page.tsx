@@ -1,5 +1,3 @@
 export default function analysisResult() {
-  return (
-    <div>analysisResult</div>
-  );
+  return <div>analysisResult</div>;
 }

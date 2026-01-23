@@ -1,5 +1,3 @@
 export default function myplanEdit() {
-  return (
-    <div>myPlanEdit</div>
-  );
+  return <div>myPlanEdit</div>;
 }

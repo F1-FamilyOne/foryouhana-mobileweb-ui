@@ -1,5 +1,3 @@
 export default function verifyList() {
-  return (
-    <div>verifyList</div>
-  );
+  return <div>verifyList</div>;
 }

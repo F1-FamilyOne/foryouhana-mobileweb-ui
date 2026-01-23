@@ -1,5 +1,3 @@
 export default function fundRegistComplete() {
-  return (
-    <div>fundRegistComplete</div>
-  );
+  return <div>fundRegistComplete</div>;
 }

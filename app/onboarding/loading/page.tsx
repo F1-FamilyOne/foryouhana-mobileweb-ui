@@ -1,5 +1,3 @@
 export default function analysisLoading() {
-  return (
-    <div>analysisLoading</div>
-  );
+  return <div>analysisLoading</div>;
 }

@@ -1,5 +1,3 @@
 export default function registerComplete() {
-  return (
-    <div>registerComplete</div>
-  );
+  return <div>registerComplete</div>;
 }

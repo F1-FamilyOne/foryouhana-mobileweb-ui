@@ -1,5 +1,3 @@
 export default function analysisMethod() {
-  return (
-    <div>analysisMethod</div>
-  );
+  return <div>analysisMethod</div>;
 }

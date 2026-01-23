@@ -1,5 +1,3 @@
 export default function productListAll() {
-  return (
-    <div>productListAll</div>
-  );
+  return <div>productListAll</div>;
 }

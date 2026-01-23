@@ -1,5 +1,3 @@
 export default function investTestAnalysis() {
-  return (
-    <div>investTestAnalysis</div>
-  );
+  return <div>investTestAnalysis</div>;
 }

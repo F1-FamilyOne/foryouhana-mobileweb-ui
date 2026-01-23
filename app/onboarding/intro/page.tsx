@@ -1,5 +1,3 @@
 export default function ServiceInfo() {
-  return (
-    <div>ServiceInfo</div>
-  );
+  return <div>ServiceInfo</div>;
 }

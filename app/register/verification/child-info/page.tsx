@@ -1,5 +1,3 @@
 export default function childInfoDetail() {
-  return (
-    <div>childInfoDetail</div>
-  );
+  return <div>childInfoDetail</div>;
 }

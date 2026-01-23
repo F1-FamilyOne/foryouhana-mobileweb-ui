@@ -1,5 +1,3 @@
 export default function myProduct() {
-  return (
-    <div>myProduct</div>
-  );
+  return <div>myProduct</div>;
 }

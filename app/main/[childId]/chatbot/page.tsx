@@ -1,5 +1,3 @@
 export default function chatbot() {
-  return (
-    <div>chatbot</div>
-  );
+  return <div>chatbot</div>;
 }

@@ -1,5 +1,3 @@
 export default function childProfileEdit() {
-  return (
-    <div>childProfileEdit</div>
-  );
+  return <div>childProfileEdit</div>;
 }
