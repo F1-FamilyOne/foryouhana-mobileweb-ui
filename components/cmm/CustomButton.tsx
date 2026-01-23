@@ -8,9 +8,12 @@ import { cn } from '@/lib/utils';
  * @description:
  * 서비스 전반에서 공통으로 사용되는 버튼 컴포넌트입니다.
  *
- * 버튼의 크기(size)와 색상 스타일(variant)을 조합하여 일관된 UI를 유지하며,
- * 자주 사용되는 조합은 preset으로 정의해 팀원들이 의도를 쉽게 파악하고
- * 동일한 버튼 스타일을 반복적으로 사용할 수 있도록 구성했습니다.
+ * UI에 공통적으로 사용되는 버튼들은
+ * preset을 색상 + 길이 (혹은 모양) 이름 규칙으로 설정해서 사용할 수 있습니다.
+ * 그 외에도 vairant로 추가 스타일을 조정할 수 있습니다.
+ *
+ * 사용 예시 ) <CustomButton preset="lightgrayshort">
+ *
  * @author: 이정수
  * @date: 2026-01-23
  */
@@ -49,6 +52,7 @@ const buttonVariants = cva(
         maingreenshort: `${SIZE.short} bg-hana-main hover:bg-hana-main/90`,
         badgegreenshort: `${SIZE.short} bg-hana-badge-green hover:bg-hana-badge-green/90`,
         lightgreenshort: `${SIZE.short} bg-hana-light-green hover:bg-hana-light-green/70 text-black`,
+        grayround: `h-[30px] w-[138px] rounded-[30px] bg-hana-gray-400 hover:bg-hana-gray-400/70 text-black`,
       },
     },
     defaultVariants: {
