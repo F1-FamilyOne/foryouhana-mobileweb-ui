@@ -36,7 +36,7 @@ export default function CardTimeline({
   });
 
   return (
-    <div className="h-[98px] w-[300px] rounded-[20px] bg-(--color-hana-light-green) p-3 font-hana-regular">
+    <div className="h-24.5 w-75 rounded-4xl bg-(--color-hana-light-green) p-3 font-hana-regular">
       <div className="flex justify-between text-[16px]">
         <p>{isMessage ? '입금' : title}</p>
         <p>{isMessage && `+${movedMoney.toLocaleString()}원`}</p>
@@ -48,11 +48,11 @@ export default function CardTimeline({
         </div>
 
         {isMessage ? (
-          <div className="grid h-[28px] w-full place-items-center rounded-[15px] bg-white">
+          <div className="grid h-7 w-full place-items-center rounded-[15px] bg-white">
             {`"${message}"`}
           </div>
         ) : (
-          <div className="flex h-[28px] items-center">
+          <div className="flex h-7 items-center">
             {fundName}로 {movedMoney.toLocaleString()}원 투자완료
           </div>
         )}

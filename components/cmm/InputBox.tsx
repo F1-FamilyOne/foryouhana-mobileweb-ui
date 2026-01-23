@@ -76,6 +76,7 @@ export default function InputBox({
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
+          <title>전송 아이콘</title>
           <path
             d="M7 0L14 7M14 7L7 14M14 7H0"
             stroke="white"
