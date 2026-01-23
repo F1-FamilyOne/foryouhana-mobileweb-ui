@@ -53,14 +53,14 @@
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-hana-regular);
+  --font-mono: var(--font-hana-regular);
   --font-hana-light: var(--font-hana-light);
   --font-hana-regular: var(--font-hana-regular);
   --font-hana-medium: var(--font-hana-medium);
   --font-hana-bold: var(--font-hana-bold);
   --font-hana-heavy: var(--font-hana-heavy);
-  --font-hana-cm: var(--font-hana-cm); 
+  --font-hana-cm: var(--font-hana-cm);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -100,13 +100,6 @@
 }
 
 :root {
-  --font-hana-light: 'HanaLight', sans-serif;
-  --font-hana-regular: 'HanaRegular', sans-serif;
-  --font-hana-medium: 'HanaMedium', sans-serif;
-  --font-hana-bold: 'HanaBold', sans-serif;
-  --font-hana-heavy: 'HanaHeavy', sans-serif;
-  --font-hana-cm: 'HanaCM', sans-serif;
-  
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
