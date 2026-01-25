@@ -27,8 +27,8 @@ type Props = {
 };
 
 const variantMap = {
-  big: 'h-10.25 w-73.75 bg-gray-200 font-hana-light text-[15px]',
-  small: 'h-8 text-[12px] bg-gray-200',
+  big: 'h-10.25 w-73.75 bg-hana-gray-200 font-hana-light text-[15px]',
+  small: 'h-8 text-[12px] bg-hana-gray-200',
 };
 
 export function CustomTab({ tabs, value, onChange, variant = 'big' }: Props) {
