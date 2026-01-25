@@ -53,7 +53,7 @@ export default function ToggleChildProfile({
                   width={400}
                   height={400}
                   src={kid.avatarUrl}
-                  alt="logo"
+                  alt="자녀 프로필"
                   className="object-cover"
                 />
               </button>
