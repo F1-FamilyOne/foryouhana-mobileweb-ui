@@ -1,6 +1,6 @@
 import { Target } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import { cn } from '@/lib/utils';
+import { cn, formatWon } from '@/lib/utils';
 
 /**
  * @page: CustomMoneyProgress
@@ -26,10 +26,6 @@ type MoneyProgressProps = {
   total: number;
   variant?: MoneyProgressVariant;
 };
-
-function formatWon(num: number) {
-  return num.toLocaleString('ko-KR');
-}
 
 export function CustomMoneyProgress({
   title,
