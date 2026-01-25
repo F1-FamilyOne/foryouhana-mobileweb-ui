@@ -41,7 +41,7 @@ export default function CardChatbot({
           priority
         />
       </div>
-      <div className="relative flex w-full flex-col overflow-hidden rounded-lg bg-(--color-hana-light-green) p-7 font-hana-cm text-hana-black shadow-sm">
+      <div className="relative flex w-full flex-col overflow-hidden rounded-lg bg-[var(--color-hana-light-green)] p-7 font-hana-cm text-hana-black shadow-sm">
         <div className="relative z-10 flex h-full flex-1 flex-col">
           <h2 className="mb-8 font-hana-medium text-[15px] tracking-tight">
             {mainTitle}
