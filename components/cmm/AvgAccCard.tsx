@@ -26,7 +26,7 @@ export default function AvgAccCard({ title, value, subText }: AvgAccCardProps) {
   return (
     <div
       className={cn(
-        'h-26 w-37.25 gap-1 rounded-[14px] bg-linear-to-r from-[#ecfdf5] to-[#f0fdf4] pt-5 pl-5 font-hana-cm',
+        'h-26 w-37.25 gap-1 rounded-[14px] bg-linear-to-r from-hana-linear-green to-hana-linear-green-end pt-5 pl-5 font-hana-cm',
       )}
     >
       <div className="font-hana-cm text-[14px] text-hana-gray-600">{title}</div>

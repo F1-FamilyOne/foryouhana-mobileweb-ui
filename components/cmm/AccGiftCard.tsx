@@ -31,7 +31,7 @@ export default function AccGiftCard({
     <div
       className={cn(
         'h-25 w-37.5 rounded-[14px] pt-4.5 pl-3.25 font-hana-cm',
-        highlight ? 'bg-hana-light-green' : 'bg-[#F5F5F5]',
+        highlight ? 'bg-hana-light-green' : 'bg-hana-gray-150',
       )}
     >
       <div className="font-hana-cm text-[12px]">{title}</div>
