@@ -38,8 +38,10 @@ export function MyFundCard({
 }: Props) {
   return (
     <article
-      className={cn('rounded-2xl border bg-white p-5 shadow-md', className)}
-      style={{ width: 312, borderColor: '#E5E7EB' }}
+      className={cn(
+        'w-78 rounded-2xl border border-hana-gray-300 bg-white p-5 shadow-md',
+        className,
+      )}
       aria-label="내 펀드 카드"
     >
       {/* 뱃지 2개 */}

@@ -1,6 +1,7 @@
 'use client';
 
 import { ChevronRight, CircleCheck } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 /**
  * @page: 공통 컴포넌트 - 약관 동의
@@ -43,10 +44,10 @@ export function AgreeTerms({ label, items = [], className }: Props) {
 
   return (
     <section
-      className={[
+      className={cn(
         'rounded-[10px] border-2 border-hana-gray-200 bg-white font-hana-cm',
-        className ?? '',
-      ].join(' ')}
+        className,
+      )}
       aria-label="약관 동의"
     >
       {/* Title */}
@@ -61,9 +62,9 @@ export function AgreeTerms({ label, items = [], className }: Props) {
           <CircleCheck className={getCheckColorClass(allChecked)} />
         </button>
 
-        <span className="ml-3 text-gray-400 text-sm">{label}</span>
+        <span className="hana-gray-400 ml-3 text-sm">{label}</span>
 
-        <span className="ml-auto shrink-0 text-gray-400" aria-hidden="true">
+        <span className="hana-gray-400 ml-auto shrink-0" aria-hidden="true">
           <ChevronRight />
         </span>
       </div>
