@@ -1,6 +1,7 @@
 'use client';
-import DOMPurify from 'dompurify';
+import createDOMPurify from 'dompurify';
 import Image from 'next/image';
+import { useEffect, useRef, useState } from 'react';
 import { IMAGES_PATH } from '@/constants/images';
 
 /**
@@ -28,7 +29,17 @@ export default function CardChatbot({
   onRefresh,
   onAnalyze,
 }: CardChatbotProps) {
-  const sanitizedContent = DOMPurify.sanitize(content);
+  const purifierRef = useRef<ReturnType<typeof createDOMPurify> | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    purifierRef.current = createDOMPurify(window);
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null; // ✅ 서버 & 첫 CSR 동일
+
+  const sanitizedContent = purifierRef.current!.sanitize(content);
 
   return (
     <div className="relative pt-[20px]">

@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { z } from 'zod';
 import { prisma } from '@/lib/prisma'; // 로그 저장용
 
 // ✅ Enum 정의
@@ -9,6 +10,14 @@ enum AccountAccType {
   PENSION = 'PENSION', // 연저펀
 }
 
+const chatbotRequestSchema = z.object({
+  childId: z.number(),
+  userInput: z.string(),
+  parentIncome: z.number(),
+  parentAssets: z.number(),
+  childAge: z.number(),
+});
+
 export async function POST(req: NextRequest) {
   const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -16,14 +25,16 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
+    const parsedBody = chatbotRequestSchema.safeParse(body);
+    if (!parsedBody.success) {
+      return NextResponse.json(
+        { error: 'Invalid request body' },
+        { status: 400 },
+      );
+    }
+
     const { childId, userInput, parentIncome, parentAssets, childAge } =
-      body as {
-        childId: number;
-        userInput: string;
-        parentIncome: number;
-        parentAssets: number;
-        childAge: number;
-      };
+      parsedBody.data;
 
     // 🛡️ [안전장치 1] 사용자 질문 로그 저장 (실패 시 무시)
     try {
