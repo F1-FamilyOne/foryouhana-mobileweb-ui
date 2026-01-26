@@ -98,7 +98,7 @@ export default function menu() {
           </Button>
           <Button
             className="flex h-[60px] w-full cursor-pointer justify-between rounded-[15px] bg-hana-pastel-mint p-2 text-[18px] hover:bg-hana-pastel-mint/60"
-            onClick={() => route.push(`/main/${childId}/my-product`)}
+            onClick={() => route.push(`/onboarding/intro`)}
           >
             <p>현재 가입 상품 보기</p> <ChevronRight />
           </Button>
