@@ -14,7 +14,8 @@
       "!.next",
       "!dist",
       "!build",
-      "!**/components/ui"
+      "!**/components/ui",
+      "prisma/seed.ts"
     ]
   },
   "formatter": {
