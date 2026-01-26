@@ -15,7 +15,7 @@ type Props = {
 export default function Header({ content }: Props) {
   const router = useRouter();
   return (
-    <div className="-mx-3 -my-3 relative mb-3 flex h-[65px] w-full items-center justify-center rounded-t-4xl border-b border-b-[var(--color-hana-gray-300)] bg-white font-hana-cm shadow-b-xs">
+    <div className="-mx-3 -my-3 relative mb-3 flex h-[65px] w-[393px] items-center justify-center rounded-t-4xl border-b border-b-[var(--color-hana-gray-300)] bg-white font-hana-cm shadow-b-xs">
       <button
         onClick={() => router.back()}
         type="button"
