@@ -1,6 +1,7 @@
 import {
   account_acc_type,
   fund_danger,
+  fund_saving_type,
   fund_type,
 } from '../lib/generated/prisma/client';
 import { prisma } from '../lib/prisma';
@@ -17,10 +18,11 @@ async function main() {
   // 2. 펀드 상품 생성 (계좌 연결용)
   const baseFund = await prisma.fund.create({
     data: {
-      name: '우리 아이 희망 지수 ETF',
+      name: '하나없이하나마나ETF',
       danger: fund_danger.MID,
       type: fund_type.ETF,
-      company: '우리자산운용',
+      saving_type: fund_saving_type.BOTH,
+      company: '하나은행',
       total_fee: 0.015,
       sell_fee: 0.005,
       set_date: new Date('2024-01-01'),
@@ -35,10 +37,11 @@ async function main() {
   // 펀드 추가 - 0125
   const bondFund = await prisma.fund.create({
     data: {
-      name: '우리아이 튼튼 채권 펀드',
+      name: '하나암자 채권형 펀드',
       danger: fund_danger.LOW,
       type: fund_type.BOND,
-      company: '우리자산운용',
+      saving_type: fund_saving_type.REGULAR,
+      company: '하나은행',
       total_fee: 0.008, // 낮은 수수료
       sell_fee: 0.001,
       set_date: new Date('2023-05-20'),
@@ -52,10 +55,11 @@ async function main() {
 
   const globalStockFund = await prisma.fund.create({
     data: {
-      name: '글로벌 혁신 기업 주식 펀드',
+      name: '하나글로벌울트라 TOP50 ETF',
       danger: fund_danger.HIGH,
       type: fund_type.STOCK,
-      company: '우리자산운용',
+      saving_type: fund_saving_type.BOTH,
+      company: '하나은행',
       total_fee: 0.025, // 높은 수익률만큼 높은 수수료
       sell_fee: 0.01,
       set_date: new Date('2024-02-15'),
@@ -71,11 +75,13 @@ async function main() {
   const child1 = await prisma.child.create({
     data: {
       parent_id: parent.id,
-      name: '김첫째',
+      name: '하나둘',
+      profile_pic: '/file/자녀1.jpg', //자녀 프로필 이미지 경로 명시
       born_date: new Date('2015-01-01'),
       is_promise_fixed: true,
       goal_money: 20000000n,
       monthly_money: 100000n,
+      invest_type: fund_danger.MID,
       identity_hash: 'hash_child_1_unique',
     },
   });
@@ -83,11 +89,13 @@ async function main() {
   const child2 = await prisma.child.create({
     data: {
       parent_id: parent.id,
-      name: '김둘째',
+      name: '하나셋',
+      profile_pic: '/file/자녀2.jpg',
       born_date: new Date('2018-05-05'),
       is_promise_fixed: false, // 0이므로
       goal_money: null, // 반드시 null
       monthly_money: null, // 반드시 null
+      invest_type: fund_danger.LOW,
       identity_hash: 'hash_child_2_unique',
     },
   });
