@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   WheelPicker,
   type WheelPickerOption,
@@ -9,19 +9,15 @@ import {
 
 /**
  * @page: ScrollDatePicker
- * @description: 스크롤로 연,월,일을 선택하는 컴포넌트
+ * @description: ScrolseonukimePicker
  * @author: seonukim
- * @date: 2026-01-23
+ * @date: 2026-01-26
  *
- *
- * 입력값:
- * - year: 선택된 연도
- * - month: 선택된 월
- * - day: 선택된 일
- * - onChange: 날짜 변경 시 호출되는 함수
- *
- * 년, 월, 일 선택 휠을 제공하며, 사용자가 스크롤하여 날짜를 선택할 수 있습니다.
- * 선택된 날짜가 변경되면 onChange 콜백이 호출되어 부모 컴포넌트에서 상태를 업데이트할 수 있습니다.
+ * @props:
+ * - year: number - 선택된 연도
+ * - month: number - 선택된 월
+ * - day: number - 선택된 일
+ * - onChange: (date: { year: number; month: number; day: number }) => void - 날짜 변경 시 호출되는 콜백 함수
  */
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -65,25 +61,38 @@ export function ScrollDatePicker({
 }: ScrollDatePickerProps) {
   const days = useMemo(() => getDays(year, month), [year, month]);
 
-  if (day > days.length) {
-    onChange({ year, month, day: days.length });
-  }
+  const clampedDay = useMemo(
+    () => Math.min(day, days.length),
+    [day, days.length],
+  );
+
+  useEffect(() => {
+    if (day !== clampedDay) {
+      onChange({ year, month, day: clampedDay });
+    }
+  }, [day, clampedDay, year, month, onChange]);
 
   return (
     <WheelPickerWrapper>
       <WheelPicker
         options={years}
         value={year}
-        onValueChange={(y) => onChange({ year: y, month, day })}
+        onValueChange={(y) => {
+          const nextDaysLen = getDays(y, month).length;
+          onChange({ year: y, month, day: Math.min(day, nextDaysLen) });
+        }}
       />
       <WheelPicker
         options={months}
         value={month}
-        onValueChange={(m) => onChange({ year, month: m, day })}
+        onValueChange={(m) => {
+          const nextDaysLen = getDays(year, m).length;
+          onChange({ year, month: m, day: Math.min(day, nextDaysLen) });
+        }}
       />
       <WheelPicker
         options={days}
-        value={day}
+        value={clampedDay}
         onValueChange={(d) => onChange({ year, month, day: d })}
       />
     </WheelPickerWrapper>
