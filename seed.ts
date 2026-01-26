@@ -1,5 +1,9 @@
+import {
+  account_acc_type,
+  fund_danger,
+  fund_type,
+} from './lib/generated/prisma/client';
 import { prisma } from './lib/prisma';
-import { account_acc_type, fund_danger, fund_type } from './lib/generated/prisma/client';
 
 async function main() {
   console.log('🚀 시딩 시작: 부모, 자녀, 계좌 및 이력 데이터...');
@@ -44,8 +48,8 @@ async function main() {
       name: '김둘째',
       born_date: new Date('2018-05-05'),
       is_promise_fixed: false, // 0이므로
-      goal_money: null,        // 반드시 null
-      monthly_money: null,     // 반드시 null
+      goal_money: null, // 반드시 null
+      monthly_money: null, // 반드시 null
       identity_hash: 'hash_child_2_unique',
     },
   });
@@ -99,7 +103,7 @@ async function main() {
       opened_at: new Date(),
       deposit: 150000n,
       in_type: true, // 1: 자유
-      in_month: 12,  // 제약 조건에 따라 필수 입력
+      in_month: 12, // 제약 조건에 따라 필수 입력
       plus_rate: 4.5,
     },
   });
