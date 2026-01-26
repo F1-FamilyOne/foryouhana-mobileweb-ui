@@ -140,6 +140,15 @@ model alert {
   @@index([child_id], map: "fk_alert_child")
 }
 
+model timeline {
+  id          Int      @id @default(autoincrement()) @db.UnsignedInt
+  child_id    Int      @db.UnsignedInt
+  date        DateTime @default(now()) @db.DateTime(6)
+  type        String   @db.VarChar(20) 
+  description String?  @db.VarChar(50)
+  memo        String?  @db.VarChar(50) 
+}
+
 enum fund_danger {
   LOW
   MID
