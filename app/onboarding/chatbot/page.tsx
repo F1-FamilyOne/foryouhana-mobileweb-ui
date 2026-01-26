@@ -91,7 +91,7 @@ export default function chatbotSignProcess() {
         // 🔥 [추가] 세션 스토리지 저장 (isSigned: false)
         if (data.dbData) {
           const sessionData = {
-            child_id: childId,
+            child_id: null,
             isSigned: false, // ✅ 요청하신 대로 false 설정
             updated_at: new Date().toISOString(),
             plan: data.dbData,
