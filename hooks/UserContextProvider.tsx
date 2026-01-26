@@ -6,7 +6,6 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 
@@ -18,8 +17,6 @@ import {
  *
  * 화면 임시 테스트용으로 유저 아이디를 변경하고 싶을 때는
  * forcedUserId를 넣어주세요. (로컬 스토리지에 반영되지 않고 context사용 시 바뀝니다.)
- * 영구적 전환 시 직접 application 탭에 들어가서 바꾸던가,
- * defaultUserID를 변경해주세요.
  */
 
 type UserContextValue = {
@@ -48,8 +45,6 @@ export function UserContextProvider({ children, forcedUserId }: Props) {
   const [userId, setUserIdState] = useState(DEFAULT_USER_ID);
   const [ready, setReady] = useState(false);
 
-  const initializedRef = useRef(false);
-
   const isForced = !!forcedUserId;
 
   useEffect(() => {
@@ -57,20 +52,15 @@ export function UserContextProvider({ children, forcedUserId }: Props) {
 
     if (forcedUserId) {
       setUserIdState(forcedUserId);
-      setReady(true);
-      return;
-    }
-
-    if (!initializedRef.current) {
+    } else {
       const stored = localStorage.getItem(STORAGE_KEY);
       const initial = stored || DEFAULT_USER_ID;
-
       setUserIdState(initial);
-      localStorage.setItem(STORAGE_KEY, initial);
-
-      initializedRef.current = true;
-      setReady(true);
+      if (!stored) {
+        localStorage.setItem(STORAGE_KEY, initial);
+      }
     }
+    setReady(true);
   }, [forcedUserId]);
 
   const setUserId = useCallback(
