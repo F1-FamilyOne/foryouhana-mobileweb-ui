@@ -26,12 +26,9 @@ type UserContextValue = {
   isForced: boolean;
 };
 
-export const UserContext = createContext<UserContextValue>({
-  userId: '1',
-  setUserId: () => {},
-  ready: false,
-  isForced: false,
-});
+export const UserContext = createContext<UserContextValue | undefined>(
+  undefined,
+);
 
 const STORAGE_KEY = 'mock_userId';
 const DEFAULT_USER_ID = '1';
