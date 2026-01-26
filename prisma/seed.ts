@@ -2,6 +2,7 @@ import {
   account_acc_type,
   fund_danger,
   fund_type,
+  fund_saving_type,
 } from '../lib/generated/prisma/client';
 import { prisma } from '../lib/prisma';
 
@@ -20,6 +21,7 @@ async function main() {
       name: '우리 아이 희망 지수 ETF',
       danger: fund_danger.MID,
       type: fund_type.ETF,
+      saving_type: fund_saving_type.BOTH,
       company: '우리자산운용',
       total_fee: 0.015,
       sell_fee: 0.005,
@@ -38,6 +40,7 @@ async function main() {
       name: '우리아이 튼튼 채권 펀드',
       danger: fund_danger.LOW,
       type: fund_type.BOND,
+      saving_type: fund_saving_type.REGULAR,
       company: '우리자산운용',
       total_fee: 0.008, // 낮은 수수료
       sell_fee: 0.001,
@@ -55,6 +58,7 @@ async function main() {
       name: '글로벌 혁신 기업 주식 펀드',
       danger: fund_danger.HIGH,
       type: fund_type.STOCK,
+      saving_type: fund_saving_type.BOTH,
       company: '우리자산운용',
       total_fee: 0.025, // 높은 수익률만큼 높은 수수료
       sell_fee: 0.01,
@@ -72,10 +76,12 @@ async function main() {
     data: {
       parent_id: parent.id,
       name: '김첫째',
+      profile_pic: '/file/자녀1.jpg', //자녀 프로필 이미지 경로 명시
       born_date: new Date('2015-01-01'),
       is_promise_fixed: true,
       goal_money: 20000000n,
       monthly_money: 100000n,
+      invest_type: fund_danger.MID,
       identity_hash: 'hash_child_1_unique',
     },
   });
@@ -84,10 +90,12 @@ async function main() {
     data: {
       parent_id: parent.id,
       name: '김둘째',
+      profile_pic: '/file/자녀2.jpg',
       born_date: new Date('2018-05-05'),
       is_promise_fixed: false, // 0이므로
       goal_money: null, // 반드시 null
       monthly_money: null, // 반드시 null
+      invest_type: fund_danger.LOW,
       identity_hash: 'hash_child_2_unique',
     },
   });
