@@ -93,7 +93,7 @@ export function InputDay({
         placeholder={placeholder}
         className="w-full bg-transparent text-center font-medium text-[24px] outline-none placeholder:text-hana-gray-400"
       />
-      <span className="ml-2 shrink-0 text-[16px] text-hana-gray-600">일</span>
+      <span className="ml-2 shrink-0 text-[16px] text-hana-gray-600">개월</span>
     </label>
   );
 }
