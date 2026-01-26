@@ -98,8 +98,8 @@ model history {
 
 model auto_transfer {
   id                Int    @id @default(autoincrement()) @db.UnsignedInt
-  date              Int    @db.UnsignedTinyInt   // 납입일 (매월 몇 일, 1-31)
-  count             Int    @db.UnsignedTinyInt   // 납입횟수
+  transfer_day      Int    @db.UnsignedTinyInt   // 납입일 (매월 몇 일, 1-31)
+  transfer_count    Int    @db.UnsignedTinyInt   // 총 납입횟수
   amount            BigInt @db.UnsignedBigInt    // 납입금액
   source_account_id Int    @db.UnsignedInt       // 납부계좌 (출금)
   target_account_id Int    @db.UnsignedInt       // 입금계좌
