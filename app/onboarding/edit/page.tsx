@@ -1,9 +1,13 @@
+'use client';
 import { InfoIcon } from 'lucide-react';
+import { useState } from 'react';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import Header from '@/components/cmm/Header';
 import { InputAmount, InputDay } from '@/components/cmm/InputDayAmount';
 
 export default function planEdit() {
+  const [pensionSelected, setPensionSelected] = useState<boolean>(false);
+  const [giftSelected, setGiftSelected] = useState<boolean>(false);
   return (
     <div>
       <Header content="플랜 직접 수정하기" />
@@ -18,8 +22,26 @@ export default function planEdit() {
               <InfoIcon className="h-4 w-4 text-hana-gray-400" />
             </div>
             <div className="flex flex-row justify-between">
-              <CustomButton preset="lightgrayshort">신청</CustomButton>
-              <CustomButton preset="lightgrayshort">신청 안함</CustomButton>
+              <CustomButton
+                preset={
+                  pensionSelected === true
+                    ? 'lightgreenshort'
+                    : 'lightgrayshort'
+                }
+                onClick={() => setPensionSelected(true)}
+              >
+                신청
+              </CustomButton>
+              <CustomButton
+                preset={
+                  pensionSelected === false
+                    ? 'lightgreenshort'
+                    : 'lightgrayshort'
+                }
+                onClick={() => setPensionSelected(false)}
+              >
+                신청 안함
+              </CustomButton>
             </div>
             <h4 className="pt-2 font-hana-light text-[10px] text-hana-gray-400">
               ※ 연금저축펀드는 세액공제 혜택이 있는 대신, 연금 수령 요건을
@@ -36,8 +58,22 @@ export default function planEdit() {
               </h2>
             </div>
             <div className="flex flex-row justify-between">
-              <CustomButton preset="lightgrayshort">신청</CustomButton>
-              <CustomButton preset="lightgrayshort">신청 안함</CustomButton>
+              <CustomButton
+                preset={
+                  giftSelected === true ? 'lightgreenshort' : 'lightgrayshort'
+                }
+                onClick={() => setGiftSelected(true)}
+              >
+                신청
+              </CustomButton>
+              <CustomButton
+                preset={
+                  giftSelected === false ? 'lightgreenshort' : 'lightgrayshort'
+                }
+                onClick={() => setGiftSelected(false)}
+              >
+                신청 안함
+              </CustomButton>
             </div>
             <h4 className="pt-2 font-hana-light text-[10px] text-hana-gray-400">
               ※ 증여세 공제는 10년마다 새로 적용돼요. 19세 미만은 2,000만원,
