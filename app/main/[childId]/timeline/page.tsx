@@ -29,7 +29,7 @@ export default async function TimelinePage({
   const childIdInt = Number(childId);
 
   // ID 유효성 검사
-  if (isNaN(childIdInt)) {
+  if (Number.isNaN(childIdInt)) {
     return <div className="p-10 text-center">잘못된 접근입니다. (ID 오류)</div>;
   }
 
