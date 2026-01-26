@@ -1,11 +1,12 @@
 import TimelineFooter from '@/components/timeline/TimelineFooter';
 import TimelineHeader from '@/components/timeline/TimelineHeader';
-import TimelineRow from '@/components/timeline/TimelineRow';
+import TimelineList from '@/components/timeline/TimelineList'; // Row가 아니라 List임에 주의!
 import TimelineSummary from '@/components/timeline/TimelineSummary';
-import { account_acc_type } from '@/lib/generated/prisma/client';
 import { prisma } from '@/lib/prisma';
 
-// 타임라인 아이템 타입 정의
+// 👇 캐시 끄기 (팝업 테스트를 위해 필수)
+export const dynamic = 'force-dynamic';
+
 type TimelineItemData = {
   id: string;
   date: Date;
@@ -24,159 +25,103 @@ export default async function TimelinePage({
 }: {
   params: Promise<{ childId: string }>;
 }) {
-  // 1. URL 파라미터 가져오기 (Next.js 15+ 대응)
   const { childId } = await params;
   const childIdInt = Number(childId);
 
-  // ID 유효성 검사
   if (Number.isNaN(childIdInt)) {
     return <div className="p-10 text-center">잘못된 접근입니다. (ID 오류)</div>;
   }
 
-  // 2. 헤더용: 모든 자녀 목록 조회 (프로필 사진 표시용)
+  // 1. 헤더용 데이터 조회
+  const currentChild = await prisma.child.findUnique({
+    where: { id: childIdInt },
+    select: { name: true, born_date: true },
+  });
+
   const allChildren = await prisma.child.findMany({
     select: { id: true, name: true, profile_pic: true },
     orderBy: { born_date: 'asc' },
   });
 
-  // 3. 데이터 병렬 조회: 알림 & 계좌 먼저 가져오기
-  const [alerts, accounts] = await Promise.all([
-    // A. 알림 조회
-    prisma.alert.findMany({
-      where: { child_id: childIdInt },
-      orderBy: { created_at: 'desc' },
-    }),
-    // B. 계좌 조회 (펀드 정보 포함)
-    prisma.account.findMany({
-      where: { child_id: childIdInt },
-      orderBy: { opened_at: 'desc' },
-      include: { fund: true },
-    }),
-  ]);
-
-  // 4. 자녀의 계좌 ID 목록 추출 (History 조회용)
-  const childAccountIds = accounts.map((acc) => acc.id);
-
-  // 5. 송금 이력 조회 (수정된 로직: target_account_id IN [...ids])
-  const histories = await prisma.history.findMany({
-    where: {
-      target_account_id: { in: childAccountIds },
-    },
-    orderBy: { created_at: 'desc' },
+  // 2. 타임라인 데이터 조회
+  const timelines = await prisma.timeline.findMany({
+    where: { child_id: childIdInt },
+    orderBy: { date: 'desc' },
   });
 
-  // 6. 데이터 가공 (DB 데이터 -> UI 포맷)
-  const timelineItems: TimelineItemData[] = [];
+  // -----------------------------------------------------------
+  // ✅ [복구 완료] 요약 정보 계산 로직 (이게 빠져서 에러가 난 겁니다!)
+  // -----------------------------------------------------------
+  const depositItems = timelines.filter((t) => t.type.includes('입금'));
+  const depositCount = depositItems.length;
 
-  // (1) 알림(Alert) 데이터 매핑
-  alerts.forEach((alert) => {
-    // Alert Type에 따른 아이콘/색상 분기 (Seed 데이터 기반)
-    let icon: TimelineItemData['icon'] = 'bell';
-    let variant: TimelineItemData['variant'] = 'purple';
+  let monthsPassed = 0;
+  if (depositCount > 0) {
+    // timelines는 최신순(desc)이므로, 배열의 맨 마지막이 '첫 입금'입니다.
+    const firstDepositDate = depositItems[depositItems.length - 1].date;
+    const today = new Date();
 
-    if (alert.type === '1') {
+    monthsPassed =
+      (today.getFullYear() - firstDepositDate.getFullYear()) * 12 +
+      (today.getMonth() - firstDepositDate.getMonth());
+
+    if (monthsPassed < 0) monthsPassed = 0;
+  }
+  // -----------------------------------------------------------
+
+  // 3. UI 데이터로 변환
+  const timelineItems: TimelineItemData[] = timelines.map((item) => {
+    let icon: TimelineItemData['icon'] = 'business';
+    let variant: TimelineItemData['variant'] = 'lightGreen';
+    let isMessage = false;
+
+    if (item.type.includes('입금') || item.type.includes('선물')) {
       icon = 'gift';
       variant = 'pastelGreen';
-    } // 입금 알림
-    else if (alert.type === '3') {
+      isMessage = true;
+    } else if (
+      item.type.includes('가입') ||
+      item.type.includes('개설') ||
+      item.type.includes('펀드')
+    ) {
       icon = 'trending';
       variant = 'lightGreen';
-    } // 펀드 만기
-
-    timelineItems.push({
-      id: `alert-${alert.id}`,
-      date: alert.created_at || new Date(),
-      title: alert.title,
-      fundName: alert.description || undefined, // 설명이 길면 fundName 자리에 표시
-      icon: icon,
-      variant: variant,
-      isMessage: false,
-    });
-  });
-
-  // (2) 송금 이력(History) 매핑
-  histories.forEach((history) => {
-    timelineItems.push({
-      id: `history-${history.id}`,
-      date: history.created_at,
-      movedMoney: Number(history.money), // BigInt -> Number 변환
-      message: '부모님으로부터 입금 완료! 🎁',
-      icon: 'gift',
-      variant: 'pastelGreen',
-      isMessage: true,
-    });
-  });
-
-  // (3) 계좌(Account) 개설 이력 매핑
-  accounts.forEach((acc) => {
-    // 입출금 계좌
-    if (acc.acc_type === account_acc_type.DEPOSIT) {
-      timelineItems.push({
-        id: `acc-${acc.id}`,
-        date: acc.opened_at,
-        title: '입출금 통장 개설',
-        fundName: '첫 금융 생활의 시작',
-        movedMoney: Number(acc.deposit),
-        icon: 'business',
-        variant: 'lightGreen',
-        isMessage: false,
-      });
     }
-    // 펀드 및 연금 계좌
-    else {
-      const isPension = acc.acc_type === account_acc_type.PENSION;
-      timelineItems.push({
-        id: `acc-${acc.id}`,
-        date: acc.opened_at,
-        title: isPension ? '연금저축펀드 가입' : '펀드 상품 가입',
-        fundName: acc.fund?.name || '알 수 없는 펀드',
-        movedMoney: Number(acc.deposit),
-        icon: 'trending',
-        variant: isPension ? 'purple' : 'lightGreen',
-        isMessage: false,
-      });
-    }
+
+    return {
+      id: String(item.id),
+      date: item.date,
+      title: item.type,
+      fundName: item.description || '',
+      movedMoney: 0,
+      icon,
+      variant,
+      isMessage,
+      message: item.memo || '',
+    };
   });
 
-  // 7. 날짜순 정렬 (최신순)
-  timelineItems.sort((a, b) => b.date.getTime() - a.date.getTime());
-
-  // 8. 마지막 아이템 처리 (선 연결 끊기)
+  // 마지막 아이템 선 끊기 처리
   if (timelineItems.length > 0) {
     timelineItems[timelineItems.length - 1].isLast = true;
   }
 
   return (
     <main className="min-h-screen bg-white p-6 pb-20 font-hana-regular">
-      {/* 헤더: 자녀 목록 전달 */}
       <TimelineHeader childrenList={allChildren} />
 
-      <TimelineSummary />
+      {/* ✅ 이제 monthsPassed 변수가 정의되어서 에러가 사라집니다 */}
+      <TimelineSummary
+        monthsPassed={monthsPassed}
+        depositCount={depositCount}
+      />
 
-      <section className="flex flex-col">
-        {timelineItems.length > 0 ? (
-          timelineItems.map((item) => (
-            <TimelineRow
-              key={item.id}
-              icon={item.icon}
-              variant={item.variant}
-              isLast={item.isLast}
-              cardData={{
-                date: item.date,
-                title: item.title,
-                fundName: item.fundName,
-                movedMoney: item.movedMoney || 0,
-                isMessage: item.isMessage,
-                message: item.message,
-              }}
-            />
-          ))
-        ) : (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-            <p>아직 기록된 활동이 없어요.</p>
-          </div>
-        )}
-      </section>
+      {/* ✅ 조건문 삭제됨: 데이터가 없어도 TimelineList는 실행됨 (그래야 팝업 로직이 돔) */}
+      <TimelineList
+        items={timelineItems}
+        childName={currentChild?.name || ''}
+        bornDate={currentChild?.born_date || new Date()}
+      />
 
       <TimelineFooter />
     </main>

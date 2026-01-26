@@ -91,7 +91,7 @@ async function main() {
       parent_id: parent.id,
       name: '하나셋',
       profile_pic: '/file/자녀2.jpg',
-      born_date: new Date('2018-05-05'),
+      born_date: new Date('2005-05-05'),
       is_promise_fixed: false, // 0이므로
       goal_money: null, // 반드시 null
       monthly_money: null, // 반드시 null

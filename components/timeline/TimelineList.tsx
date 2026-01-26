@@ -2,8 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { saveTimelineMessage } from '@/app/components/timeline';
-// 🆕 새로 만든 성인 축하 모달 Import
+import { saveTimelineMessage } from '@/app/actions/timeline';
 import { FinancialHistoryGiftModal } from './FinancialHistoryGiftModal';
 import TimelineMsg from './TimelineMsg';
 import TimelineRow from './TimelineRow';
@@ -35,48 +34,70 @@ export default function TimelineList({
 
   const [isMsgModalOpen, setIsMsgModalOpen] = useState(false);
   const [isAdultModalOpen, setIsAdultModalOpen] = useState(false);
-  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
-  // ✨ 성인 여부 체크 (만 19세 기준)
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const [currentMessage, setCurrentMessage] = useState('');
+
+  // ✨ 성인(만 19세, 한국나이 20세) 체크 로직
   useEffect(() => {
+    if (!bornDate) return;
+
+    console.log('넘겨받은 생일:', bornDate);
+
     const today = new Date();
     const birth = new Date(bornDate);
+
+    // 👇👇 이 로그를 추가해주세요! 👇👇
+    console.log('=== 성인 체크 디버깅 ===');
+    console.log('오늘 날짜:', today);
+    console.log('받아온 생일:', bornDate);
+    console.log('변환된 생일:', birth);
+    // 만 나이 계산
     let age = today.getFullYear() - birth.getFullYear();
     const m = today.getMonth() - birth.getMonth();
-
-    // 생일이 안 지났으면 한 살 뺌 (만 나이 계산)
     if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
       age--;
     }
 
-    // 만 19세 이상이면 팝업 띄우기 (UX를 위해 1.5초 뒤 등장)
+    // 만 19세 이상(성인)이면 1.5초 뒤 축하 팝업 등장
     if (age >= 19) {
       const timer = setTimeout(() => setIsAdultModalOpen(true), 1500);
       return () => clearTimeout(timer);
     }
   }, [bornDate]);
 
-  // 메시지 모달 열기
+  // 💌 메시지 모달 열기
   const handleOpenMsgModal = (id: string) => {
+    const targetItem = items.find((item) => item.id === id);
     setSelectedItemId(id);
+    setCurrentMessage(targetItem?.message || '');
     setIsMsgModalOpen(true);
   };
 
-  // 메시지 저장 로직
+  // 💾 메시지 저장 로직
   const handleSaveMessage = async (text: string) => {
     if (!selectedItemId) return;
     try {
       const result = await saveTimelineMessage(childId, selectedItemId, text);
-      if (result.success) setIsMsgModalOpen(false);
-      else alert('저장 실패');
+      if (result.success) {
+        setIsMsgModalOpen(false);
+      } else {
+        alert('저장에 실패했습니다.');
+      }
     } catch (e) {
       console.error(e);
+      alert('오류가 발생했습니다.');
     }
   };
 
   return (
     <>
-      {/* 1. 타임라인 리스트 영역 */}
+      {/* 👇👇 임시 디버깅용 (화면 맨 위에 날짜가 뜹니다) 👇👇 */}
+      <div className="fixed top-0 left-0 z-50 w-full bg-red-500 p-4 font-bold text-lg text-white">
+        디버깅: 자녀 생일 ={' '}
+        {bornDate ? new Date(bornDate).toLocaleDateString() : '없음'}
+      </div>
+      {/* 1. 타임라인 리스트 */}
       <section className="flex flex-col">
         {items.map((item) => (
           <TimelineRow
@@ -97,20 +118,20 @@ export default function TimelineList({
         ))}
       </section>
 
-      {/* 2. 💌 메시지 작성 모달 */}
+      {/* 2. 메시지 작성 모달 */}
       <TimelineMsg
         isOpen={isMsgModalOpen}
         onClose={() => setIsMsgModalOpen(false)}
         onSave={handleSaveMessage}
       />
 
-      {/* 3. 🎉 성인 축하 및 금융 이력 선물 모달 (교체 완료!) */}
+      {/* 3. 🎉 성인 축하 모달 (여기가 핵심!) */}
       <FinancialHistoryGiftModal
         isOpen={isAdultModalOpen}
         onClose={() => setIsAdultModalOpen(false)}
         childName={childName}
-        onShare={() => alert('공유하기 기능은 준비 중입니다! 📤')}
-        onNext={() => setIsAdultModalOpen(false)} // '다음에 하기' 클릭 시 닫기
+        onShare={() => alert('카카오톡 공유 기능은 준비 중입니다! 📤')}
+        onNext={() => setIsAdultModalOpen(false)}
       />
     </>
   );
