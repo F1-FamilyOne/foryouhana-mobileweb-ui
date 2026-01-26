@@ -20,4 +20,6 @@ export const IMAGES_PATH = {
   REGIST_CALC_ICON: '/register/icon/calc.svg',
   REGIST_NOTE_ICON: '/register/icon/note.svg',
   REGIST_PROTECT_ICON: '/register/icon/protect.svg',
+  STARBOT: '/chatbot/icon/starbot.svg',
+  PROGRESS_CHECK: '/ProgressBar/icon/StepSuccess.svg',
 } as const;

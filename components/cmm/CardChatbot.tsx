@@ -1,5 +1,6 @@
 'use client';
 import Image from 'next/image';
+import { IMAGES_PATH } from '@/constants/images';
 
 /**
  * @page: 챗봇카드
@@ -11,29 +12,24 @@ import Image from 'next/image';
  * @date: 2026-01-23
  */
 
-type HelpSection = {
-  title: string;
-  descriptions: string[];
-};
-
 type CardChatbotProps = {
   mainTitle: string;
-  sections: HelpSection[];
-  isScenario?: boolean;
+  content: string;
+  isScenario: boolean;
 };
 
 export default function CardChatbot({
   mainTitle,
-  sections,
+  content,
   isScenario = false,
 }: CardChatbotProps) {
-  const ICON_PATH = '/chatbot/icon/starbot.svg';
+  // const ICON_PATH = '/chatbot/icon/starbot.svg';
 
   return (
     <div className="relative pt-[20px]">
       <div className="pointer-events-none absolute top-0 left-0 z-20">
         <Image
-          src={ICON_PATH}
+          src={IMAGES_PATH.STARBOT}
           alt="starbot icon"
           width={46.02}
           height={38.6}
@@ -48,18 +44,7 @@ export default function CardChatbot({
           </h2>
 
           <div className="flex-1 space-y-8 rounded-lg bg-white p-6">
-            {sections.map((section) => (
-              <div key={section.title} className="space-y-2">
-                <h3 className="font-hana-bold text-base text-hana-main tracking-tight">
-                  {section.title}
-                </h3>
-                <ul className="list-disc pl-4 font-hana-light text-[14px] text-hana-gray-600 leading-relaxed">
-                  {section.descriptions.map((desc) => (
-                    <li key={desc}>{desc}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            {content}
           </div>
 
           {!isScenario && (

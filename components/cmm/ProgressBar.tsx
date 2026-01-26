@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { IMAGES_PATH } from '@/constants/images';
 
 /**
  * @page: ProgressBar
@@ -18,7 +19,7 @@ type Step = {
 };
 
 export default function ProgressBar({ step, step2 }: Step) {
-  const ICON_PATH = '/ProgressBar/icon/StepSuccess.svg';
+  // const ICON_PATH = '/ProgressBar/icon/StepSuccess.svg';
 
   // 재사용 가능한 Step 렌더링 함수
   const renderStep = (
@@ -35,7 +36,12 @@ export default function ProgressBar({ step, step2 }: Step) {
       />
       <div className="flex justify-center gap-1 p-1">
         {status === 'completed' && (
-          <Image src={ICON_PATH} alt="완료" width={12} height={12} />
+          <Image
+            src={IMAGES_PATH.PROGRESS_CHECK}
+            alt="완료"
+            width={12}
+            height={12}
+          />
         )}
         <p
           className={`font-hana-light text-[13px] ${
