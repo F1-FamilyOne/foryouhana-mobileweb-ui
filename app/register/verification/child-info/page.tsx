@@ -53,9 +53,11 @@ export default function ChildInfoPage() {
     const stored = sessionStorage.getItem('childInfo');
     if (!stored) return;
 
-    const { name, born_date } = JSON.parse(stored);
+    const { name, resident_number } = JSON.parse(stored);
     setName(name ?? '');
-    setBornDate(born_date ?? '');
+    if (resident_number) {
+      setBornDate(resident_number.slice(0, 6));
+    }
   }, []);
 
   return (
