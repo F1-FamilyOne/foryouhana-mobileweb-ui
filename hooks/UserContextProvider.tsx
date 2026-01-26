@@ -10,8 +10,8 @@ import {
 } from 'react';
 
 /**
- * @page: UserContextValue
- * @description: UserCseonukimxtValue
+ * @page: UserContextProvider
+ * @description: User id 전역관리 프로바이더
  * @author: seonukim
  * @date: 2026-01-26
  *
