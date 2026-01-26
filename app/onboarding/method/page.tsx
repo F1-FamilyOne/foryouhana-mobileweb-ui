@@ -1,4 +1,7 @@
+'use client';
+
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import Header from '@/components/cmm/Header';
 import { PlanFeatureCard } from '@/components/onboarding/PlanFeatureCard';
@@ -12,8 +15,9 @@ import { IMAGES_PATH } from '@/constants/images';
  */
 
 export default function analysisMethodPage() {
+  const router = useRouter();
   return (
-    <div className="mx-4 flex flex-col">
+    <div className="flex flex-col">
       <Header content="AI 맞춤 증여 플랜" />
       <div className="mt-7 text-center">
         <h1 className="font-hana-medium text-[24px] leading-tight">
@@ -55,10 +59,16 @@ export default function analysisMethodPage() {
       </div>
 
       <div className="flex flex-col gap-3 px-3 pt-5 pb-6">
-        <CustomButton preset="lightgraylong">
+        <CustomButton
+          preset="lightgraylong"
+          onClick={() => router.push('/onboarding/loading')}
+        >
           간단 분석으로 증여 플랜 시작하기
         </CustomButton>
-        <CustomButton preset="greenlong">
+        <CustomButton
+          preset="greenlong"
+          onClick={() => router.push('/onboarding/loading')}
+        >
           정밀 분석으로 증여 플랜 시작하기
         </CustomButton>
       </div>
