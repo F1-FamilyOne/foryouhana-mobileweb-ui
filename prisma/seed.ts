@@ -72,6 +72,7 @@ async function main() {
     data: {
       parent_id: parent.id,
       name: '김첫째',
+      profile_pic: '/file/자녀1.jpg', //자녀 프로필 이미지 경로 명시
       born_date: new Date('2015-01-01'),
       is_promise_fixed: true,
       goal_money: 20000000n,
@@ -84,6 +85,7 @@ async function main() {
     data: {
       parent_id: parent.id,
       name: '김둘째',
+      profile_pic: '/file/자녀2.jpg',
       born_date: new Date('2018-05-05'),
       is_promise_fixed: false, // 0이므로
       goal_money: null, // 반드시 null
