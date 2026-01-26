@@ -52,7 +52,7 @@ export default function ToggleChildProfile({
                 <Image
                   width={400}
                   height={400}
-                  src={kid.avatarUrl}
+                  src={kid.avatarUrl || `/file/default.png`}
                   alt={`${kid.id.toString()}프로필`}
                   className="object-cover"
                 />
