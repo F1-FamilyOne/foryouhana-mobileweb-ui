@@ -114,7 +114,9 @@ export default function ModalAllChart({ onClose, kids }: ModalAllChartProps) {
                         {kid}
                       </div>
                       <div>
-                        <div>{data.datasets[0].data[idx]}</div>
+                        <div>
+                          {data.datasets[0].data[idx].toLocaleString('ko-KR')}원
+                        </div>
                         <div className="text-right text-hana-gray-600 text-xs">
                           {Math.round(
                             (data.datasets[0].data[idx] / totalGiftAmount) *
