@@ -84,21 +84,24 @@ export default function chatbotSignProcess() {
             role: 'ai',
             mainTitle: '앗, 답변하기 어려워요 😅',
             content: data.error,
-            isScenario: true,
+            isScenario: false, // 에러일 때도 버튼 숨김
           },
         ]);
       } else {
-        // 🔥  서버에서 받은 dbData를 세션 스토리지에 저장!
-        //세션 스토리지 저장 구조 개선 (childId, updated_at 포함)
+        // 🔥 [추가] 세션 스토리지 저장 (isSigned: false)
         if (data.dbData) {
           const sessionData = {
-            child_id: childId, // URL 파라미터에서 가져온 childId
-            updated_at: new Date().toISOString(), // 현재 시간
-            plan: data.dbData, // 서버에서 받은 추천 플랜 데이터
+            child_id: childId,
+            isSigned: false, // ✅ 요청하신 대로 false 설정
+            updated_at: new Date().toISOString(),
+            plan: data.dbData,
           };
 
           sessionStorage.setItem('giftPlan', JSON.stringify(sessionData));
-          console.log('✅ 플랜 데이터 저장 완료:', sessionData);
+          console.log(
+            '✅ 플랜 데이터 저장 완료 (isSigned: false):',
+            sessionData,
+          );
         }
 
         const summaryText = `
@@ -120,7 +123,7 @@ ${data.usePensionFund ? '💸 연금저축펀드: 추천' : ''}
             role: 'ai',
             mainTitle: '✨ 별벗 맞춤 증여 플랜 도착!',
             content: summaryText,
-            isScenario: true,
+            isScenario: false, // ✅ 버튼 아예 안 보이게 설정 (true -> false)
           },
         ]);
       }
@@ -133,7 +136,7 @@ ${data.usePensionFund ? '💸 연금저축펀드: 추천' : ''}
           role: 'ai',
           mainTitle: '시스템 오류가 발생했어요 😭',
           content: '잠시 후 다시 시도해 주세요.',
-          isScenario: true,
+          isScenario: false,
         },
       ]);
     } finally {
@@ -147,9 +150,7 @@ ${data.usePensionFund ? '💸 연금저축펀드: 추천' : ''}
       <Header content="AI 맞춤 증여 플랜" />
 
       {/* 2. 채팅 영역 (스크롤) */}
-      {/* w-full 추가, 좌우 패딩 제거 후 내부 컨테이너에서 패딩 조절 */}
       <div className="scrollbar-hide -p-3 w-full flex-1 overflow-y-auto pb-24">
-        {/* 내부 컨테이너: 최대 너비 제한 없이 꽉 차게, 패딩만 살짝 */}
         <div className="flex w-full flex-col p-4">
           {/* (1) 상단 일러스트 및 멘트 */}
           <div className="my-6 flex animate-fade-in-down flex-col items-center justify-center">
@@ -178,7 +179,7 @@ ${data.usePensionFund ? '💸 연금저축펀드: 추천' : ''}
                     <CardChatbot
                       mainTitle={msg.mainTitle || ''}
                       content={msg.content}
-                      isScenario={msg.isScenario || true}
+                      isScenario={msg.isScenario || false} // ✅ 여기서도 확실하게 false 처리
                     />
                   </div>
                 ) : (
@@ -194,14 +195,16 @@ ${data.usePensionFund ? '💸 연금저축펀드: 추천' : ''}
             {loading && (
               <div className="flex justify-start pl-2">
                 <span className="animate-pulse text-gray-400 text-xs">
-                  별이가 열심히 계산 중... 🤔
+                  별벗이가 열심히 계산 중... 🤔
                 </span>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
+
+          {/* 완료 버튼 (로딩 중 아닐 때만 보임) */}
           {!loading && (
-            <div className="flex w-full justify-center">
+            <div className="mt-6 flex w-full justify-center">
               <CustomButton
                 preset="maingreenshort"
                 onClick={() => route.push('/onboarding/loading')}
