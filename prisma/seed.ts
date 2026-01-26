@@ -72,7 +72,7 @@ async function main() {
     data: {
       parent_id: parent.id,
       name: '김첫째',
-      profile_pic: '/file/자녀1.jpg',
+      profile_pic: '/file/자녀1.jpg', //자녀 프로필 이미지 경로 명시
       born_date: new Date('2015-01-01'),
       is_promise_fixed: true,
       goal_money: 20000000n,
