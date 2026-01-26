@@ -30,7 +30,7 @@ model child {
   goal_money       BigInt?   @db.UnsignedBigInt
   monthly_money    BigInt?   @db.UnsignedBigInt
   is_promise_fixed Boolean   @default(false) // 유기정기금 yes(1), no(0)
-  invest_type      String?   @db.VarChar(20) // 아직 안했을수도 있음
+  invest_type      fund_danger  // 투자 성향 (LOW/MID/HIGH)
   identity_hash    String    @db.VarChar(255)
   account          account[]
   alert            alert[]
@@ -41,11 +41,12 @@ model child {
 }
 
 model fund {
-  id          Int          @id @default(autoincrement()) @db.UnsignedInt
-  name        String       @db.VarChar(255)
+  id          Int               @id @default(autoincrement()) @db.UnsignedInt
+  name        String            @db.VarChar(255)
   danger      fund_danger
-  type        fund_type
-  company     String       @db.VarChar(50)
+  type        fund_type         // 채권, 주식 등 펀드 유형
+  saving_type fund_saving_type  // 적립 방식: 정기+자유(BOTH), 정기만(REGULAR), 자유만(FREE)
+  company     String            @db.VarChar(50)
   total_fee   Decimal      @db.Decimal(5, 4)
   sell_fee    Decimal      @db.Decimal(5, 4)
   set_date    DateTime     @db.Date
@@ -74,6 +75,8 @@ model account {
   fund                                       fund?             @relation(fields: [fund_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_account_fund")
   history_history_source_account_idToaccount history[]         @relation("history_source_account_idToaccount")
   history_history_target_account_idToaccount history[]         @relation("history_target_account_idToaccount")
+  auto_transfer_source                       auto_transfer[]   @relation("auto_transfer_source")
+  auto_transfer_target                       auto_transfer[]   @relation("auto_transfer_target")
 
   @@index([child_id], map: "fk_account_child")
   @@index([fund_id], map: "fk_account_fund")
@@ -81,16 +84,31 @@ model account {
 
 model history {
   id                BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  created_at        DateTime @default(now()) @db.DateTime(6) 
-  money             BigInt   @db.UnsignedBigInt        
-  source_account_id Int      @db.UnsignedInt               
-  target_account_id Int      @db.UnsignedInt           
-  
+  created_at        DateTime @default(now()) @db.DateTime(6)
+  money             BigInt   @db.UnsignedBigInt
+  source_account_id Int      @db.UnsignedInt
+  target_account_id Int      @db.UnsignedInt
+
   account_history_source_account_idToaccount account @relation("history_source_account_idToaccount", fields: [source_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_history_source")
   account_history_target_account_idToaccount account @relation("history_target_account_idToaccount", fields: [target_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_history_target")
 
   @@index([source_account_id], map: "fk_history_source")
   @@index([target_account_id], map: "fk_history_target")
+}
+
+model auto_transfer {
+  id                Int    @id @default(autoincrement()) @db.UnsignedInt
+  transfer_day      Int    @db.UnsignedTinyInt   // 납입일 (매월 몇 일, 1-31)
+  transfer_count    Int    @db.UnsignedTinyInt   // 총 납입횟수
+  amount            BigInt @db.UnsignedBigInt    // 납입금액
+  source_account_id Int    @db.UnsignedInt       // 납부계좌 (출금)
+  target_account_id Int    @db.UnsignedInt       // 입금계좌
+
+  source_account account @relation("auto_transfer_source", fields: [source_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_auto_transfer_source")
+  target_account account @relation("auto_transfer_target", fields: [target_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_auto_transfer_target")
+
+  @@index([source_account_id], map: "fk_auto_transfer_source")
+  @@index([target_account_id], map: "fk_auto_transfer_target")
 }
 
 model chatlog {
@@ -133,6 +151,12 @@ enum fund_type {
   BOND        // 채권형
   MIXED       // 혼합형
   ETF         // 상장지수펀드
+}
+
+enum fund_saving_type {
+  BOTH        // 정기+자유 둘 다 허용
+  REGULAR     // 정기적립식만
+  FREE        // 자유적립식만
 }
 
 enum account_acc_type {
