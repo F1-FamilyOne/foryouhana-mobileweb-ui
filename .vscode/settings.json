@@ -3,8 +3,6 @@
   "editor.formatOnSave": true,
   "editor.fontFamily": "Fira Code",
   "editor.codeActionsOnSave": {
-    "source.sortImports": "explicit",
-    "source.removeUnusedImports": "explicit",
     "source.organizeImports.biome": "explicit",
     "source.fixAll.biome": "explicit"
   },
