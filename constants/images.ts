@@ -32,4 +32,6 @@ export const IMAGES_PATH = {
   CUTE: '/home/icon/cute.png',
   LADDER_CUTE: '/register/icon/ladder-cute.svg',
   REGISTER_STAR: '/register/icon/register-star.svg',
+  BEFORE_TEST: '/beforeJoin/icon/beforeTest.svg',
+  BEFORE_TEST_ICON: '/beforeJoin/icon/beforeTestIcon.svg',
 } as const;
