@@ -32,12 +32,14 @@ export async function getUserSetup(parentId: number): Promise<UserSetupReturn> {
         take: 1,
         select: {
           id: true,
-          account: {
-            where: {
-              acc_type: account_acc_type.FUND,
+          _count: {
+            select: {
+              account: {
+                where: {
+                  acc_type: account_acc_type.FUND,
+                },
+              },
             },
-            select: { id: true },
-            take: 1,
           },
         },
       },
@@ -58,11 +60,11 @@ export async function getUserSetup(parentId: number): Promise<UserSetupReturn> {
     exists: true,
     hasChild: true,
     firstChildId: firstChild.id,
-    hasFundAccount: firstChild.account.length > 0,
+    hasFundAccount: firstChild._count.account > 0,
   };
 }
 
-export type ChildList = {
+export type ChildListItem = {
   childId: number;
   profile: string | null;
   hasFundAccount: boolean;
@@ -74,7 +76,7 @@ type AllChildWithIsHaveFundReturn =
     }
   | {
       exists: true;
-      children: ChildList[];
+      children: ChildListItem[];
     };
 
 export async function getAllChildWithIsHaveFund(
@@ -88,11 +90,14 @@ export async function getAllChildWithIsHaveFund(
         select: {
           id: true,
           profile_pic: true,
-          account: {
-            where: {
-              acc_type: account_acc_type.FUND,
+          _count: {
+            select: {
+              account: {
+                where: {
+                  acc_type: account_acc_type.FUND,
+                },
+              },
             },
-            select: { id: true },
           },
         },
       },
@@ -108,7 +113,22 @@ export async function getAllChildWithIsHaveFund(
     children: parent.child.map((c) => ({
       childId: c.id,
       profile: c.profile_pic,
-      hasFundAccount: c.account.length > 0,
+      hasFundAccount: c._count.account > 0,
     })),
   };
+}
+
+export async function getAllChildWithIsHaveFundByChild(
+  childId: number,
+): Promise<AllChildWithIsHaveFundReturn> {
+  const child = await prisma.child.findUnique({
+    where: { id: childId },
+    select: {
+      parent_id: true,
+    },
+  });
+
+  if (!child) return { exists: false };
+
+  return getAllChildWithIsHaveFund(child.parent_id);
 }

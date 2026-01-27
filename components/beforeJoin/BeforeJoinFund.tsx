@@ -3,56 +3,37 @@
 import type { Route } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  type ChildList,
-  getAllChildWithIsHaveFund,
-} from '@/actions/getUserSetup';
+import type { ChildListItem } from '@/actions/getUserSetup';
 import MainCute from '@/components/home/MainCute';
 import ToggleChildProfile, {
   type KidProfile,
 } from '@/components/home/ToggleChildProfile';
-import { useUserContext } from '@/hooks/useUserContext';
 
 export default function BeforeJoinFund({
   initialChildId,
+  childList,
 }: {
   initialChildId: number;
+  childList: ChildListItem[];
 }) {
   const router = useRouter();
-  const { userId, ready } = useUserContext();
 
-  const [children, setChildren] = useState<ChildList[]>([]);
   const [selectedKidId, setSelectedKidId] = useState<number>(initialChildId);
 
-  useEffect(() => {
-    if (!ready || !userId) return;
-
-    (async () => {
-      const result = await getAllChildWithIsHaveFund(Number(userId));
-      if (!result.exists) return;
-
-      setChildren(result.children);
-
-      const valid =
-        result.children.find((c) => c.childId === initialChildId) ??
-        result.children[0];
-
-      setSelectedKidId(valid.childId);
-    })();
-  }, [ready, userId, initialChildId]);
+  const pathname = usePathname();
 
   const selectedChild = useMemo(() => {
-    return children.find((c) => c.childId === selectedKidId) ?? null;
-  }, [children, selectedKidId]);
+    return childList.find((c) => c.childId === selectedKidId) ?? null;
+  }, [childList, selectedKidId]);
 
   const kids = useMemo<KidProfile[]>(() => {
-    return children.map((c) => ({
+    return childList.map((c) => ({
       id: c.childId,
-      avatarUrl: c.profile ?? '/file/자녀1.jpg',
+      avatarUrl: c.profile ?? '/file/default.png',
     }));
-  }, [children]);
+  }, [childList]);
 
   useEffect(() => {
     if (!selectedChild) return;
@@ -63,8 +44,10 @@ export default function BeforeJoinFund({
         : `/main/${selectedChild.childId}/beforeJoin`
     ) as Route;
 
-    router.replace(target);
-  }, [selectedChild, router]);
+    if (pathname !== target) {
+      router.replace(target);
+    }
+  }, [selectedChild, pathname, router]);
 
   if (!selectedChild) return <div className="p-6">불러오는 중...</div>;
 
