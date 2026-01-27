@@ -92,11 +92,6 @@ export default function TimelineList({
 
   return (
     <>
-      {/* 👇👇 임시 디버깅용 (화면 맨 위에 날짜가 뜹니다) 👇👇 */}
-      <div className="fixed top-0 left-0 z-50 w-full bg-red-500 p-4 font-bold text-lg text-white">
-        디버깅: 자녀 생일 ={' '}
-        {bornDate ? new Date(bornDate).toLocaleDateString() : '없음'}
-      </div>
       {/* 1. 타임라인 리스트 */}
       <section className="flex flex-col">
         {items.map((item) => (
@@ -118,14 +113,12 @@ export default function TimelineList({
         ))}
       </section>
 
-      {/* 2. 메시지 작성 모달 */}
       <TimelineMsg
         isOpen={isMsgModalOpen}
         onClose={() => setIsMsgModalOpen(false)}
         onSave={handleSaveMessage}
       />
 
-      {/* 3. 🎉 성인 축하 모달 (여기가 핵심!) */}
       <FinancialHistoryGiftModal
         isOpen={isAdultModalOpen}
         onClose={() => setIsAdultModalOpen(false)}

@@ -1,10 +1,9 @@
 import TimelineFooter from '@/components/timeline/TimelineFooter';
 import TimelineHeader from '@/components/timeline/TimelineHeader';
-import TimelineList from '@/components/timeline/TimelineList'; // Row가 아니라 List임에 주의!
+import TimelineList from '@/components/timeline/TimelineList';
 import TimelineSummary from '@/components/timeline/TimelineSummary';
 import { prisma } from '@/lib/prisma';
 
-// 👇 캐시 끄기 (팝업 테스트를 위해 필수)
 export const dynamic = 'force-dynamic';
 
 type TimelineItemData = {
@@ -49,15 +48,12 @@ export default async function TimelinePage({
     orderBy: { date: 'desc' },
   });
 
-  // -----------------------------------------------------------
-  // ✅ [복구 완료] 요약 정보 계산 로직 (이게 빠져서 에러가 난 겁니다!)
-  // -----------------------------------------------------------
+  // 요약 정보 계산
   const depositItems = timelines.filter((t) => t.type.includes('입금'));
   const depositCount = depositItems.length;
 
   let monthsPassed = 0;
   if (depositCount > 0) {
-    // timelines는 최신순(desc)이므로, 배열의 맨 마지막이 '첫 입금'입니다.
     const firstDepositDate = depositItems[depositItems.length - 1].date;
     const today = new Date();
 
@@ -67,18 +63,18 @@ export default async function TimelinePage({
 
     if (monthsPassed < 0) monthsPassed = 0;
   }
-  // -----------------------------------------------------------
 
-  // 3. UI 데이터로 변환
+  // 3. UI 데이터로 변환 (여기가 핵심 수정 부분입니다!)
   const timelineItems: TimelineItemData[] = timelines.map((item) => {
     let icon: TimelineItemData['icon'] = 'business';
     let variant: TimelineItemData['variant'] = 'lightGreen';
     let isMessage = false;
 
+    // 1) 기본 아이콘/색상 결정
     if (item.type.includes('입금') || item.type.includes('선물')) {
       icon = 'gift';
       variant = 'pastelGreen';
-      isMessage = true;
+      isMessage = true; // 입금/선물은 기본적으로 메시지 타입
     } else if (
       item.type.includes('가입') ||
       item.type.includes('개설') ||
@@ -86,6 +82,12 @@ export default async function TimelinePage({
     ) {
       icon = 'trending';
       variant = 'lightGreen';
+    }
+
+    // ⭐ [핵심 수정] DB에 저장된 메모(memo)가 있다면, 강제로 메시지 모드로 변경! ⭐
+    // 빈 문자열이 아닌 실제 내용이 있을 때만 적용
+    if (item.memo && item.memo.trim().length > 0) {
+      isMessage = true;
     }
 
     return {
@@ -96,12 +98,11 @@ export default async function TimelinePage({
       movedMoney: 0,
       icon,
       variant,
-      isMessage,
+      isMessage, // 수정된 로직이 반영된 값
       message: item.memo || '',
     };
   });
 
-  // 마지막 아이템 선 끊기 처리
   if (timelineItems.length > 0) {
     timelineItems[timelineItems.length - 1].isLast = true;
   }
@@ -109,14 +110,11 @@ export default async function TimelinePage({
   return (
     <main className="min-h-screen bg-white p-6 pb-20 font-hana-regular">
       <TimelineHeader childrenList={allChildren} />
-
-      {/* ✅ 이제 monthsPassed 변수가 정의되어서 에러가 사라집니다 */}
       <TimelineSummary
         monthsPassed={monthsPassed}
         depositCount={depositCount}
       />
 
-      {/* ✅ 조건문 삭제됨: 데이터가 없어도 TimelineList는 실행됨 (그래야 팝업 로직이 돔) */}
       <TimelineList
         items={timelineItems}
         childName={currentChild?.name || ''}
