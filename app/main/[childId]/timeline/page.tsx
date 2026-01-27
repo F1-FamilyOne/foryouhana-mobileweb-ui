@@ -29,7 +29,7 @@ export default async function TimelinePage({
     return redirect('/main' as Route);
   }
 
-  // 2. 데이터 병렬 조회
+  // 1. 데이터 병렬 조회
   const [currentChild, allChildren, timelines] = await Promise.all([
     prisma.child.findUnique({ where: { id: childIdInt } }),
     prisma.child.findMany({ orderBy: { born_date: 'asc' } }),
@@ -44,13 +44,13 @@ export default async function TimelinePage({
     return redirect('/main' as Route);
   }
 
-  // 3. 자녀 토글용 데이터 변환
+  // 2. 자녀 토글용 데이터 변환
   const kidProfiles: KidProfile[] = allChildren.map((child) => ({
     id: child.id,
     avatarUrl: child.profile_pic || '',
   }));
 
-  // 4. UI 데이터 변환 (any 제거 및 구체적 타입 지정)
+  // 3. UI 데이터 변환
   const timelineItems = timelines.map((item) => {
     const isGift = item.type.includes('입금') || item.type.includes('선물');
 
@@ -67,15 +67,16 @@ export default async function TimelinePage({
     };
   });
 
-  // 요약 정보 계산 (간단 예시)
+  // 요약 정보 계산
   const depositCount = timelines.filter((t) => t.type.includes('입금')).length;
 
   return (
-    <main className="relative min-h-screen bg-white font-hana-regular">
+    <main className="min-h-screen bg-white font-hana-regular">
+      {/* 고정 상단 헤더 */}
       <Header content="타임라인" />
 
+      {/* 컨텐츠 영역: pb-32를 통해 하단 네비바에 가려지는 부분을 방지합니다. */}
       <div className="p-6 pb-32">
-        {/* ✨ 이 부분이 훨씬 깔끔해졌습니다! */}
         <TimelineChildToggle kids={kidProfiles} selectedKidId={childIdInt} />
 
         <TimelineSummary monthsPassed={0} depositCount={depositCount} />
@@ -89,7 +90,15 @@ export default async function TimelinePage({
         <TimelineFooter />
       </div>
 
-      <BottomNavBar />
+      {/* 플로팅 하단 네비게이션 
+        - fixed: 뷰포트 고정
+        - bottom-0: 바닥 밀착
+        - left-1/2 & -translate-x-1/2: 중앙 정렬
+        - z-50: 컨텐츠보다 항상 위
+      */}
+      <div className="-translate-x-1/2 fixed bottom-0 left-1/2 z-50">
+        <BottomNavBar />
+      </div>
     </main>
   );
 }
