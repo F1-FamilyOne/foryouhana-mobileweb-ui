@@ -1,6 +1,12 @@
 import { InfoIcon } from 'lucide-react';
 import { InputAmount, InputDay } from '@/components/cmm/InputDayAmount';
-import { formatWon } from '@/lib/utils';
+import {
+  calculateGiftBenefit,
+  formatWonDetail,
+  formatWonNumbers,
+  getMonthUnit,
+  getWonUnit,
+} from '@/lib/utils';
 import { BinaryToggle } from '../../../components/cmm/BinaryToggle';
 
 /**
@@ -10,6 +16,8 @@ import { BinaryToggle } from '../../../components/cmm/BinaryToggle';
  * @author: 작성자명
  * @date: 2026-01-26
  */
+
+const ANNUAL_RATE = 0.03;
 
 export default function GiftSection({
   giftPlan,
@@ -31,7 +39,17 @@ export default function GiftSection({
       <div className="flex items-center gap-1 pb-2">
         <h2 className="font-hana-light text-xs">유기정기금</h2>
         <InfoIcon className="h-4 w-4 text-hana-gray-400" />
-        <h2 className="text-[12px]">약 ${}원의 증여세를 절감할 수 있어요.</h2>
+        <h2 className="text-[12px]">
+          약{' '}
+          {formatWonDetail(
+            calculateGiftBenefit({
+              monthlyMoney,
+              inMonth,
+              annualRate: ANNUAL_RATE,
+            }).benefit,
+          )}
+          의 증여세를 절감할 수 있어요.
+        </h2>
       </div>
       <BinaryToggle
         value={giftPlan}
@@ -74,6 +92,7 @@ export default function GiftSection({
                   <InputDay
                     className="h-10.5 w-38.25 bg-hana-light-green"
                     value={inMonth}
+                    unit={getMonthUnit(inMonth)}
                   />
                 </div>
               </div>
@@ -86,7 +105,8 @@ export default function GiftSection({
                   <InputAmount
                     showLabel={false}
                     className="h-10.5 w-38.25"
-                    value={monthlyMoney}
+                    value={formatWonNumbers(monthlyMoney)}
+                    unit={getWonUnit(monthlyMoney)}
                   />
                 </div>
               </div>
@@ -99,10 +119,11 @@ export default function GiftSection({
               </div>
               <div className="grid justify-center rounded-xl bg-hana-light-green px-10 py-5">
                 <h4 className="text-center text-hana-badge-green">
-                  {formatWon(monthlyMoney * inMonth)}만원
+                  {formatWonDetail(monthlyMoney * inMonth)}
                 </h4>
                 <h4 className="text-hana-gray-500 text-xs">
-                  {formatWon(monthlyMoney)}만원 X {inMonth}개월
+                  {formatWonDetail(monthlyMoney)} X {inMonth}
+                  {getMonthUnit(inMonth)}
                 </h4>
               </div>
             </div>

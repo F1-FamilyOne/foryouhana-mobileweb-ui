@@ -23,6 +23,7 @@ import { cn } from '@/lib/utils';
 
 type InputDayProps = {
   value?: number;
+  unit: string;
   onChange?: (value: number | undefined) => void;
   placeholder?: string;
   className?: string;
@@ -30,6 +31,7 @@ type InputDayProps = {
 
 type InputAmountProps = {
   value?: number;
+  unit: string;
   onChange?: (value: number | undefined) => void;
   placeholder?: string;
   label?: string;
@@ -41,6 +43,7 @@ const MAX_INT = 2147483647;
 
 export function InputDay({
   value,
+  unit,
   onChange,
   placeholder = '',
   className,
@@ -93,7 +96,7 @@ export function InputDay({
         placeholder={placeholder}
         className="w-full bg-transparent text-center font-medium outline-none placeholder:text-hana-gray-400"
       />
-      <span className="ml-2 shrink-0 text-hana-gray-600">개월</span>
+      <span className="ml-2 shrink-0 text-hana-gray-600">{unit}</span>
     </label>
   );
 }
@@ -101,6 +104,7 @@ export function InputDay({
 export function InputAmount({
   value,
   onChange,
+  unit,
   placeholder = '',
   label = '월 증여액',
   showLabel = true,
@@ -147,7 +151,7 @@ export function InputAmount({
           placeholder={placeholder}
           className="w-full bg-transparent text-center font-medium outline-none placeholder:text-hana-gray-400"
         />
-        <span className="ml-2 shrink-0 text-hana-gray-600">만원</span>
+        <span className="ml-2 shrink-0 text-hana-gray-600">{unit}</span>
       </label>
     </div>
   );
