@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { Plus } from 'lucide-react';
 import Image from 'next/image';
 
 /**
@@ -19,12 +20,14 @@ type Props = {
   onSelect: (kidId: number) => void;
   selectedKidId: number;
   kids: KidProfile[];
+  onAddKid: () => void;
 };
 
 export default function ToggleChildProfile({
   kids,
   onSelect,
   selectedKidId,
+  onAddKid,
 }: Props) {
   const orderedKids = [
     ...kids.filter((kid) => kid.id === selectedKidId),
@@ -47,7 +50,7 @@ export default function ToggleChildProfile({
               <button
                 type="button"
                 onClick={() => onSelect(kid.id)}
-                className="item-center flex h-13 w-13 justify-center overflow-hidden rounded-full bg-blue-500 hover:scale-105"
+                className="flex h-13 w-13 justify-center overflow-hidden rounded-full hover:scale-105"
               >
                 <Image
                   width={400}
@@ -60,6 +63,19 @@ export default function ToggleChildProfile({
             </li>
           );
         })}
+        <li
+          className="-ml-10 transition-all duration-200 ease-out group-hover:ml-0"
+          style={{ zIndex: 0 }}
+        >
+          <button
+            type="button"
+            className="flex h-13 w-13 items-center justify-center overflow-hidden rounded-full bg-hana-gray-400 hover:scale-105"
+            onClick={onAddKid}
+            aria-label="자녀 추가"
+          >
+            <Plus />
+          </button>
+        </li>
       </ul>
     </div>
   );

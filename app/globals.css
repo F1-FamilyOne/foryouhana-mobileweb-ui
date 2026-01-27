@@ -195,3 +195,29 @@
     touch-action: manipulation; /* 더블탭 줌 방지 */
   }
 }
+
+
+@layer utilities {
+  /* AI 분석 화면 애니메이션 */
+  @keyframes hanabot-float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+
+  .animate-hanabot-float {
+    animation: hanabot-float 1.8s ease-in-out infinite;
+    will-change: transform;
+  }
+  
+/* 크롬, 사파리, 오페라 */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
