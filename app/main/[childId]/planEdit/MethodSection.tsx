@@ -1,5 +1,4 @@
 import { InfoIcon } from 'lucide-react';
-import { useState } from 'react';
 import { BinaryToggle } from '@/components/cmm/BinaryToggle';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import { InputMonth } from '@/components/cmm/InputDayAmount';
@@ -13,19 +12,20 @@ export default function MethodSection({
   isFixed,
   period,
   amount,
+  onChangeAmount,
+  onChangePeriod,
 }: {
   isRegular: boolean;
   onChange: (v: GIFT_METHOD) => void;
   isFixed: boolean;
   period: number;
   amount: number;
+  onChangeAmount: (value: number | null) => void;
+  onChangePeriod: (value: number | null) => void;
 }) {
-  const [regular, setGiftMethod] = useState<boolean>(isRegular);
-  const [newAmount, setNewAmount] = useState<number | null>(amount);
-  const [newPeriod, setNewPeriod] = useState<number | null>(period);
   return (
     <div>
-      {isRegular === true ? (
+      {isRegular ? (
         <div>
           <BinaryToggle
             falseLabel="자유 이체"
@@ -39,28 +39,23 @@ export default function MethodSection({
         </div>
       ) : (
         <div>
-          {!regular ? (
+          {!isRegular && (
             <div>
               <CustomButton
                 preset="lightgreenlong"
-                onClick={() => setGiftMethod(!regular)}
+                onClick={() =>
+                  onChange(
+                    !isRegular ? GIFT_METHOD.REGULAR : GIFT_METHOD.FLEXIBLE,
+                  )
+                }
               >
                 정기 이체로 변경
-              </CustomButton>
-            </div>
-          ) : (
-            <div>
-              <CustomButton
-                onClick={() => setGiftMethod(!regular)}
-                preset="lightgreenlong"
-              >
-                자유 이체로 변경
               </CustomButton>
             </div>
           )}
         </div>
       )}
-      {regular === true ? (
+      {isRegular && (
         <div className="flex justify-between pt-4">
           <div>
             <TitlePlanSelect title="증여 기간" />
@@ -73,7 +68,7 @@ export default function MethodSection({
                   ? 'h-[42px] w-[155px] bg-hana-gray-300 font-hana-regular text-hana-gray-600'
                   : 'h-[42px] w-[155px] bg-hana-light-green font-hana-regular'
               }
-              onChange={(v) => setNewPeriod(v ?? null)}
+              onChange={(v) => onChangePeriod(v ?? null)}
             />
           </div>
           <div>
@@ -87,14 +82,12 @@ export default function MethodSection({
                   ? 'h-[42px] w-[155px] bg-hana-gray-300 font-hana-regular text-hana-gray-600'
                   : 'h-[42px] w-[155px] bg-hana-light-green font-hana-regular'
               }
-              onChange={(v) => setNewAmount(v ?? null)}
+              onChange={(v) => onChangeAmount(v ?? null)}
             />
           </div>
         </div>
-      ) : (
-        <div></div>
       )}
-      {regular ? (
+      {isRegular && (
         <div className="grid gap-2 pt-3">
           <div className="flex gap-1">
             <h2 className="font-hana-light text-xs">총 증여액</h2>
@@ -102,10 +95,10 @@ export default function MethodSection({
           </div>
           <div className="grid justify-center rounded-xl bg-hana-light-green px-10 py-5">
             <h4 className="text-center text-hana-badge-green">
-              {formatWonNatural((newPeriod ?? 0) * (newAmount ?? 0))}
+              {formatWonNatural((period ?? 0) * (amount ?? 0))}
             </h4>
             <h4 className="text-hana-gray-500 text-xs">
-              약 {formatWonNatural(newAmount ?? 0)} X {newPeriod ?? 0}
+              약 {formatWonNatural(amount ?? 0)} X {period ?? 0}
               개월
             </h4>
           </div>
@@ -115,8 +108,6 @@ export default function MethodSection({
             부과됩니다.
           </h4>
         </div>
-      ) : (
-        <div></div>
       )}
     </div>
   );

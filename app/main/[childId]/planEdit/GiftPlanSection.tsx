@@ -21,8 +21,8 @@ export default function GiftPlanSection({
   isFixed: boolean;
 }) {
   const [giftMethod, setGiftMethod] = useState<GIFT_METHOD>(method);
-  //   const [newAmount, setNewAmount] = useState<number | null>(amount);
-  //   const [newPeriod, setNewPeriod] = useState<number | null>(period);
+  const [newAmount, setNewAmount] = useState<number | null>(amount);
+  const [newPeriod, setNewPeriod] = useState<number | null>(period);
   return (
     <div>
       <TitlePlanSelect title="증여 방식" />
@@ -34,12 +34,12 @@ export default function GiftPlanSection({
       ) : (
         <MethodSection
           isRegular={giftMethod === GIFT_METHOD.REGULAR}
-          onChange={(v) =>
-            setGiftMethod(v ? GIFT_METHOD.REGULAR : GIFT_METHOD.FLEXIBLE)
-          }
+          onChange={setGiftMethod}
           isFixed={isFixed}
-          amount={amount ?? 0}
-          period={period ?? 0}
+          amount={newAmount ?? 0}
+          period={newPeriod ?? 0}
+          onChangeAmount={setNewAmount}
+          onChangePeriod={setNewPeriod}
         />
       )}
     </div>
