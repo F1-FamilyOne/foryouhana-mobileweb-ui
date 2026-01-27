@@ -1,23 +1,26 @@
+import type { Route } from 'next';
+import { redirect } from 'next/navigation';
+import Header from '@/components/cmm/Header';
+// 2. 공통 컴포넌트 (cmm)
+import { BottomNavBar } from '@/components/cmm/NavBar';
+
+// 3. 도메인 컴포넌트 (home, timeline)
+import ToggleChildProfile, {
+  type KidProfile,
+} from '@/components/home/ToggleChildProfile';
 import TimelineFooter from '@/components/timeline/TimelineFooter';
-import TimelineHeader from '@/components/timeline/TimelineHeader';
 import TimelineList from '@/components/timeline/TimelineList';
 import TimelineSummary from '@/components/timeline/TimelineSummary';
+
+// 4. 라이브러리 및 설정
 import { prisma } from '@/lib/prisma';
+import TimelineChildToggle from '@/components/timeline/TimelineChildToggle';
 
 export const dynamic = 'force-dynamic';
 
-type TimelineItemData = {
-  id: string;
-  date: Date;
-  title?: string;
-  fundName?: string;
-  movedMoney?: number;
-  icon: 'bell' | 'business' | 'trending' | 'gift';
-  variant: 'purple' | 'pastelGreen' | 'lightGreen';
-  isMessage: boolean;
-  message?: string;
-  isLast?: boolean;
-};
+// UI 데이터 타입 정의
+type TimelineIcon = 'gift' | 'trending' | 'bell' | 'business';
+type TimelineVariant = 'pastelGreen' | 'lightGreen' | 'purple';
 
 export default async function TimelinePage({
   params,
@@ -28,65 +31,33 @@ export default async function TimelinePage({
   const childIdInt = Number(childId);
 
   if (Number.isNaN(childIdInt)) {
-    return <div className="p-10 text-center">잘못된 접근입니다. (ID 오류)</div>;
+    return redirect('/main' as Route);
   }
 
-  // 1. 헤더용 데이터 조회
-  const currentChild = await prisma.child.findUnique({
-    where: { id: childIdInt },
-    select: { name: true, born_date: true },
-  });
+  // 2. 데이터 병렬 조회
+  const [currentChild, allChildren, timelines] = await Promise.all([
+    prisma.child.findUnique({ where: { id: childIdInt } }),
+    prisma.child.findMany({ orderBy: { born_date: 'asc' } }),
+    prisma.timeline.findMany({
+      where: { child_id: childIdInt },
+      orderBy: { date: 'desc' },
+    }),
+  ]);
 
-  const allChildren = await prisma.child.findMany({
-    select: { id: true, name: true, profile_pic: true },
-    orderBy: { born_date: 'asc' },
-  });
-
-  // 2. 타임라인 데이터 조회
-  const timelines = await prisma.timeline.findMany({
-    where: { child_id: childIdInt },
-    orderBy: { date: 'desc' },
-  });
-
-  // 요약 정보 계산
-  const depositItems = timelines.filter((t) => t.type.includes('입금'));
-  const depositCount = depositItems.length;
-
-  let monthsPassed = 0;
-  if (depositCount > 0) {
-    const firstDepositDate = depositItems[depositItems.length - 1].date;
-    const today = new Date();
-
-    monthsPassed =
-      (today.getFullYear() - firstDepositDate.getFullYear()) * 12 +
-      (today.getMonth() - firstDepositDate.getMonth());
-
-    if (monthsPassed < 0) monthsPassed = 0;
+  // 자녀 정보가 없을 경우 리다이렉트
+  if (!currentChild) {
+    return redirect('/main' as Route);
   }
 
-  // 3. UI 데이터로 변환
-  const timelineItems: TimelineItemData[] = timelines.map((item) => {
-    let icon: TimelineItemData['icon'] = 'business';
-    let variant: TimelineItemData['variant'] = 'lightGreen';
-    let isMessage = false;
+  // 3. 자녀 토글용 데이터 변환
+  const kidProfiles: KidProfile[] = allChildren.map((child) => ({
+    id: child.id,
+    avatarUrl: child.profile_pic || '',
+  }));
 
-    // 1) 기본 아이콘/색상 결정
-    if (item.type.includes('입금') || item.type.includes('선물')) {
-      icon = 'gift';
-      variant = 'pastelGreen';
-      isMessage = true; // 입금/선물은 기본적으로 메시지 타입
-    } else if (
-      item.type.includes('가입') ||
-      item.type.includes('개설') ||
-      item.type.includes('펀드')
-    ) {
-      icon = 'trending';
-      variant = 'lightGreen';
-    }
-
-    if (item.memo && item.memo.trim().length > 0) {
-      isMessage = true;
-    }
+  // 4. UI 데이터 변환 (any 제거 및 구체적 타입 지정)
+  const timelineItems = timelines.map((item) => {
+    const isGift = item.type.includes('입금') || item.type.includes('선물');
 
     return {
       id: String(item.id),
@@ -94,32 +65,36 @@ export default async function TimelinePage({
       title: item.type,
       fundName: item.description || '',
       movedMoney: 0,
-      icon,
-      variant,
-      isMessage,
+      icon: (isGift ? 'gift' : 'trending') as TimelineIcon,
+      variant: (isGift ? 'pastelGreen' : 'lightGreen') as TimelineVariant,
+      isMessage: true,
       message: item.memo || '',
     };
   });
 
-  if (timelineItems.length > 0) {
-    timelineItems[timelineItems.length - 1].isLast = true;
-  }
+  // 요약 정보 계산 (간단 예시)
+  const depositCount = timelines.filter((t) => t.type.includes('입금')).length;
 
   return (
-    <main className="min-h-screen bg-white p-6 pb-20 font-hana-regular">
-      <TimelineHeader childrenList={allChildren} />
-      <TimelineSummary
-        monthsPassed={monthsPassed}
-        depositCount={depositCount}
-      />
+    <main className="relative min-h-screen bg-white font-hana-regular">
+      <Header content="타임라인" />
 
-      <TimelineList
-        items={timelineItems}
-        childName={currentChild?.name || ''}
-        bornDate={currentChild?.born_date || new Date()}
-      />
+      <div className="p-6 pb-32">
+        {/* ✨ 이 부분이 훨씬 깔끔해졌습니다! */}
+        <TimelineChildToggle kids={kidProfiles} selectedKidId={childIdInt} />
 
-      <TimelineFooter />
+        <TimelineSummary monthsPassed={0} depositCount={depositCount} />
+
+        <TimelineList
+          items={timelineItems}
+          childName={currentChild.name}
+          bornDate={currentChild.born_date}
+        />
+
+        <TimelineFooter />
+      </div>
+
+      <BottomNavBar />
     </main>
   );
 }

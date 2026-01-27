@@ -444,22 +444,20 @@ async function main() {
         date: new Date('2024-02-01T10:05:00'),
       },
 
-      // 3. 어린이날 용돈 (과거 이벤트)
       {
         child_id: child1.id,
-        type: '용돈 입금',
-        description: '100,000원',
+        type: '증여 입금',
+        description: '100,000원 증여 완료!',
         date: new Date('2024-05-05'),
       },
 
       {
         child_id: child1.id,
-        type: '용돈 입금',
-        description: '50,000원', // history.money와 동일
+        type: '증여 입금',
+        description: '50,000원 증여 완료!', // history.money와 동일
         date: new Date(), // 이건 가장 최근에 떠야 하니 현재 시간으로!
       },
 
-      // 성인 자식의 경우
       {
         child_id: child2.id,
         type: '입출금 통장 개설',
@@ -470,14 +468,14 @@ async function main() {
       {
         child_id: child2.id,
         type: '성년의 날',
-        description: '축하합니다',
+        description: '50000원 증여 완료!',
         date: new Date('2024-05-20'), 
       },
 
       {
-        child_id: child2.id,
+        child_id: child2.id,// 애기 id
         type: '펀드 가입',
-        description: baseFund.name, // '하나없이하나마나ETF'
+        description: '하나없이하나마나ETF 가입 완료, 매월 150,000원 납입',
         date: new Date('2025-01-01'), 
       },
 
@@ -485,7 +483,7 @@ async function main() {
       {
         child_id: child2.id,
         type: '펀드 배당금 입금',
-        description: '12,500원',
+        description: '12,500원 입금 완료!',
         date: new Date('2026-01-15'), 
       },
     ],

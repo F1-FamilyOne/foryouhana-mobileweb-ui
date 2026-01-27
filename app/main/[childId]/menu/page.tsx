@@ -30,6 +30,9 @@ export default function menu() {
           onSelect={(kidId) => {
             setSelectedKidId(kidId);
           }}
+          onAddKid={function (): void {
+            throw new Error('Function not implemented.');
+          }}
         />
       </div>
       <div className="flex w-full flex-col items-center justify-center space-y-15">
