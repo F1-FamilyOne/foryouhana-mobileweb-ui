@@ -30,12 +30,13 @@ export default function EntryClient() {
     if (!ready || !userId) return;
 
     (async () => {
+      if (Number.isNaN(Number(userId)))
+        return setError('Invalid userId provided');
+
       const result = await getUserSetup(Number(userId));
 
-      if (!result.exists) {
-        setError('유저 정보가 없습니다. 다시 로그인해주세요.');
-        throw new Error('there is no User, User must login');
-      }
+      if (!result.exists)
+        return setError('유저 정보가 없습니다. 다시 로그인해주세요.');
 
       if (!result.hasChild) return router.replace('/onboarding/intro');
       if (!result.hasFundAccount)
