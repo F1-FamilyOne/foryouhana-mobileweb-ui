@@ -28,4 +28,8 @@ export const IMAGES_PATH = {
   REGIST_FUNDACCOUNT_ICON: '/register/icon/fundAccount.svg',
   REGIST_FUNDPRODUCT_ICON: '/register/icon/fundProduct.svg',
   REGIST_STARSPRING_IMG: '/register/img/starSpring.svg',
+  RUN: '/home/icon/run.png',
+  CUTE: '/home/icon/cute.png',
+  LADDER_CUTE: '/register/icon/ladder-cute.svg',
+  REGISTER_STAR: '/register/icon/register-star.svg',
 } as const;
