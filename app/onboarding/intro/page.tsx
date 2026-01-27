@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import Header from '@/components/cmm/Header';
-import IntroCardCarousel from '../../../components/intro/IntroCardCarousel';
-import SlideAi from '../../../components/intro/SlideAi';
-import SlideBenefit from '../../../components/intro/SlideBenefit';
-import SlideIntro from '../../../components/intro/SlideIntro';
+import IntroCardCarousel from '@/components/intro/IntroCardCarousel';
+import SlideAi from '@/components/intro/SlideAi';
+import SlideBenefit from '@/components/intro/SlideBenefit';
+import SlideIntro from '@/components/intro/SlideIntro';
 
 /**
  * @page: /onboarding/intro/

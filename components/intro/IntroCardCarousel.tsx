@@ -15,7 +15,7 @@ import {
  * @author: seonukim
  * @date: 2026-01-27
  *
- * 현재 오토 플레이는 5초 간격으로 움직이도록 설정되어있습니다.
+ * 카드리스트와 딜레이 초 (5초 = 5000 디폴트입니다.)
  */
 
 type CarouselCard = {
@@ -25,10 +25,11 @@ type CarouselCard = {
 
 type Props = {
   cardlist: CarouselCard[];
+  delay?: number;
 };
 
-export default function IntroCardCarousel({ cardlist }: Props) {
-  const autoplay = useRef(Autoplay({ delay: 5000, stopOnInteraction: false }));
+export default function IntroCardCarousel({ cardlist, delay = 5000 }: Props) {
+  const autoplay = useRef(Autoplay({ delay, stopOnInteraction: true }));
   return (
     <Carousel
       opts={{ loop: true }}
