@@ -23,24 +23,27 @@ model parent {
 
 model child {
   id               Int       @id @default(autoincrement()) @db.UnsignedInt
+  gift_account_id  Int?     @unique @db.UnsignedInt // 증여 용도 입출금 통장 ID
   parent_id        Int       @db.UnsignedInt
   born_date        DateTime  @db.Date
   name             String    @db.VarChar(50)
   profile_pic      String?   @db.VarChar(255)
-  goal_money       BigInt?   @db.UnsignedBigInt
-  monthly_money    BigInt?   @db.UnsignedBigInt
+  goal_money       BigInt?   @db.UnsignedBigInt // 증여 플랜에 따른 목표 금액
+  monthly_money    BigInt?   @db.UnsignedBigInt // 증여 플랜에 따른 월 납입 금액
   is_promise_fixed Boolean   @default(false) // 유기정기금 yes(1), no(0)
   invest_type      invest_type @default(NOBASE) // 투자 성향 (NOBASE, DEFENSIVE, OFFENSIVE, DOPAMINE)
   identity_hash    String     @unique @db.VarChar(255)
   start_date       DateTime?  @db.Date       // 증여 플랜 시작날짜
   end_date         DateTime?  @db.Date       // 증여 플랜 종료날짜  
-  account          account[]
+  account          account[]  @relation("AllAccounts")
   alert            alert[]
   chatlog          chatlog[]
   parent           parent    @relation(fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_child_parent")
-  
+  // 증여 통장 전용 관계 설정
+  gift_account     account? @relation("GiftAccount", fields: [gift_account_id], references: [id])
 
   @@index([parent_id], map: "fk_child_parent")
+  
 }
 
 model fund {
@@ -75,12 +78,13 @@ model account {
   plus_rate                                  Decimal           @default(0.00) @db.Decimal(5, 2)
   plus_money                                 BigInt            @default(0) @db.UnsignedBigInt
   in_month                                   Int?              @db.TinyInt
-  child                                      child             @relation(fields: [child_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_account_child")
+  child                                      child             @relation("AllAccounts", fields: [child_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_account_child")
   fund                                       fund?             @relation(fields: [fund_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_account_fund")
   history_history_source_account_idToaccount history[]         @relation("history_source_account_idToaccount")
   history_history_target_account_idToaccount history[]         @relation("history_target_account_idToaccount")
   auto_transfer_source                       auto_transfer[]   @relation("auto_transfer_source")
   auto_transfer_target                       auto_transfer[]   @relation("auto_transfer_target")
+  gift_child       child?   @relation("GiftAccount")
 
   @@index([child_id], map: "fk_account_child")
   @@index([fund_id], map: "fk_account_fund")

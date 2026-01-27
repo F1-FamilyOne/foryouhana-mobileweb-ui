@@ -275,7 +275,8 @@ async function main() {
     },
   });
 
-  // 4. 계좌 생성 (부모 1, 자녀 1, 자녀 펀드 2)
+    // --- 4. 계좌 생성 (부모 1, 자녀 1 입출금, 자녀 2 입출금, 펀드 계좌들) ---
+
   const parentDeposit = await prisma.account.create({
     data: {
       child_id: child1.id,
@@ -283,11 +284,10 @@ async function main() {
       acc_type: account_acc_type.DEPOSIT,
       opened_at: new Date('2020-01-01'),
       deposit: 5000000n,
-      in_type: false, // 정기
+      in_type: false,
     },
   });
 
-  // 자녀 1의 입출금 계좌 != 연금저축펀드계좌
   const child1Deposit = await prisma.account.create({
     data: {
       child_id: child1.id,
@@ -299,61 +299,84 @@ async function main() {
     },
   });
 
-  // 자녀 2의 펀드 계좌 1: 자유 (in_type: 0)
+  //  [연결] 자녀 1의 증여 통장으로 지정
+  await prisma.child.update({
+    where: { id: child1.id },
+    data: { gift_account_id: child1Deposit.id },
+  });
+
+  // 자녀 2의 입출금 계좌 (투자 원천)
+  const child2Deposit = await prisma.account.create({
+    data: {
+      child_id: child2.id,
+      acc_num: '1002-888-000002',
+      acc_type: account_acc_type.DEPOSIT,
+      opened_at: new Date('2024-01-01'),
+      deposit: 1000000n,
+      in_type: false,
+    },
+  });
+
+  // 자녀 2의 펀드 계좌 1: 정기 (in_type: false)
   const child2RegularFund = await prisma.account.create({
     data: {
       child_id: child2.id,
       fund_id: baseFund.id,
       acc_num: '555-001-1111',
       acc_type: account_acc_type.FUND,
-      opened_at: new Date(),
+      opened_at: new Date('2025-01-01'),
       deposit: 200000n,
-      in_type: false, // 0: 정기
+      in_type: false,
       plus_rate: 3.2,
       plus_money: 6400n,
     },
   });
 
-  // 자녀 2의 펀드 계좌 2: 정기적립식 (in_type: 1 -> in_month 필수!)
+  await prisma.child.update({
+    where: { id: child2.id },
+    data: { gift_account_id: child2Deposit.id },
+  });
+
+  // 자녀 2의 펀드 계좌 2: 자유적립 (in_type: true)
   const child2FreeFund = await prisma.account.create({
     data: {
       child_id: child2.id,
-      fund_id: baseFund.id,
+      fund_id: bondFund.id,
       acc_num: '555-002-2222',
       acc_type: account_acc_type.FUND,
-      opened_at: new Date(),
+      opened_at: new Date('2026-01-27'),
       deposit: 150000n,
-      in_type: true, // 0: 정기
-      in_month: 12, // 제약 조건에 따라 필수 입력
+      in_type: true,
+      in_month: 12,
       plus_rate: 4.5,
       plus_money: 6750n,
     },
   });
 
-  // 연저펀
+  // 자녀 1 연금저축펀드 - 채권형
   const child1PensionPart1 = await prisma.account.create({
     data: {
       child_id: child1.id,
-      fund_id: bondFund.id, // 위에서 만든 채권형 펀드 ID
-      acc_num: '123-PENSION-001', // 계좌번호 동일
+      fund_id: bondFund.id,
+      acc_num: '123-PENSION-001',
       acc_type: account_acc_type.PENSION,
       opened_at: new Date('2024-02-01'),
-      deposit: 400000n, // 채권 펀드에 들어있는 금액
+      deposit: 400000n,
       plus_rate: 1.5,
       plus_money: 6000n,
-      in_type: false, // 자유
+      in_type: false,
     },
   });
 
-  // 2. 연금저축펀드 - 주식형 상품 부분
+  // 자녀 1 연금저축펀드 - 주식형
   const child1PensionPart2 = await prisma.account.create({
     data: {
       child_id: child1.id,
-      fund_id: globalStockFund.id, // 위에서 만든 주식형 펀드 ID
-      acc_num: '123-PENSION-001', // 계좌번호 동일!
+      fund_id: globalStockFund.id,
+      acc_num: '123-PENSION-001',
       acc_type: account_acc_type.PENSION,
       opened_at: new Date('2024-02-01'),
-      deposit: 600000n, // 주식 펀드에 들어있는 금액
+      deposit: 600000n,
       plus_rate: 8.4,
       plus_money: 50400n,
       in_type: false,
@@ -416,7 +439,9 @@ async function main() {
   });
   // 추가 팝업도 만들 것!
 
-  // 6. 송금 이력(History) 생성: 부모 계좌 -> 자녀 1 입출금 계좌
+    // --- 6. 송금 이력(History) 생성 (변수명.id 사용) ---
+
+  // 부모 -> 자녀 1 입출금
   await prisma.history.create({
     data: {
       money: 50000n,
@@ -426,13 +451,53 @@ async function main() {
     },
   });
 
+  // 부모 -> 자녀 1 연금 계좌 (주식형 600,000원)
+  await prisma.history.create({
+    data: {
+      money: 600000n,
+      source_account_id: parentDeposit.id,
+      target_account_id: child1PensionPart2.id, // 하드코딩된 '6' 대신 변수 사용
+      created_at: new Date('2024-02-01T10:00:00'),
+    },
+  });
+
+  // 부모 -> 자녀 1 연금 계좌 (채권형 400,000원)
+  await prisma.history.create({
+    data: {
+      money: 400000n,
+      source_account_id: parentDeposit.id,
+      target_account_id: child1PensionPart1.id, // 하드코딩된 '5' 대신 변수 사용
+      created_at: new Date('2024-02-01T11:00:00'),
+    },
+  });
+
+  // 자녀 2 본인 입출금 -> 일반 펀드 1번 (150,000원)
+  await prisma.history.create({
+    data: {
+      money: 150000n,
+      source_account_id: child2Deposit.id,
+      target_account_id: child2FreeFund.id, // 하드코딩된 '4' 대신 변수 사용
+      created_at: new Date('2026-01-27T14:30:00'),
+    },
+  });
+
+  // 자녀 2 본인 입출금 -> 일반 펀드 2번 (200,000원)
+  await prisma.history.create({
+    data: {
+      money: 200000n,
+      source_account_id: child2Deposit.id,
+      target_account_id: child2RegularFund.id, // 하드코딩된 '3' 대신 변수 사용
+      created_at: new Date('2026-01-27T09:15:00'),
+    },
+  });
+
   await prisma.timeline.createMany({
     data: [
       // 1. 입출금 통장 개설 (계좌 opened_at: 2024-01-01과 일치)
       {
         child_id: child1.id,
         type: '입출금 통장 개설', 
-        description: '500000원',
+        description: '500000원 입금',
         date: new Date('2024-01-01'), 
       },
 
@@ -440,21 +505,21 @@ async function main() {
       {
         child_id: child1.id,
         type: '연금저축펀드 가입',
-        description: globalStockFund.name, // '하나글로벌울트라 TOP50 ETF'
+        description: '하나글로벌울트라ETF 매 달 100000원 납입',
         date: new Date('2024-02-01T10:05:00'),
       },
 
       // 3. 어린이날 용돈 (과거 이벤트)
       {
         child_id: child1.id,
-        type: '용돈 입금',
-        description: '100,000원',
+        type: '증여',
+        description: '100,000원 입금',
         date: new Date('2024-05-05'),
       },
 
       {
         child_id: child1.id,
-        type: '용돈 입금',
+        type: '증여',
         description: '50,000원', // history.money와 동일
         date: new Date(), // 이건 가장 최근에 떠야 하니 현재 시간으로!
       },
@@ -470,14 +535,14 @@ async function main() {
       {
         child_id: child2.id,
         type: '성년의 날',
-        description: '축하합니다',
+        description: '50000원 입금',
         date: new Date('2024-05-20'), 
       },
 
       {
         child_id: child2.id,
         type: '펀드 가입',
-        description: baseFund.name, // '하나없이하나마나ETF'
+        description: '하나없이하나마나ETF 매 달 200000원 납입',
         date: new Date('2025-01-01'), 
       },
 
@@ -485,7 +550,7 @@ async function main() {
       {
         child_id: child2.id,
         type: '펀드 배당금 입금',
-        description: '12,500원',
+        description: '12,500원 입금',
         date: new Date('2026-01-15'), 
       },
     ],
