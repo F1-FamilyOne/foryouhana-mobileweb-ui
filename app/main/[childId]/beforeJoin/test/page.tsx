@@ -5,6 +5,13 @@ import Header from '@/components/cmm/Header';
 import { Button } from '@/components/ui/button';
 import { IMAGES_PATH } from '@/constants/images';
 
+/**
+ * @page: 투자성형 분석 시작
+ * @description: 투자성형 분석 시작 페이지
+ * @author: 승빈
+ *  @date: 2026-01-27
+ */
+
 export default function investTest() {
   const route = useRouter();
   const params = useParams();

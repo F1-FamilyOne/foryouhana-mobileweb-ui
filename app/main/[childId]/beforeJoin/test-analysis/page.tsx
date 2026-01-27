@@ -41,7 +41,7 @@ export default function InvestTestAnalysis() {
       const elapsed = timestamp - startTimeRef.current;
       const ratio = Math.min(elapsed / TOTAL_DURATION, 1);
 
-      const elasticProgress =
+      const elasticProgress = // 프로그레스바 속도 조절 로직
         ratio < 0.25
           ? ratio * 140
           : ratio < 0.5

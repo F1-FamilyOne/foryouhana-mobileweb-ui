@@ -3,11 +3,18 @@
 import { CircleDot } from 'lucide-react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { createRandomInvest, getChild } from '@/app/actions/test.action';
+import { useEffect, useRef, useState } from 'react';
+import { getChild, setRandomInvestTypeForChild } from '@/actions/test.action';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import Header from '@/components/cmm/Header';
 import { IMAGES_PATH } from '@/constants/images';
+
+/**
+ * @page: 투자성향 분석 완료
+ * @description: 투자성향 분석 완료 페이지
+ * @author: 승빈
+ * @date: 2026-01-27
+ */
 
 const INVEST_MAP = {
   NOBASE: {
@@ -40,21 +47,40 @@ export default function InvestTestResult() {
   const [childName, setChildName] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
+  // 1. 중복 실행 방지를 위한 Ref 선언
+  const isInitialized = useRef(false);
+
   useEffect(() => {
+    // 2. 이미 실행되었다면 바로 리턴 (Strict Mode 중복 호출 차단)
+    if (isInitialized.current) return;
+
     const initAnalysis = async () => {
       try {
+        // 실행 직후 true로 변경하여 다음 호출을 막음
+        isInitialized.current = true;
+
         const [investType, childData] = await Promise.all([
-          createRandomInvest(childId),
+          setRandomInvestTypeForChild(childId),
           getChild(childId),
         ]);
+
         setResult(investType);
         setChildName(childData?.name || '자녀');
         setTimeout(() => setIsVisible(true), 100);
       } catch (error) {
         console.error('Failed to load investment result:', error);
+        // 에러 시 재시도가 필요하다면 다시 false로 바꿀 수도 있음
+        isInitialized.current = false;
       }
     };
+
     if (childId) initAnalysis();
+
+    // 스크롤 방지
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
   }, [childId]);
 
   const currentInvest = result
@@ -158,11 +184,7 @@ export default function InvestTestResult() {
 
         <style jsx global>{`
           /* 스크롤바 강제 제거 */
-          html, body { 
-            overflow: hidden !important; 
-            height: 100% !important;
-            touch-action: none; /* 모바일 바운스 방지 */
-          }
+
           @keyframes subtle-float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-5px); }

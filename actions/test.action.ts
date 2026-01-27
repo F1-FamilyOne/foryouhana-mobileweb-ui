@@ -3,7 +3,7 @@
 import { invest_type } from '@/lib/generated/prisma/enums';
 import { prisma } from '@/lib/prisma';
 
-export async function createRandomInvest(childId: number) {
+export async function setRandomInvestTypeForChild(childId: number) {
   // 1. Enum에서 랜덤하게 하나 선택
   const types = Object.values(invest_type);
   const randomType = types[Math.floor(Math.random() * types.length)];
