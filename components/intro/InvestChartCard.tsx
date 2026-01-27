@@ -71,7 +71,7 @@ export default function InvestChartCard() {
       {
         data: values,
         borderColor: '#1AA89C',
-        borderWidth: 5,
+        borderWidth: 3,
         tension: 0.35,
         pointRadius: 0,
         fill: true,
