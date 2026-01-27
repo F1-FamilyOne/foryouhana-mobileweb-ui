@@ -34,4 +34,5 @@ export const IMAGES_PATH = {
   REGISTER_STAR: '/register/icon/register-star.svg',
   BEFORE_TEST: '/beforeJoin/icon/beforeTest.svg',
   BEFORE_TEST_ICON: '/beforeJoin/icon/beforeTestIcon.svg',
+  STARDOLL_3D: '/beforeJoin/icon/stardoll3D.svg',
 } as const;
