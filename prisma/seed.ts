@@ -8,6 +8,17 @@ import {
 import { prisma } from '../lib/prisma';
 
 async function main() {
+  console.log('🧹 기존 데이터 정리 중...');
+  // 삭제 순서 최적화 (에러 방지)
+  await prisma.history.deleteMany();
+  await prisma.timeline.deleteMany();
+  await prisma.account.deleteMany();
+  await prisma.alert.deleteMany();
+  await prisma.chatlog.deleteMany();
+  await prisma.child.deleteMany();
+  await prisma.parent.deleteMany();
+  await prisma.fund.deleteMany();
+
   console.log('🚀 시딩 시작: 부모, 자녀, 계좌 및 이력 데이터...');
 
   // 1. MyData & 부모 생성
@@ -106,9 +117,9 @@ async function main() {
       set_date: new Date('2020-01-15'),
       image: 'https://placehold.co/400x400?text=BOND',
       total_money: 8000000000n,
-      plus_1: '3.5',
-      plus_5: '15.2',
-      plus_10: '32.1',
+      plus_1: 3.5,
+      plus_5: 15.2,
+      plus_10: 32.1,
     },
   });
 
@@ -130,9 +141,9 @@ async function main() {
       set_date: new Date('2021-04-09'),
       image: 'https://placehold.co/400x400?text=TIGER',
       total_money: 50000000000n, // 규모 큼
-      plus_1: '38.2',
-      plus_5: '120.5',
-      plus_10: '0.0',
+      plus_1: 38.2,
+      plus_5: 120.5,
+      plus_10: 0.0,
     },
   });
 
@@ -150,9 +161,9 @@ async function main() {
       set_date: new Date('2002-10-14'),
       image: 'https://placehold.co/400x400?text=KODEX',
       total_money: 60000000000n,
-      plus_1: '8.4',
-      plus_5: '25.6',
-      plus_10: '55.3',
+      plus_1: 8.4,
+      plus_5: 25.6,
+      plus_10: 55.3,
     },
   });
 
@@ -170,9 +181,9 @@ async function main() {
       set_date: new Date('2022-11-15'),
       image: 'https://placehold.co/400x400?text=ACE',
       total_money: 1500000000n,
-      plus_1: '12.1',
-      plus_5: '0.0',
-      plus_10: '0.0',
+      plus_1: 12.1,
+      plus_5: 0.0,
+      plus_10: 0.0,
     },
   });
 
@@ -190,9 +201,9 @@ async function main() {
       set_date: new Date('2018-02-05'),
       image: 'https://placehold.co/400x400?text=KBSTAR',
       total_money: 2500000000n,
-      plus_1: '3.8',
-      plus_5: '14.2',
-      plus_10: '25.4',
+      plus_1: 3.8,
+      plus_5: 14.2,
+      plus_10: 25.4,
     },
   });
 
@@ -210,50 +221,62 @@ async function main() {
       set_date: new Date('2023-05-25'),
       image: 'https://placehold.co/400x400?text=ARIRANG',
       total_money: 1200000000n,
-      plus_1: '-2.5', // 금리 영향으로 마이너스 가능성 반영
-      plus_5: '0.0',
-      plus_10: '0.0',
+      plus_1: -2.5, // 금리 영향으로 마이너스 가능성 반영
+      plus_5: 0.0,
+      plus_10: 0.0,
     },
   });
 
-  // 일반 상품 펀드 생성
-
-  // 3. 자녀 2명 생성 (제약 조건 준수)
-  // 자녀 1: 유기정기금 YES (goal_money, monthly_money 필수)
-  const child1 = await prisma.child.create({
-    data: {
+  const child1 = await prisma.child.upsert({
+    where: { identity_hash: 'hash_child_1_unique' }, // 중복 체크 기준
+    update: {
+      name: '하나둘',
+      profile_pic: '/file/자녀1.jpg',
+      is_promise_fixed: true,
+      goal_money: 20000000n,
+      monthly_money: 100000n,
+      invest_type: invest_type.OFFENSIVE,
+    },
+    create: {
       parent_id: parent.id,
       name: '하나둘',
-      profile_pic: '/file/자녀1.jpg', //자녀 프로필 이미지 경로 명시
+      profile_pic: '/file/자녀1.jpg',
       born_date: new Date('2015-01-01'),
       is_promise_fixed: true,
       goal_money: 20000000n,
       monthly_money: 100000n,
       invest_type: invest_type.OFFENSIVE,
       identity_hash: 'hash_child_1_unique',
-      start_date: new Date('2024-01-01'), // 증여 플랜 시작날짜
-      end_date: new Date('2033-12-31'),   // 증여 플랜 종료날짜
+      start_date: new Date('2024-01-01'),
+      end_date: new Date('2033-12-31'),
     },
   });
 
-  const child2 = await prisma.child.create({
-    data: {
+  // 자녀 2: 유기정기금 NO (성인 가정)
+  const child2 = await prisma.child.upsert({
+    where: { identity_hash: 'hash_child_2_unique' }, // 중복 체크 기준
+    update: {
+      name: '하나셋',
+      profile_pic: '/file/자녀2.jpg',
+      invest_type: invest_type.DEFENSIVE,
+    },
+    create: {
       parent_id: parent.id,
       name: '하나셋',
       profile_pic: '/file/자녀2.jpg',
       born_date: new Date('2005-05-05'),
-      is_promise_fixed: false, // 0이므로
-      goal_money: null, // 반드시 null
-      monthly_money: null, // 반드시 null
+      is_promise_fixed: false,
+      goal_money: null,
+      monthly_money: null,
       invest_type: invest_type.DEFENSIVE,
       identity_hash: 'hash_child_2_unique',
-      start_date: new Date('2024-01-01'), // 증여 플랜 시작날짜
-      end_date: new Date('2028-12-31'),   // 증여 플랜 종료날짜
+      start_date: new Date('2024-01-01'),
+      end_date: new Date('2028-12-31'),
     },
   });
 
-  // 4. 계좌 생성 (부모 1, 자녀 1, 자녀 펀드 2)
-  // 부모의 입출금 계좌 (스키마상 child_id가 필수이므로 첫째에게 연결)
+    // --- 4. 계좌 생성 (부모 1, 자녀 1 입출금, 자녀 2 입출금, 펀드 계좌들) ---
+
   const parentDeposit = await prisma.account.create({
     data: {
       child_id: child1.id,
@@ -261,11 +284,10 @@ async function main() {
       acc_type: account_acc_type.DEPOSIT,
       opened_at: new Date('2020-01-01'),
       deposit: 5000000n,
-      in_type: false, // 정기
+      in_type: false,
     },
   });
 
-  // 자녀 1의 입출금 계좌 != 연금저축펀드계좌
   const child1Deposit = await prisma.account.create({
     data: {
       child_id: child1.id,
@@ -277,61 +299,84 @@ async function main() {
     },
   });
 
-  // 자녀 2의 펀드 계좌 1: 자유 (in_type: 0)
+  //  [연결] 자녀 1의 증여 통장으로 지정
+  await prisma.child.update({
+    where: { id: child1.id },
+    data: { gift_account_id: child1Deposit.id },
+  });
+
+  // 자녀 2의 입출금 계좌 (투자 원천)
+  const child2Deposit = await prisma.account.create({
+    data: {
+      child_id: child2.id,
+      acc_num: '1002-888-000002',
+      acc_type: account_acc_type.DEPOSIT,
+      opened_at: new Date('2024-01-01'),
+      deposit: 1000000n,
+      in_type: false,
+    },
+  });
+
+  // 자녀 2의 펀드 계좌 1: 정기 (in_type: false)
   const child2RegularFund = await prisma.account.create({
     data: {
       child_id: child2.id,
       fund_id: baseFund.id,
       acc_num: '555-001-1111',
       acc_type: account_acc_type.FUND,
-      opened_at: new Date(),
+      opened_at: new Date('2025-01-01'),
       deposit: 200000n,
-      in_type: false, // 0: 정기
+      in_type: false,
       plus_rate: 3.2,
       plus_money: 6400n,
     },
   });
 
-  // 자녀 2의 펀드 계좌 2: 정기적립식 (in_type: 1 -> in_month 필수!)
+  await prisma.child.update({
+    where: { id: child2.id },
+    data: { gift_account_id: child2Deposit.id },
+  });
+
+  // 자녀 2의 펀드 계좌 2: 자유적립 (in_type: true)
   const child2FreeFund = await prisma.account.create({
     data: {
       child_id: child2.id,
-      fund_id: baseFund.id,
+      fund_id: bondFund.id,
       acc_num: '555-002-2222',
       acc_type: account_acc_type.FUND,
-      opened_at: new Date(),
+      opened_at: new Date('2026-01-27'),
       deposit: 150000n,
-      in_type: true, // 0: 정기
-      in_month: 12, // 제약 조건에 따라 필수 입력
+      in_type: true,
+      in_month: 12,
       plus_rate: 4.5,
       plus_money: 6750n,
     },
   });
 
-  // 연저펀
+  // 자녀 1 연금저축펀드 - 채권형
   const child1PensionPart1 = await prisma.account.create({
     data: {
       child_id: child1.id,
-      fund_id: bondFund.id, // 위에서 만든 채권형 펀드 ID
-      acc_num: '123-PENSION-001', // 계좌번호 동일
+      fund_id: bondFund.id,
+      acc_num: '123-PENSION-001',
       acc_type: account_acc_type.PENSION,
       opened_at: new Date('2024-02-01'),
-      deposit: 400000n, // 채권 펀드에 들어있는 금액
+      deposit: 400000n,
       plus_rate: 1.5,
       plus_money: 6000n,
-      in_type: false, // 자유
+      in_type: false,
     },
   });
 
-  // 2. 연금저축펀드 - 주식형 상품 부분
+  // 자녀 1 연금저축펀드 - 주식형
   const child1PensionPart2 = await prisma.account.create({
     data: {
       child_id: child1.id,
-      fund_id: globalStockFund.id, // 위에서 만든 주식형 펀드 ID
-      acc_num: '123-PENSION-001', // 계좌번호 동일!
+      fund_id: globalStockFund.id,
+      acc_num: '123-PENSION-001',
       acc_type: account_acc_type.PENSION,
       opened_at: new Date('2024-02-01'),
-      deposit: 600000n, // 주식 펀드에 들어있는 금액
+      deposit: 600000n,
       plus_rate: 8.4,
       plus_money: 50400n,
       in_type: false,
@@ -394,7 +439,9 @@ async function main() {
   });
   // 추가 팝업도 만들 것!
 
-  // 6. 송금 이력(History) 생성: 부모 계좌 -> 자녀 1 입출금 계좌
+    // --- 6. 송금 이력(History) 생성 (변수명.id 사용) ---
+
+  // 부모 -> 자녀 1 입출금
   await prisma.history.create({
     data: {
       money: 50000n,
@@ -404,14 +451,53 @@ async function main() {
     },
   });
 
+  // 부모 -> 자녀 1 연금 계좌 (주식형 600,000원)
+  await prisma.history.create({
+    data: {
+      money: 600000n,
+      source_account_id: parentDeposit.id,
+      target_account_id: child1PensionPart2.id, // 하드코딩된 '6' 대신 변수 사용
+      created_at: new Date('2024-02-01T10:00:00'),
+    },
+  });
+
+  // 부모 -> 자녀 1 연금 계좌 (채권형 400,000원)
+  await prisma.history.create({
+    data: {
+      money: 400000n,
+      source_account_id: parentDeposit.id,
+      target_account_id: child1PensionPart1.id, // 하드코딩된 '5' 대신 변수 사용
+      created_at: new Date('2024-02-01T11:00:00'),
+    },
+  });
+
+  // 자녀 2 본인 입출금 -> 일반 펀드 1번 (150,000원)
+  await prisma.history.create({
+    data: {
+      money: 150000n,
+      source_account_id: child2Deposit.id,
+      target_account_id: child2FreeFund.id, // 하드코딩된 '4' 대신 변수 사용
+      created_at: new Date('2026-01-27T14:30:00'),
+    },
+  });
+
+  // 자녀 2 본인 입출금 -> 일반 펀드 2번 (200,000원)
+  await prisma.history.create({
+    data: {
+      money: 200000n,
+      source_account_id: child2Deposit.id,
+      target_account_id: child2RegularFund.id, // 하드코딩된 '3' 대신 변수 사용
+      created_at: new Date('2026-01-27T09:15:00'),
+    },
+  });
+
   await prisma.timeline.createMany({
     data: [
       // 1. 입출금 통장 개설 (계좌 opened_at: 2024-01-01과 일치)
       {
         child_id: child1.id,
         type: '입출금 통장 개설', 
-        description: '첫 금융 생활의 시작',
-        memo: '하나둘 첫 통장 만든 날',
+        description: '500000원 입금',
         date: new Date('2024-01-01'), 
       },
 
@@ -419,50 +505,42 @@ async function main() {
       {
         child_id: child1.id,
         type: '연금저축펀드 가입',
-        description: globalStockFund.name, // '하나글로벌울트라 TOP50 ETF'
-        memo: '테x라 우주가보자',
+        description: '하나글로벌울트라ETF 매 달 100000원 납입',
         date: new Date('2024-02-01T10:05:00'),
       },
 
-      // 3. 어린이날 용돈 (과거 이벤트)
       {
         child_id: child1.id,
-        type: '용돈 입금',
-        description: '100,000원',
-        memo: '행복한 어린이날 선물 🎁',
+        type: '증여 입금',
+        description: '100,000원 증여 완료!',
         date: new Date('2024-05-05'),
       },
 
       {
         child_id: child1.id,
-        type: '용돈 입금',
-        description: '50,000원', // history.money와 동일
-        memo: '할머니가 주신 용돈 저축하기',
+        type: '증여 입금',
+        description: '50,000원 증여 완료!', // history.money와 동일
         date: new Date(), // 이건 가장 최근에 떠야 하니 현재 시간으로!
       },
 
-      // 성인 자식의 경우
       {
         child_id: child2.id,
         type: '입출금 통장 개설',
         description: '우리 아기 첫 통장',
-        memo: '자라나라 머리머리',
         date: new Date('2010-05-05'), 
       },
 
       {
         child_id: child2.id,
         type: '성년의 날',
-        description: '축하합니다',
-        memo: '성인 축하해',
+        description: '50000원 증여 완료!',
         date: new Date('2024-05-20'), 
       },
 
       {
-        child_id: child2.id,
+        child_id: child2.id,// 애기 id
         type: '펀드 가입',
-        description: baseFund.name, // '하나없이하나마나ETF'
-        memo: 'ETF로 돈 좀 벌게 해줄게',
+        description: '하나없이하나마나ETF 가입 완료, 매월 150,000원 납입',
         date: new Date('2025-01-01'), 
       },
 
@@ -470,8 +548,7 @@ async function main() {
       {
         child_id: child2.id,
         type: '펀드 배당금 입금',
-        description: '12,500원',
-        memo: '첫 투자 배당금 받음!',
+        description: '12,500원 입금 완료!',
         date: new Date('2026-01-15'), 
       },
     ],
@@ -481,8 +558,11 @@ async function main() {
 }
 
 main()
-  .catch((e) => {
-    console.error('❌ 시딩 중 에러 발생:', e);
-    process.exit(1);
+  .then(async () => {
+    await prisma.$disconnect();
   })
-  .finally(() => prisma.$disconnect());
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

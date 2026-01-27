@@ -22,7 +22,7 @@ export default function menu() {
   const childId = params.childId as string;
   return (
     <div className="relative min-h-full">
-      <div id="menuHeader" className="mb-25 flex h-[50px] justify-between">
+      <div id="menuHeader" className="mb-25 flex h-12.5 justify-between">
         <p className="font-hana-bold text-[25px]">메뉴</p>
         <ToggleChildProfile
           kids={kidsProfile}
@@ -30,10 +30,13 @@ export default function menu() {
           onSelect={(kidId) => {
             setSelectedKidId(kidId);
           }}
+          onAddKid={() => {
+            throw new Error('Function not implemented.');
+          }}
         />
       </div>
       <div className="flex w-full flex-col items-center justify-center space-y-15">
-        <div id="setting" className="w-[312px] space-y-2">
+        <div id="setting" className="w-78 space-y-2">
           <div>
             <div className="mb-3 font-hana-medium text-[20px]">설정</div>
             <div className="border-hana-gray-400 border-b-2">
@@ -52,7 +55,7 @@ export default function menu() {
               </div>
             </div>
           </div>
-          <div id="assetNotification" className="w-[312px]">
+          <div id="assetNotification" className="w-78">
             <div className="border-hana-gray-600 border-b-2">
               <div className="flex justify-between pb-1 font-hana-light">
                 <div className="text-[20px]">자산 변동 알림 사용</div>
@@ -63,7 +66,7 @@ export default function menu() {
               </div>
             </div>
           </div>
-          <div id="serviceTermination" className="w-[312px]">
+          <div id="serviceTermination" className="w-78">
             <div className="border-hana-gray-600 border-b-2">
               <div className="flex justify-between pb-1 font-hana-light">
                 <div className="text-[20px]">아이앞으로 서비스 해지</div>
@@ -82,18 +85,18 @@ export default function menu() {
             </div>
           </div>
         </div>
-        <div className="w-[312px] space-y-2">
+        <div className="w-78 space-y-2">
           <div className="mb-3 font-hana-medium text-[20px]">
             서비스 상세 관리
           </div>
           <Button
-            className="flex h-[60px] w-full cursor-pointer justify-between rounded-[15px] bg-hana-pastel-mint p-2 text-[18px] hover:bg-hana-pastel-mint/60"
+            className="flex h-15 w-full cursor-pointer justify-between rounded-[15px] bg-hana-pastel-mint p-2 text-[18px] hover:bg-hana-pastel-mint/60"
             onClick={() => route.push(`/main/${childId}/planEdit`)}
           >
             <p>증여 플랜 수정하기</p> <ChevronRight />
           </Button>
           <Button
-            className="flex h-[60px] w-full cursor-pointer justify-between rounded-[15px] bg-hana-pastel-mint p-2 text-[18px] hover:bg-hana-pastel-mint/60"
+            className="flex h-15 w-full cursor-pointer justify-between rounded-[15px] bg-hana-pastel-mint p-2 text-[18px] hover:bg-hana-pastel-mint/60"
             onClick={() => route.push(`/main/${childId}/my-product`)}
           >
             <p>현재 가입 상품 보기</p> <ChevronRight />

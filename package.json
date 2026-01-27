@@ -34,6 +34,8 @@
     "chart.js": "^4.5.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "embla-carousel-autoplay": "^8.6.0",
+    "embla-carousel-react": "^8.6.0",
     "dompurify": "^3.3.1",
     "lucide": "^0.562.0",
     "lucide-react": "^0.562.0",

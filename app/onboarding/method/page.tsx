@@ -27,7 +27,6 @@ export default function analysisMethodPage() {
         };
 
     const sessionData = {
-      ...prevData.plan,
       child_id: null,
       isSigned: false, // ✅ 요청하신 대로 false 설정
       updated_at: new Date().toISOString(),
@@ -37,7 +36,7 @@ export default function analysisMethodPage() {
         monthly_money: 416000,
         is_promise_fixed: true,
         in_month: 120,
-        acc_type: 'PENSIOIN',
+        acc_type: 'PENSION',
         in_type: true,
         //임시 MYDATE
       },
