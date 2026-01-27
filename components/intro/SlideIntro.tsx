@@ -1,7 +1,7 @@
 import { HandCoins, PiggyBank, TrendingUp } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import FeatureCard from './FeatureCard';
-import { default as InvestChartCard } from './InvestChartCard';
+import InvestChartCard from './InvestChartCard';
 
 /**
  * @page: onboarding/intro 화면의 첫번째 슬라이드
