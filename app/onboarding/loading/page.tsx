@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { IMAGES_PATH } from '@/constants/images';
 
 /**
  * @page: AI 분석 - 총 자산 분석중... 페이지
@@ -54,7 +55,7 @@ export default function AnalysisLoadingPage() {
 
   const HanabotImage = (
     <Image
-      src="/ai/hanabot.svg"
+      src={IMAGES_PATH.LOADING_HANABOT_IMG}
       alt="hanabot"
       width={180}
       height={180}
