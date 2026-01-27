@@ -37,7 +37,7 @@ export default function analysisMethodPage() {
         monthly_money: 416000,
         is_promise_fixed: true,
         in_month: 120,
-        acc_type: 'PENSIOIN',
+        acc_type: 'PENSION',
         in_type: true,
         //임시 MYDATE
       },
