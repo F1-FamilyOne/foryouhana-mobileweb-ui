@@ -62,17 +62,19 @@ export async function getUserSetup(parentId: number): Promise<UserSetupReturn> {
   };
 }
 
+export type ChildList = {
+  childId: number;
+  profile: string | null;
+  hasFundAccount: boolean;
+};
+
 type AllChildWithIsHaveFundReturn =
   | {
       exists: false;
     }
   | {
       exists: true;
-      children: {
-        childId: number;
-        profile: string | null;
-        hasFundAccount: boolean;
-      }[];
+      children: ChildList[];
     };
 
 export async function getAllChildWithIsHaveFund(
