@@ -11,6 +11,7 @@ import { CustomButton } from '@/components/cmm/CustomButton';
 import Header from '@/components/cmm/Header';
 import InputChat from '@/components/cmm/InputChat';
 import { IMAGES_PATH } from '@/constants/images';
+import type { DraftPlanPayload } from '../result/page';
 
 type Message = {
   id: number;
@@ -91,11 +92,19 @@ export default function chatbotSignProcess() {
       } else {
         // 🔥 [추가] 세션 스토리지 저장 (isSigned: false)
         if (data.dbData) {
+          const raw = sessionStorage.getItem('giftPlan');
+          const prevData: DraftPlanPayload = raw
+            ? JSON.parse(raw)
+            : {
+                updated_at: new Date().toISOString(),
+                plan: {},
+              };
+
           const sessionData = {
             child_id: null,
             isSigned: false, // ✅ 요청하신 대로 false 설정
             updated_at: new Date().toISOString(),
-            plan: data.dbData,
+            plan: { ...prevData.plan, ...data.dbData },
           };
 
           sessionStorage.setItem('giftPlan', JSON.stringify(sessionData));

@@ -4,6 +4,8 @@ import { Check, Info } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import Header from '@/components/cmm/Header';
+import { formatWon } from '@/lib/utils';
+import type { BirthInput } from '../child-info/page';
 
 /**
  * @page: AI 맞춤 증여 플랜 결과
@@ -12,26 +14,53 @@ import Header from '@/components/cmm/Header';
  * @date: 2026-01-25
  */
 
-// 데이터 영역 (나중에 API 연결 시 이 부분만 교체)
-const planData = {
-  // 자녀 정보
-  birthDate: '2020년 1월 1일',
-  age: 6,
-
-  // 추천 플랜
-  giftPeriodYears: 14,
-  monthlyAmount: 50, // 만원 단위
-
-  // 신청 상태
-  hasAnnuity: true, // 유기정기금
-  hasPensionFund: true, // 연금저축펀드
+export type DraftPlanPayload = {
+  updated_at: string; // ISO string
+  plan: {
+    child_birth: BirthInput;
+    goal_money: number;
+    monthly_money: number;
+    is_promise_fixed: boolean;
+    in_month: number;
+    in_type: boolean;
+    acc_type: 'PENSION' | 'DEPOSIT';
+  };
 };
 
-// 계산된 값
-const totalAmount = planData.giftPeriodYears * 12 * planData.monthlyAmount;
-
+export const EMPTY_DRAFT_PLAN: DraftPlanPayload = {
+  updated_at: new Date().toISOString(),
+  plan: {
+    child_birth: {
+      year: 0,
+      month: 0,
+      day: 0,
+      age: 0,
+    },
+    goal_money: 0,
+    monthly_money: 0,
+    is_promise_fixed: false,
+    in_month: 0,
+    in_type: false,
+    acc_type: 'DEPOSIT',
+  },
+};
 export default function AnalysisResult() {
   const router = useRouter();
+  const emptyDraft: DraftPlanPayload = EMPTY_DRAFT_PLAN;
+  let data: DraftPlanPayload = emptyDraft;
+  try {
+    const raw = sessionStorage.getItem('giftPlan');
+    const planData: DraftPlanPayload = raw
+      ? JSON.parse(raw)
+      : {
+          updated_at: new Date().toISOString(),
+          plan: {},
+        };
+    data = planData;
+  } catch {
+    // 깨진 데이터면 폐기
+    sessionStorage.removeItem('giftPlan');
+  }
 
   return (
     <div className="h-full bg-white">
@@ -49,10 +78,10 @@ export default function AnalysisResult() {
             <span className="text-[13px] text-gray-500">생년월일</span>
             <div className="text-right">
               <div className="font-medium text-[15px]">
-                {planData.birthDate}
+                {data.plan.child_birth.age}
               </div>
               <div className="text-[13px] text-hana-main">
-                현재 만 {planData.age}세
+                현재 만 {data.plan.child_birth.age}세
               </div>
             </div>
           </div>
@@ -68,7 +97,7 @@ export default function AnalysisResult() {
               <p className="mb-1 text-[13px] text-gray-600">증여 기간</p>
               <div className="flex h-[70px] items-center justify-center rounded-xl bg-gray-100">
                 <span className="font-bold text-[22px]">
-                  {planData.giftPeriodYears}년
+                  {data.plan.in_month}개월
                 </span>
               </div>
             </div>
@@ -78,7 +107,7 @@ export default function AnalysisResult() {
               <p className="mb-1 text-[13px] text-gray-600">월 증여액</p>
               <div className="flex h-[70px] items-center justify-center rounded-xl bg-gray-100">
                 <span className="font-bold text-[22px]">
-                  {planData.monthlyAmount}만원
+                  {formatWon(data.plan.monthly_money)}만원
                 </span>
               </div>
             </div>
@@ -93,10 +122,10 @@ export default function AnalysisResult() {
           </div>
           <div className="rounded-xl bg-hana-light-green p-4 text-center">
             <div className="font-bold text-[26px] text-hana-main">
-              {totalAmount.toLocaleString()}만원
+              {formatWon(data.plan.goal_money)}만원
             </div>
             <div className="text-[13px] text-gray-600">
-              {planData.giftPeriodYears}년 × 12개월 × {planData.monthlyAmount}
+              {data.plan.in_month}개월 × {data.plan.monthly_money}
               만원
             </div>
           </div>
@@ -121,9 +150,9 @@ export default function AnalysisResult() {
             </div>
             <div className="flex h-[42px] items-center justify-center gap-2 rounded-xl bg-gray-100">
               <span className="text-[13px]">
-                {planData.hasAnnuity ? '신청함' : '신청안함'}
+                {data.plan.is_promise_fixed ? '신청함' : '신청안함'}
               </span>
-              {planData.hasAnnuity && (
+              {data.plan.is_promise_fixed && (
                 <Check className="h-4 w-4 text-hana-main" />
               )}
             </div>
@@ -139,9 +168,9 @@ export default function AnalysisResult() {
             </div>
             <div className="flex h-[42px] items-center justify-center gap-2 rounded-xl bg-gray-100">
               <span className="text-[13px]">
-                {planData.hasPensionFund ? '신청함' : '신청안함'}
+                {data.plan.acc_type === 'PENSION' ? '신청함' : '신청안함'}
               </span>
-              {planData.hasPensionFund && (
+              {data.plan.acc_type === 'PENSION' && (
                 <Check className="h-4 w-4 text-hana-main" />
               )}
             </div>

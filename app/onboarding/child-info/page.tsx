@@ -1,9 +1,11 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import Header from '@/components/cmm/Header';
 import { ScrollDatePicker } from '@/components/cmm/ScrollDatePicker';
+import type { DraftPlanPayload } from '../result/page';
 
 /**
  * @page: onboarding/ChildInfo
@@ -16,6 +18,13 @@ import { ScrollDatePicker } from '@/components/cmm/ScrollDatePicker';
  * 자녀의 생년월일은 brirth에 (year, month, day)로 들어갑니다.
  */
 
+export type BirthInput = {
+  year: number;
+  month: number; // 1 ~ 12
+  day: number; // 1 ~ 31
+  age: number;
+};
+
 export default function ChildInfoDetail() {
   const TODAY = new Date();
   const [birth, setBirth] = useState({
@@ -23,8 +32,25 @@ export default function ChildInfoDetail() {
     month: TODAY.getMonth() + 1,
     day: TODAY.getDate(),
   });
-
+  const router = useRouter();
   const [agree, setAgree] = useState(false);
+
+  const saveBirth = (age: number) => {
+    const payload: DraftPlanPayload = {
+      updated_at: new Date().toISOString(),
+      plan: {
+        child_birth: { ...birth, age },
+        goal_money: 0,
+        monthly_money: 0,
+        is_promise_fixed: false,
+        in_month: 0,
+        in_type: false,
+        acc_type: 'DEPOSIT',
+      },
+    };
+    sessionStorage.setItem('giftPlan', JSON.stringify(payload));
+    router.push('/onboarding/method');
+  };
 
   const age = useMemo(() => {
     const today = new Date();
@@ -79,7 +105,11 @@ export default function ChildInfoDetail() {
           마이데이터 수집 및 활용에 동의합니다.
         </label>
 
-        <CustomButton preset="greenlong" disabled={!agree}>
+        <CustomButton
+          preset="greenlong"
+          disabled={!agree}
+          onClick={() => saveBirth(age)}
+        >
           증여 플랜 확인하기
         </CustomButton>
       </div>
