@@ -26,7 +26,11 @@
   --color-hana-complete: #00c177;
   --color-hana-complete-bg: #e8fff6;
   --color-hana-linear-green: #ecfdf5;
+  --color-hana-linear-deep-green: #01716D;
   --color-hana-linear-green-end: #f0fdf4;
+  --color-hana-linear-deep-green-end: #0b9c97;
+  --color-hana-carousel-bg-green: #e5f5f2;
+  --color-hana-gray-green: #aacfca;
 
   /* ========== Gray ========== */
   --color-hana-gray-50: #eeeeef;
@@ -189,5 +193,31 @@
     height: 100%;
     overflow: hidden; /* 전체 페이지 스크롤 방지 (앱처럼 보이게) */
     touch-action: manipulation; /* 더블탭 줌 방지 */
+  }
+}
+
+
+@layer utilities {
+  /* AI 분석 화면 애니메이션 */
+  @keyframes hanabot-float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+
+  .animate-hanabot-float {
+    animation: hanabot-float 1.8s ease-in-out infinite;
+    will-change: transform;
+  }
+  
+/* 크롬, 사파리, 오페라 */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
