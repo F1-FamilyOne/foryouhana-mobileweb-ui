@@ -1,6 +1,5 @@
 'use client';
 import { Check, type LucideIcon } from 'lucide-react';
-import { useState } from 'react';
 import { Badge } from '../ui/badge';
 
 /**
@@ -30,7 +29,6 @@ export default function CardVerify({
   checked,
   onSuccess,
 }: CardProps) {
-  const [verified, setVerified] = useState(false);
   const Icon = icon;
   return (
     <div>
@@ -72,7 +70,6 @@ export default function CardVerify({
             type="button"
             className="h-7.25 w-full rounded-[10px] bg-hana-gray-400 text-sm text-white hover:bg-hana-gray-400/80"
             onClick={() => {
-              setVerified(true);
               if (onSuccess) onSuccess();
             }}
           >
