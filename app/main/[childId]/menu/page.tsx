@@ -52,7 +52,7 @@ export default function menu() {
               </div>
             </div>
           </div>
-          <div id="serviceDetail" className="w-[312px]">
+          <div id="assetNotification" className="w-[312px]">
             <div className="border-hana-gray-600 border-b-2">
               <div className="flex justify-between pb-1 font-hana-light">
                 <div className="text-[20px]">자산 변동 알림 사용</div>
