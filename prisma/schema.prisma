@@ -31,13 +31,14 @@ model child {
   monthly_money    BigInt?   @db.UnsignedBigInt
   is_promise_fixed Boolean   @default(false) // 유기정기금 yes(1), no(0)
   invest_type      invest_type @default(NOBASE) // 투자 성향 (NOBASE, DEFENSIVE, OFFENSIVE, DOPAMINE)
-  identity_hash    String    @db.VarChar(255)
-  start_date       DateTime  @db.Date       // 증여 플랜 시작날짜
-  end_date         DateTime  @db.Date       // 증여 플랜 종료날짜  
+  identity_hash    String     @unique @db.VarChar(255)
+  start_date       DateTime?  @db.Date       // 증여 플랜 시작날짜
+  end_date         DateTime?  @db.Date       // 증여 플랜 종료날짜  
   account          account[]
   alert            alert[]
   chatlog          chatlog[]
   parent           parent    @relation(fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_child_parent")
+  
 
   @@index([parent_id], map: "fk_child_parent")
 }
