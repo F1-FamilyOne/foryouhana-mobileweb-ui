@@ -39,7 +39,7 @@ export default function RootLayout({
       className={`${HanaLight.variable} ${HanaRegular.variable} ${HanaMedium.variable} ${HanaBold.variable} ${HanaHeavy.variable} ${HanaCM.variable}`}
     >
       <body
-        className={`flex h-dvh w-screen items-center justify-center overflow-hidden bg-gray-100 antialiased`}
+        className={`flex h-dvh w-full items-center justify-center overflow-hidden bg-gray-100 antialiased`}
       >
         <UserContextProvider>
           <div className="scrollbar-hide h-full max-h-[852px] w-full max-w-[393px] overflow-y-auto rounded-4xl bg-white p-3 shadow-md">

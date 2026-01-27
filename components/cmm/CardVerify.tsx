@@ -1,6 +1,5 @@
 'use client';
 import { Check, type LucideIcon } from 'lucide-react';
-import { useState } from 'react';
 import { Badge } from '../ui/badge';
 
 /**
@@ -16,6 +15,9 @@ type CardProps = {
   title: string;
   description?: string;
   buttonLabel: string;
+  checkedLabel: string;
+  onSuccess?: () => void;
+  checked: boolean;
 };
 
 export default function CardVerify({
@@ -23,13 +25,15 @@ export default function CardVerify({
   title,
   description,
   buttonLabel,
+  checkedLabel,
+  checked,
+  onSuccess,
 }: CardProps) {
-  const [verified, setVerified] = useState(false);
   const Icon = icon;
   return (
     <div>
-      {verified ? (
-        <div className="flex h-31.75 w-85.5 flex-col rounded-3xl border-2 border-hana-complete px-5.5 pt-5.5 pb-3.75">
+      {checked ? (
+        <div className="flex h-31.75 w-85.5 flex-col rounded-3xl border-2 border-hana-gray-300 bg-hana-white-mint px-5.5 pt-5.5 pb-3.75">
           <div className="flex flex-1 gap-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-hana-complete">
               <Icon className="h-6 w-6 text-white" />
@@ -46,7 +50,7 @@ export default function CardVerify({
           </div>
           <div className="flex h-7.25 w-full items-center rounded-[10px] text-hana-complete text-sm">
             <Check />
-            인증이 완료되었습니다.
+            {checkedLabel}
           </div>
         </div>
       ) : (
@@ -65,7 +69,9 @@ export default function CardVerify({
           <button
             type="button"
             className="h-7.25 w-full rounded-[10px] bg-hana-gray-400 text-sm text-white hover:bg-hana-gray-400/80"
-            onClick={() => setVerified(true)}
+            onClick={() => {
+              if (onSuccess) onSuccess();
+            }}
           >
             {buttonLabel}
           </button>

@@ -14,12 +14,15 @@ import { cn } from '@/lib/utils';
  */
 
 type RiskLevel = 'high' | 'mid' | 'low';
-type FundIcon = 'king' | 'sp';
+type FundIcon = 'king' | 'sp' | 'hana';
 
 type Props = {
   title: string;
   risk: RiskLevel;
   extraBadgeText?: string;
+
+  subText?: string;
+
   performanceText: string;
   icon?: FundIcon;
   className?: string;
@@ -52,6 +55,9 @@ function getFundIconSrc(icon?: FundIcon) {
   if (icon === 'sp') {
     return '/fund-card/S&P.svg';
   }
+  if (icon === 'hana') {
+    return '/fund-card/hanalogo.svg';
+  }
   return null;
 }
 
@@ -59,6 +65,7 @@ export function FundListItemCard({
   title,
   risk,
   extraBadgeText,
+  subText,
   performanceText,
   icon,
   className,
@@ -68,7 +75,7 @@ export function FundListItemCard({
   return (
     <article
       className={cn(
-        'relative h-25 w-90 rounded-2xl bg-white p-2.5 shadow-md',
+        'relative w-full rounded-2xl bg-white p-2.5 shadow-md',
         className,
       )}
       aria-label="펀드 리스트 아이템"
@@ -79,7 +86,7 @@ export function FundListItemCard({
         <ChevronRight className="text-hana-gray-400" aria-hidden="true" />
       </div>
 
-      {/* 뱃지 + 수익률 */}
+      {/* 뱃지 + 텍스트 */}
       <div>
         <div className="flex items-center gap-2 py-2.5">
           <Badge
@@ -102,15 +109,23 @@ export function FundListItemCard({
           ) : null}
         </div>
 
+        {/* 회색 작은 텍스트 */}
+        {subText ? (
+          <p className="text-[10px] text-hana-gray-500">{subText}</p>
+        ) : null}
+
+        {/* 수익률 */}
         <p className="text-[11px] text-hana-badge-red">{performanceText}</p>
       </div>
 
-      {/* 우측 하단 아이콘 (40x40) */}
+      {/* 우측 하단 아이콘 */}
       {iconSrc ? (
         <div className="absolute right-2.5 bottom-2.5">
           <Image
             src={iconSrc}
-            alt={icon === 'king' ? 'king' : 'S&P'}
+            alt={
+              icon === 'hana' ? 'hana logo' : icon === 'king' ? 'king' : 'S&P'
+            }
             width={40}
             height={40}
           />
