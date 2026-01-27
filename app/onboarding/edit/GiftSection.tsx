@@ -102,7 +102,7 @@ export default function GiftSection({
                     unit={'개월'}
                     onChange={(value: number | undefined) => {
                       setInputMonth(value);
-                      if (value) onInMonthChange(value);
+                      if (value !== undefined) onInMonthChange(value);
                     }}
                   />
                 </div>
@@ -120,7 +120,7 @@ export default function GiftSection({
                     unit={'원'}
                     onChange={(value: number | undefined) => {
                       setInputMoney(value);
-                      if (value) onMonthlyMoneyChange(value);
+                      if (value !== undefined) onMonthlyMoneyChange(value);
                     }}
                   />
                 </div>
