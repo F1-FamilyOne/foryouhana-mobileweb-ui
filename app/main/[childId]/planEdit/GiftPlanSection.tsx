@@ -1,11 +1,7 @@
 'use client';
-import { InfoIcon } from 'lucide-react';
 import { useState } from 'react';
-import { BinaryToggle } from '@/components/cmm/BinaryToggle';
 import { CustomButton } from '@/components/cmm/CustomButton';
-import { InputMonth } from '@/components/cmm/InputDayAmount';
 import TitlePlanSelect from '@/components/cmm/TitlePlanSelect';
-import { formatWonNatural } from '@/lib/utils';
 import MethodSection from './MethodSection';
 
 export enum GIFT_METHOD {
