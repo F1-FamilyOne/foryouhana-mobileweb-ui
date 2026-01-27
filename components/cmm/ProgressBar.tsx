@@ -16,9 +16,11 @@ import { IMAGES_PATH } from '@/constants/images';
 type Step = {
   step: 'completed' | 'current' | 'pending';
   step2: 'completed' | 'current' | 'pending';
+  content1: string;
+  content2: string;
 };
 
-export default function ProgressBar({ step, step2 }: Step) {
+export default function ProgressBar({ step, step2, content1, content2 }: Step) {
   // const ICON_PATH = '/ProgressBar/icon/StepSuccess.svg';
 
   // 재사용 가능한 Step 렌더링 함수
@@ -28,7 +30,7 @@ export default function ProgressBar({ step, step2 }: Step) {
   ) => (
     <div className="w-full">
       <div
-        className={`border-b-2 ${
+        className={`border-b-3 ${
           status !== 'pending'
             ? 'border-b-[var(--color-hana-badge-green)]'
             : 'border-b-[var(--color-hana-gray-500)]'
@@ -47,7 +49,7 @@ export default function ProgressBar({ step, step2 }: Step) {
           className={`font-hana-light text-[13px] ${
             status !== 'pending'
               ? 'text-[var(--color-hana-badge-green)]'
-              : 'text-[var(--color-hana-gray-500)]'
+              : 'text-[var(--color-hana-gray-600)]'
           }`}
         >
           {label}
@@ -59,8 +61,8 @@ export default function ProgressBar({ step, step2 }: Step) {
   return (
     <div className="flex w-full justify-center">
       <div className="flex h-[40px] w-[357px] gap-3">
-        {renderStep(step, '가족관계 확인')}
-        {renderStep(step2, '개인정보 입력')}
+        {renderStep(step, content1)}
+        {renderStep(step2, content2)}
       </div>
     </div>
   );

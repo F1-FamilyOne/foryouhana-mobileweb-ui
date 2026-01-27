@@ -1,8 +1,12 @@
+'use client';
+
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import Header from '@/components/cmm/Header';
 import { PlanFeatureCard } from '@/components/onboarding/PlanFeatureCard';
 import { IMAGES_PATH } from '@/constants/images';
+import type { DraftPlanPayload } from '../result/page';
 
 /**
  * @page: analysisMethodPage
@@ -12,8 +16,39 @@ import { IMAGES_PATH } from '@/constants/images';
  */
 
 export default function analysisMethodPage() {
+  const router = useRouter();
+  const saveMyData = () => {
+    const raw = sessionStorage.getItem('giftPlan');
+    const prevData: DraftPlanPayload = raw
+      ? JSON.parse(raw)
+      : {
+          updated_at: new Date().toISOString(),
+          plan: {},
+        };
+
+    const sessionData = {
+      ...prevData.plan,
+      child_id: null,
+      isSigned: false, // ✅ 요청하신 대로 false 설정
+      updated_at: new Date().toISOString(),
+      plan: {
+        ...prevData.plan,
+        goal_money: 50000000,
+        monthly_money: 416000,
+        is_promise_fixed: true,
+        in_month: 120,
+        acc_type: 'PENSIOIN',
+        in_type: true,
+        //임시 MYDATE
+      },
+    };
+
+    sessionStorage.setItem('giftPlan', JSON.stringify(sessionData));
+    console.log('✅ 플랜 데이터 저장 완료 (isSigned: false):', sessionData);
+    router.push('/onboarding/loading');
+  };
   return (
-    <div className="mx-4 flex flex-col">
+    <div className="flex flex-col">
       <Header content="AI 맞춤 증여 플랜" />
       <div className="mt-7 text-center">
         <h1 className="font-hana-medium text-[24px] leading-tight">
@@ -55,10 +90,13 @@ export default function analysisMethodPage() {
       </div>
 
       <div className="flex flex-col gap-3 px-3 pt-5 pb-6">
-        <CustomButton preset="lightgraylong">
+        <CustomButton preset="lightgraylong" onClick={saveMyData}>
           간단 분석으로 증여 플랜 시작하기
         </CustomButton>
-        <CustomButton preset="greenlong">
+        <CustomButton
+          preset="greenlong"
+          onClick={() => router.push('/onboarding/chatbot')}
+        >
           정밀 분석으로 증여 플랜 시작하기
         </CustomButton>
       </div>

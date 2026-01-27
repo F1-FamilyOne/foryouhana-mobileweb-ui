@@ -14,7 +14,7 @@ model mydata {
 
 model parent {
   id        Int     @id @default(autoincrement()) @db.UnsignedInt
-  mydata_id Int?    @unique @db.UnsignedInt // @unique로 1:1 관계 형성
+  mydata_id Int?    @unique @db.UnsignedInt 
   child     child[]
   mydata    mydata? @relation(fields: [mydata_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_parent_mydata")
 
@@ -30,8 +30,10 @@ model child {
   goal_money       BigInt?   @db.UnsignedBigInt
   monthly_money    BigInt?   @db.UnsignedBigInt
   is_promise_fixed Boolean   @default(false) // 유기정기금 yes(1), no(0)
-  invest_type      fund_danger  // 투자 성향 (LOW/MID/HIGH)
+  invest_type      invest_type @default(NOBASE) // 투자 성향 (NOBASE, DEFENSIVE, OFFENSIVE, DOPAMINE)
   identity_hash    String    @db.VarChar(255)
+  start_date       DateTime  @db.Date       // 증여 플랜 시작날짜
+  end_date         DateTime  @db.Date       // 증여 플랜 종료날짜  
   account          account[]
   alert            alert[]
   chatlog          chatlog[]
@@ -45,6 +47,7 @@ model fund {
   name        String            @db.VarChar(255)
   danger      fund_danger
   type        fund_type         // 채권, 주식 등 펀드 유형
+  is_pension   Boolean           @default(false) // 연저펀 전용(1), 일반펀드(0)
   saving_type fund_saving_type  // 적립 방식: 정기+자유(BOTH), 정기만(REGULAR), 자유만(FREE)
   company     String            @db.VarChar(50)
   total_fee   Decimal      @db.Decimal(5, 4)
@@ -140,10 +143,26 @@ model alert {
   @@index([child_id], map: "fk_alert_child")
 }
 
+model timeline {
+  id          Int      @id @default(autoincrement()) @db.UnsignedInt
+  child_id    Int      @db.UnsignedInt
+  date        DateTime @default(now()) @db.DateTime(6)
+  type        String   @db.VarChar(20) 
+  description String?  @db.VarChar(50)
+  memo        String?  @db.VarChar(50) 
+}
+
 enum fund_danger {
   LOW
   MID
   HIGH
+}
+
+enum invest_type {
+  NOBASE
+  DEFENSIVE
+  OFFENSIVE
+  DOPAMINE
 }
 
 enum fund_type {
@@ -162,5 +181,6 @@ enum fund_saving_type {
 enum account_acc_type {
   DEPOSIT
   FUND
-  PENSION
+  PENSION     // 연저펀
 }
+

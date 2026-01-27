@@ -21,5 +21,11 @@ export const IMAGES_PATH = {
   REGIST_NOTE_ICON: '/register/icon/note.svg',
   REGIST_PROTECT_ICON: '/register/icon/protect.svg',
   STARBOT: '/chatbot/icon/starbot.svg',
-  PROGRESS_CHECK: '/ProgressBar/icon/StepSuccess.svg',
+  PROGRESS_CHECK: '/PrgressBar/icon/StepSuccess.svg',
+  STARBOT3D: '/chatbot/icon/starbot3D.svg',
+  REGIST_HEART: '/register/icon/register-heart.svg',
+  REGIST_MONEY_ICON: '/register/icon/money.svg',
+  REGIST_FUNDACCOUNT_ICON: '/register/icon/fundAccount.svg',
+  REGIST_FUNDPRODUCT_ICON: '/register/icon/fundProduct.svg',
+  REGIST_STARSPRING_IMG: '/register/img/starSpring.svg',
 } as const;

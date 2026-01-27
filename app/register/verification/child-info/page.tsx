@@ -1,86 +1,186 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { AgreeTerms } from '@/components/cmm/AgreeTerms';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import Header from '@/components/cmm/Header';
-import { ScrollDatePicker } from '@/components/cmm/ScrollDatePicker';
+import ProgressBar from '@/components/cmm/ProgressBar';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 /**
- * @page: verification/ChildInfo
- * @description: 자녀 생년월일 입력화면
- * @author: seonukim
+ * @page: ChildInfoPage
+ * @description: 자녀 이름과 주민등록번호 입력, 이용약관 동의가 진행되는 화면
+ * @author: minyoung
  * @date: 2026-01-26
- *
- * 스크롤 픽커로 자녀의 생년 월일을 입력받아 나이를 입력합니다.
- * prisma를 통한 데이터 전송 로직을 나중에 추가해 주세요.
- * 자녀의 생년월일은 brirth에 (year, month, day)로 들어갑니다.
  */
 
-export default function ChildInfoDetail() {
-  const TODAY = new Date();
-  const [birth, setBirth] = useState({
-    year: TODAY.getFullYear(),
-    month: TODAY.getMonth() + 1,
-    day: TODAY.getDate(),
-  });
+export default function ChildInfoPage() {
+  const router = useRouter();
 
-  const [agree, setAgree] = useState(false);
+  const [signupBase, setSignupBase] = useState(false);
+  const [signupPolicy, setSignupPolicy] = useState(false);
+  const [signupAccount, setSignupAccount] = useState(false);
 
-  const age = useMemo(() => {
-    const today = new Date();
-    let age = today.getFullYear() - birth.year;
+  const [investBase, setInvestBase] = useState(false);
+  const [investPolicy, setInvestPolicy] = useState(false);
+  const [investAccount, setInvestAccount] = useState(false);
 
-    const isBeforeBirthday =
-      today.getMonth() + 1 < birth.month ||
-      (today.getMonth() + 1 === birth.month && today.getDate() < birth.day);
+  const [name, setName] = useState('');
+  const [bornDate, setBornDate] = useState('');
+  const [rrnBack, setRrnBack] = useState('');
 
-    if (isBeforeBirthday) age -= 1;
-    return age;
-  }, [birth]);
+  const handleNext = () => {
+    if (bornDate.length !== 6 || rrnBack.length !== 7) {
+      alert('주민등록번호를 정확히 입력해주세요.');
+      return;
+    }
+    const residentNumber = `${bornDate}${rrnBack}`;
+
+    sessionStorage.setItem(
+      'childInfo',
+      JSON.stringify({
+        name,
+        resident_number: residentNumber,
+      }),
+    );
+    router.push('/register/verification/family-check');
+  };
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem('childInfo');
+    if (!stored) return;
+
+    const { name, resident_number } = JSON.parse(stored);
+    setName(name ?? '');
+    if (resident_number) {
+      setBornDate(resident_number.slice(0, 6));
+    }
+  }, []);
 
   return (
-    <div className="flex min-h-dvh flex-col overflow-hidden bg-white">
-      <Header content="AI 맞춤 증여 플랜" />
-
-      <div className="flex flex-1 flex-col overflow-y-scroll px-5 pt-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <div className="mb-6">
-          <h1 className="font-bold text-xl leading-snug">
-            자녀의 <span className="text-hana-main">생년월일</span>을 <br />
-            입력해주세요!
-          </h1>
-          <p className="mt-2 text-hana-gray-500 text-sm">
-            별벗 AI가 나의 자산과 자녀의 나이를 기반으로 <br /> 최적의 증여
-            플랜을 계산해드려요.
-          </p>
-        </div>
-
-        <div className="mb-6 flex justify-center">
-          <ScrollDatePicker
-            year={birth.year}
-            month={birth.month}
-            day={birth.day}
-            onChange={(date) => setBirth(date)}
-          />
-        </div>
-
-        <div className="text-center font-bold text-lg">
-          만 <span className="text-hana-main text-xl">{age}</span>세
-        </div>
+    <div>
+      <Header content="아이앞으로 가입" />
+      <div className="mt-6">
+        <ProgressBar
+          step="current"
+          step2="pending"
+          content1="가족관계 확인하기"
+          content2="입출금 계좌 개설"
+        />
       </div>
+      <h1 className="mx-3 mt-5 font-hana-medium text-[24px] leading-tight">
+        자녀 정보를 입력해주세요.
+      </h1>
+      <h1 className="mx-3 mt-5 font-hana-regular text-[16px] leading-tight">
+        자녀 이름
+      </h1>
+      <Input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        className="mx-3 w-85 rounded-none border-0 border-b px-0 focus-visible:ring-0"
+      />
 
-      <div className="flex shrink-0 flex-col items-center justify-center px-6 pb-11.25">
-        <label className="mb-7 flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            checked={agree}
-            onChange={(e) => setAgree(e.target.checked)}
-            className="h-4 w-4 accent-hana-main"
-          />
-          마이데이터 수집 및 활용에 동의합니다.
-        </label>
-
-        <CustomButton preset="greenlong" disabled={!agree}>
-          증여 플랜 확인하기
+      <h1 className="mx-3 mt-8 font-hana-regular text-[16px] leading-tight">
+        자녀 주민등록번호
+      </h1>
+      <div className="flex items-center gap-3">
+        <Input
+          value={bornDate}
+          maxLength={6}
+          inputMode="numeric"
+          pattern="[0-9]*"
+          onChange={(e) => {
+            const onlyNumber = e.target.value.replace(/[^0-9]/g, '');
+            setBornDate(onlyNumber);
+          }}
+          placeholder="앞 6자리"
+          className="mx-3 mt-3 w-32 rounded-none border-0 border-b px-0 text-center focus-visible:ring-0"
+        />
+        <span className="text-gray-400">-</span>
+        <Input
+          value={rrnBack}
+          maxLength={7}
+          placeholder="*******"
+          type="password"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          onChange={(e) => {
+            const onlyNumber = e.target.value.replace(/[^0-9]/g, '');
+            setRrnBack(onlyNumber);
+          }}
+          className="mt-3 w-40 rounded-none border-0 border-b px-0 text-center focus-visible:ring-0"
+        />
+      </div>
+      <div className="mt-6">
+        <AgreeTerms
+          label="자녀의 회원가입을 위한 약관 전체 동의 [필수]"
+          items={[
+            {
+              content:
+                '[필수] 개인(신용) 정보 수집 및 이용 동의서(비여신 금융거래)',
+              checked: signupBase,
+              onCheckedChange: setSignupBase,
+            },
+            {
+              content: '[필수] 고객정보 취급방침',
+              checked: signupPolicy,
+              onCheckedChange: setSignupPolicy,
+            },
+            {
+              content:
+                '[필수] 개인(신용)정보 수집 및 이용 동의서(비대면 계좌개설용)',
+              checked: signupAccount,
+              onCheckedChange: setSignupAccount,
+            },
+          ]}
+        />
+      </div>
+      <div className="mt-6">
+        <AgreeTerms
+          label="법정대리인 자격 확인을 위한 정보 조회 전체 동의 [필수]"
+          items={[
+            {
+              content:
+                '[필수] 본인의 인증서를 통해 대법원에 자동 접속 후 자격 확인에 필요한 서류를 전자적 방식으로 제출하는 스크래핑 서비스 이용을 신청합니다. ',
+              checked: investBase,
+              onCheckedChange: setInvestBase,
+            },
+            {
+              content:
+                '[필수] 스크래핑 서비스를 통해 위 자녀 기준의 가족관계증명서와 기본증명서를 발급하고 제출하며, 서류의 발급 이력은 해당 기관 홈페이지에서 조회 가능합니다.',
+              checked: investPolicy,
+              onCheckedChange: setInvestPolicy,
+            },
+            {
+              content:
+                '[필수] 개인(신용)정보 수집 및 이용 동의서(비대면 계좌개설용)',
+              checked: investAccount,
+              onCheckedChange: setInvestAccount,
+            },
+          ]}
+        />
+      </div>
+      <Label className="mx-3 mt-6 flex cursor-pointer items-center gap-2">
+        <Checkbox className="border-gray-300 data-[state=checked]:border-hana-main data-[state=checked]:bg-hana-main data-[state=checked]:text-white" />
+        <span className="font-hana-light text-[14px]">
+          "아이앞으로" 서비스를 통한 자녀관리를 위한 동의
+        </span>
+      </Label>
+      <p className="mx-3.5 mt-2 font-hana-light text-[12px] text-hana-gray-600">
+        * 해당 내용이 동의되어야 개설된 자녀의 계좌를 조회할 수 있습니다.
+      </p>
+      <Label className="mx-3 mt-5 flex cursor-pointer items-center gap-2">
+        <Checkbox className="border-gray-300 data-[state=checked]:border-hana-main data-[state=checked]:bg-hana-main data-[state=checked]:text-white" />
+        <span className="font-hana-light text-[14px]">
+          개인정보 및 금융거래 정보 제 3자 제공 동의서 (아이앞으로_자녀등록용)
+        </span>
+      </Label>
+      <div className="mx-3.5 mt-6">
+        <CustomButton preset="greenlong" onClick={handleNext}>
+          다음
         </CustomButton>
       </div>
     </div>

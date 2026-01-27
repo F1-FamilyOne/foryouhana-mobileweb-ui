@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 /**
@@ -11,6 +12,7 @@ import { useEffect, useState } from 'react';
  */
 
 export default function AnalysisLoadingPage() {
+  const router = useRouter();
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -35,6 +37,20 @@ export default function AnalysisLoadingPage() {
   }, []);
 
   const isDone = progress >= 100;
+
+  useEffect(() => {
+    if (!isDone) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      router.push('/onboarding/result');
+    }, 2000);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [isDone, router]);
 
   const HanabotImage = (
     <Image

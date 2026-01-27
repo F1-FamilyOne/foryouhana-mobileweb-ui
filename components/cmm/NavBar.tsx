@@ -40,9 +40,9 @@ export function BottomNavBar() {
   return (
     <nav
       aria-label="하단 네비게이션"
-      className="-translate-x-1/2 absolute bottom-5 left-1/2 h-[70px] w-[394px] rounded-t-2xl border-hana-gray-200 border-t bg-white shadow-[0_-4px_10px_rgba(0,0,0,0.05)]"
+      className="-translate-x-1/2 absolute bottom-0 left-1/2 h-[70px] w-[393px] rounded-t-2xl border-hana-gray-200 border-t bg-white shadow-[0_-4px_10px_rgba(0,0,0,0.05)]"
     >
-      <div className="flex h-full items-center justify-around px-6 pb-2">
+      <div className="flex h-full items-center justify-around px-5 pb-0">
         {/* 홈 */}
         <button
           type="button"
