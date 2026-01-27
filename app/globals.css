@@ -26,7 +26,11 @@
   --color-hana-complete: #00c177;
   --color-hana-complete-bg: #e8fff6;
   --color-hana-linear-green: #ecfdf5;
+  --color-hana-linear-deep-green: #01716D;
   --color-hana-linear-green-end: #f0fdf4;
+  --color-hana-linear-deep-green-end: #0b9c97;
+  --color-hana-carousel-bg-green: #e5f5f2;
+  --color-hana-gray-green: #aacfca;
 
   /* ========== Gray ========== */
   --color-hana-gray-50: #eeeeef;
