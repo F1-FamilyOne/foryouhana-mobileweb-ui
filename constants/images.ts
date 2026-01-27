@@ -35,4 +35,5 @@ export const IMAGES_PATH = {
   BEFORE_TEST: '/beforeJoin/icon/beforeTest.svg',
   BEFORE_TEST_ICON: '/beforeJoin/icon/beforeTestIcon.svg',
   STARDOLL_3D: '/beforeJoin/icon/stardoll3D.svg',
+  AFTER_TEST: '/beforeJoin/icon/afterTest.svg',
 } as const;
