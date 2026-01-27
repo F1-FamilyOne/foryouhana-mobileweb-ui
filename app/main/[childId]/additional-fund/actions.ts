@@ -113,7 +113,12 @@ export async function getChildDepositAccount(childId: number) {
     },
   });
 
-  return account;
+  if (!account) return null;
+
+  return {
+    ...account,
+    plus_rate: account.plus_rate ? Number(account.plus_rate) : null,
+  };
 }
 
 /**
@@ -124,7 +129,16 @@ export async function getFundById(fundId: number) {
     where: { id: fundId },
   });
 
-  return fund;
+  if (!fund) return null;
+
+  return {
+    ...fund,
+    total_fee: fund.total_fee ? Number(fund.total_fee) : null,
+    sell_fee: fund.sell_fee ? Number(fund.sell_fee) : null,
+    plus_1: fund.plus_1 ? Number(fund.plus_1) : null,
+    plus_5: fund.plus_5 ? Number(fund.plus_5) : null,
+    plus_10: fund.plus_10 ? Number(fund.plus_10) : null,
+  };
 }
 
 /**
