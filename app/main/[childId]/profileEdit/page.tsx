@@ -111,7 +111,7 @@ export default function ChildProfileEdit() {
               id="nickname"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
-              className="h-14 rounded-xl border-gray-300 text-[18px] focus:ring-2 focus:ring-[#008485]"
+              className="h-14 rounded-xl border-gray-300 text-[18px] focus:ring-2 focus:ring-hana-mint"
               placeholder="이름을 입력해 주세요"
             />
           </div>
@@ -132,6 +132,5 @@ export default function ChildProfileEdit() {
         <BottomNavBar />
       </div>
     </div>
-
   );
 }
