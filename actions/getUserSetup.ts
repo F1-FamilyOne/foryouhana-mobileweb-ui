@@ -61,3 +61,52 @@ export async function getUserSetup(parentId: number): Promise<UserSetupReturn> {
     hasFundAccount: firstChild.account.length > 0,
   };
 }
+
+type AllChildWithIsHaveFundReturn =
+  | {
+      exists: false;
+    }
+  | {
+      exists: true;
+      children: {
+        childId: number;
+        profile: string | null;
+        hasFundAccount: boolean;
+      }[];
+    };
+
+export async function getAllChildWithIsHaveFund(
+  parentId: number,
+): Promise<AllChildWithIsHaveFundReturn> {
+  const parent = await prisma.parent.findUnique({
+    where: { id: parentId },
+    select: {
+      child: {
+        orderBy: { id: 'asc' },
+        select: {
+          id: true,
+          profile_pic: true,
+          account: {
+            where: {
+              acc_type: account_acc_type.FUND,
+            },
+            select: { id: true },
+          },
+        },
+      },
+    },
+  });
+
+  if (!parent) {
+    return { exists: false };
+  }
+
+  return {
+    exists: true,
+    children: parent.child.map((c) => ({
+      childId: c.id,
+      profile: c.profile_pic,
+      hasFundAccount: c.account.length > 0,
+    })),
+  };
+}
