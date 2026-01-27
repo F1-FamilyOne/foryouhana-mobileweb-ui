@@ -25,14 +25,14 @@ export default function NumericKeypad({
   const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
   return (
-    <div className="grid grid-cols-3 gap-2">
+    <div className="grid grid-cols-3 gap-1">
       {keys.map((key) => (
         <button
           key={key}
           type="button"
           onClick={() => onNumberPress(key)}
           disabled={disabled}
-          className="flex h-[56px] items-center justify-center rounded-lg bg-white font-hana-medium text-[24px] text-gray-800 transition-colors hover:bg-hana-gray-100 active:bg-hana-gray-200 disabled:opacity-50"
+          className="flex h-[44px] items-center justify-center rounded-lg bg-white font-hana-medium text-[20px] text-gray-800 transition-all active:scale-95 active:bg-hana-gray-200 disabled:opacity-50"
         >
           {key}
         </button>
@@ -43,9 +43,9 @@ export default function NumericKeypad({
         type="button"
         onClick={onBackspace}
         disabled={disabled}
-        className="flex h-[56px] items-center justify-center rounded-lg bg-white text-gray-600 transition-colors hover:bg-hana-gray-100 active:bg-hana-gray-200 disabled:opacity-50"
+        className="flex h-[44px] items-center justify-center rounded-lg bg-white text-gray-600 transition-all active:scale-95 active:bg-hana-gray-200 disabled:opacity-50"
       >
-        <Delete size={24} />
+        <Delete size={20} />
       </button>
 
       {/* 0 */}
@@ -53,7 +53,7 @@ export default function NumericKeypad({
         type="button"
         onClick={() => onNumberPress('0')}
         disabled={disabled}
-        className="flex h-[56px] items-center justify-center rounded-lg bg-white font-hana-medium text-[24px] text-gray-800 transition-colors hover:bg-hana-gray-100 active:bg-hana-gray-200 disabled:opacity-50"
+        className="flex h-[44px] items-center justify-center rounded-lg bg-white font-hana-medium text-[20px] text-gray-800 transition-all active:scale-95 active:bg-hana-gray-200 disabled:opacity-50"
       >
         0
       </button>
@@ -63,7 +63,7 @@ export default function NumericKeypad({
         type="button"
         onClick={onComplete}
         disabled={disabled}
-        className="flex h-[56px] items-center justify-center rounded-lg bg-hana-main font-hana-bold text-[18px] text-white transition-colors hover:bg-hana-main/90 active:bg-hana-main/80 disabled:opacity-50"
+        className="flex h-[44px] items-center justify-center rounded-lg bg-white font-hana-bold text-[16px] text-gray-800 transition-all active:scale-95 active:bg-hana-gray-200 disabled:opacity-50"
       >
         완료
       </button>
