@@ -21,11 +21,8 @@ export default function menu() {
   const params = useParams();
   const childId = params.childId as string;
   return (
-    <>
-      <div
-        id="menuHeader"
-        className="mb-25 flex h-[50px] justify-between px-2 pt-5"
-      >
+    <div className="relative min-h-full">
+      <div id="menuHeader" className="mb-25 flex h-[50px] justify-between">
         <p className="font-hana-bold text-[25px]">메뉴</p>
         <ToggleChildProfile
           kids={kidsProfile}
@@ -104,7 +101,8 @@ export default function menu() {
           </Button>
         </div>
       </div>
+
       <BottomNavBar />
-    </>
+    </div>
   );
 }
