@@ -8,7 +8,7 @@
  */
 
 import { CardModal } from '@/components/ui/CardModal';
-import { formatAmount } from '@/lib/utils/format';
+import { formatAmount } from '@/lib/utils/numberFormat';
 
 interface TaxSavingModalProps {
   isOpen: boolean;

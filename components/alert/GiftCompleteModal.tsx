@@ -9,7 +9,7 @@
 
 import { X } from 'lucide-react';
 import { CardModal } from '@/components/ui/CardModal';
-import { formatAmount } from '@/lib/utils/format';
+import { formatAmount } from '@/lib/utils/numberFormat';
 
 interface GiftCompleteModalProps {
   isOpen: boolean;
