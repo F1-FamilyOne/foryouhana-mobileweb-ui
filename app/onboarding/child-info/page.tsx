@@ -65,7 +65,7 @@ export default function ChildInfoDetail() {
   }, [birth]);
 
   return (
-    <div className="flex min-h-dvh flex-col overflow-hidden bg-white">
+    <div className="flex min-h-full flex-col overflow-hidden bg-white">
       <Header content="AI 맞춤 증여 플랜" />
 
       <div className="flex flex-1 flex-col overflow-y-scroll px-5 pt-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -94,7 +94,7 @@ export default function ChildInfoDetail() {
         </div>
       </div>
 
-      <div className="flex shrink-0 flex-col items-center justify-center px-6 pb-11.25">
+      <div className="flex shrink-0 flex-col items-center justify-center px-6 pb-10">
         <label className="mb-7 flex items-center gap-2 text-sm">
           <input
             type="checkbox"
@@ -102,7 +102,7 @@ export default function ChildInfoDetail() {
             onChange={(e) => setAgree(e.target.checked)}
             className="h-4 w-4 accent-hana-main"
           />
-          마이데이터 수집 및 활용에 동의합니다.
+          [필수] 마이데이터 수집 및 활용에 동의합니다.
         </label>
 
         <CustomButton

@@ -81,9 +81,6 @@ importers:
       tailwind-merge:
         specifier: ^3.4.0
         version: 3.4.0
-      zod:
-        specifier: ^4.3.6
-        version: 4.3.6
     devDependencies:
       '@biomejs/biome':
         specifier: 2.2.0
@@ -2805,4 +2802,5 @@ snapshots:
       grammex: 3.1.12
       graphmatch: 1.1.0
 
-  zod@4.3.6: {}
+  zod@4.3.6:
+    optional: true

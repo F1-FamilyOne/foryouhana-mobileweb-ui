@@ -20,6 +20,9 @@ import { Label } from '@/components/ui/label';
 export default function ChildInfoPage() {
   const router = useRouter();
 
+  const [serviceAgree, setServiceAgree] = useState(false);
+  const [thirdPartyAgree, setThirdPartyAgree] = useState(false);
+
   const [signupBase, setSignupBase] = useState(false);
   const [signupPolicy, setSignupPolicy] = useState(false);
   const [signupAccount, setSignupAccount] = useState(false);
@@ -27,6 +30,16 @@ export default function ChildInfoPage() {
   const [investBase, setInvestBase] = useState(false);
   const [investPolicy, setInvestPolicy] = useState(false);
   const [investAccount, setInvestAccount] = useState(false);
+
+  const isAllChecked =
+    signupBase &&
+    signupPolicy &&
+    signupAccount &&
+    investBase &&
+    investPolicy &&
+    investPolicy &&
+    serviceAgree &&
+    thirdPartyAgree;
 
   const [name, setName] = useState('');
   const [bornDate, setBornDate] = useState('');
@@ -37,26 +50,39 @@ export default function ChildInfoPage() {
       alert('주민등록번호를 정확히 입력해주세요.');
       return;
     }
-    const residentNumber = `${bornDate}${rrnBack}`;
 
-    sessionStorage.setItem(
-      'childInfo',
-      JSON.stringify({
-        name,
-        resident_number: residentNumber,
-      }),
-    );
+    const rawData = sessionStorage.getItem('giftPlan');
+
+    if (rawData) {
+      try {
+        const giftPlan = JSON.parse(rawData);
+        giftPlan.child_name = {
+          name: name,
+        };
+        sessionStorage.setItem('giftPlan', JSON.stringify(giftPlan));
+        console.log('자녀 이름 추가 저장 완료:', giftPlan);
+      } catch (error) {
+        console.error('JSON 파싱 에러:', error);
+      }
+    } else {
+      console.error("'giftPlan' 데이터가 세션 스토리지에 없습니다.");
+    }
+
     router.push('/register/verification/family-check');
   };
 
   useEffect(() => {
-    const stored = sessionStorage.getItem('childInfo');
+    const stored = sessionStorage.getItem('giftPlan');
     if (!stored) return;
 
-    const { name, resident_number } = JSON.parse(stored);
-    setName(name ?? '');
-    if (resident_number) {
-      setBornDate(resident_number.slice(0, 6));
+    try {
+      const parsed = JSON.parse(stored);
+
+      if (parsed.child_name) {
+        setName(parsed.child_name);
+      }
+    } catch (error) {
+      console.error('데이터 로드 중 에러:', error);
     }
   }, []);
 
@@ -68,7 +94,7 @@ export default function ChildInfoPage() {
           step="current"
           step2="pending"
           content1="가족관계 확인하기"
-          content2="입출금 계좌 개설"
+          content2="계좌 개설"
         />
       </div>
       <h1 className="mx-3 mt-5 font-hana-medium text-[24px] leading-tight">
@@ -164,22 +190,35 @@ export default function ChildInfoPage() {
         />
       </div>
       <Label className="mx-3 mt-6 flex cursor-pointer items-center gap-2">
-        <Checkbox className="border-gray-300 data-[state=checked]:border-hana-main data-[state=checked]:bg-hana-main data-[state=checked]:text-white" />
+        <Checkbox
+          className="border-gray-300 data-[state=checked]:border-hana-main data-[state=checked]:bg-hana-main data-[state=checked]:text-white"
+          checked={serviceAgree}
+          onCheckedChange={(checked) => setServiceAgree(checked === true)}
+        />
         <span className="font-hana-light text-[14px]">
-          "아이앞으로" 서비스를 통한 자녀관리를 위한 동의
+          [필수] "아이앞으로" 서비스를 통한 자녀관리를 위한 동의
         </span>
       </Label>
       <p className="mx-3.5 mt-2 font-hana-light text-[12px] text-hana-gray-600">
         * 해당 내용이 동의되어야 개설된 자녀의 계좌를 조회할 수 있습니다.
       </p>
       <Label className="mx-3 mt-5 flex cursor-pointer items-center gap-2">
-        <Checkbox className="border-gray-300 data-[state=checked]:border-hana-main data-[state=checked]:bg-hana-main data-[state=checked]:text-white" />
+        <Checkbox
+          className="border-gray-300 data-[state=checked]:border-hana-main data-[state=checked]:bg-hana-main data-[state=checked]:text-white"
+          checked={thirdPartyAgree}
+          onCheckedChange={(checked) => setThirdPartyAgree(checked === true)}
+        />
         <span className="font-hana-light text-[14px]">
-          개인정보 및 금융거래 정보 제 3자 제공 동의서 (아이앞으로_자녀등록용)
+          [필수] 개인정보 및 금융거래 정보 제 3자 제공 동의서
+          (아이앞으로_자녀등록용)
         </span>
       </Label>
-      <div className="mx-3.5 mt-6">
-        <CustomButton preset="greenlong" onClick={handleNext}>
+      <div className="mx-3.5 mt-3">
+        <CustomButton
+          preset="greenlong"
+          onClick={handleNext}
+          disabled={!isAllChecked}
+        >
           다음
         </CustomButton>
       </div>
