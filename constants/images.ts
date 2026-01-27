@@ -39,4 +39,8 @@ export const IMAGES_PATH = {
   CUTE_HI: '/home/icon/cuteHi.svg',
   CUTE_WATER: '/home/icon/cuteWater.svg',
   CUTE_WINK: '/home/icon/cuteWink.svg',
+  BEFORE_TEST: '/beforeJoin/icon/beforeTest.svg',
+  BEFORE_TEST_ICON: '/beforeJoin/icon/beforeTestIcon.svg',
+  STARDOLL_3D: '/beforeJoin/icon/stardoll3D.svg',
+  AFTER_TEST: '/beforeJoin/icon/afterTest.svg',
 } as const;
