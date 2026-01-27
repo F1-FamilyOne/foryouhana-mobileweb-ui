@@ -24,7 +24,7 @@ export default function CardTimeline({
   title,
   message,
   isMessage = false,
-  onMessageClick, // 👈 구조 분해 할당
+  onMessageClick, // 메시지 클릭 핸들러
 }: Props) {
   const formattedDate = date.toLocaleDateString('ko-KR', {
     year: 'numeric',
@@ -33,7 +33,6 @@ export default function CardTimeline({
   });
 
   return (
-    // h-24.5 (약 98px) -> min-h로 변경하여 내용이 길어지면 늘어나도록 유연성 확보
     <div className="min-h-24.5 flex-1 rounded-[24px] bg-[#E9F4EF] p-4 font-hana-regular shadow-sm transition-all hover:shadow-md">
       <div className="mb-1 flex items-start justify-between text-[15px]">
         <p className="font-bold text-gray-800">{isMessage ? '입금' : title}</p>
@@ -75,12 +74,15 @@ export default function CardTimeline({
             )}
           </button>
         ) : (
-          <div className="flex items-center text-[13px] text-gray-600">
-            <span className="mr-1 font-medium text-gray-800">{fundName}</span>
-            (으)로
-            <span className="ml-1">
-              {movedMoney.toLocaleString()}원 투자완료
+          <div className="flex flex-wrap items-center gap-x-1 text-[13px] text-gray-600 leading-relaxed">
+            <span className="break-keep font-bold text-gray-800">
+              {fundName || title}
             </span>
+            <span className="shrink-0">(으)로</span>
+            <span className="shrink-0 font-bold text-hana-mint">
+              {movedMoney.toLocaleString()}원
+            </span>
+            <span className="shrink-0">투자완료</span>
           </div>
         )}
       </div>

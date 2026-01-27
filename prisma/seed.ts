@@ -8,6 +8,17 @@ import {
 import { prisma } from '../lib/prisma';
 
 async function main() {
+  console.log('🧹 기존 데이터 정리 중...');
+  // 삭제 순서 최적화 (에러 방지)
+  await prisma.history.deleteMany();
+  await prisma.timeline.deleteMany();
+  await prisma.account.deleteMany();
+  await prisma.alert.deleteMany();
+  await prisma.chatlog.deleteMany();
+  await prisma.child.deleteMany();
+  await prisma.parent.deleteMany();
+  await prisma.fund.deleteMany();
+
   console.log('🚀 시딩 시작: 부모, 자녀, 계좌 및 이력 데이터...');
 
   // 1. MyData & 부모 생성
@@ -410,8 +421,7 @@ async function main() {
       {
         child_id: child1.id,
         type: '입출금 통장 개설', 
-        description: '첫 금융 생활의 시작',
-        memo: '하나둘 첫 통장 만든 날',
+        description: '500000원',
         date: new Date('2024-01-01'), 
       },
 
@@ -420,7 +430,6 @@ async function main() {
         child_id: child1.id,
         type: '연금저축펀드 가입',
         description: globalStockFund.name, // '하나글로벌울트라 TOP50 ETF'
-        memo: '테x라 우주가보자',
         date: new Date('2024-02-01T10:05:00'),
       },
 
@@ -429,7 +438,6 @@ async function main() {
         child_id: child1.id,
         type: '용돈 입금',
         description: '100,000원',
-        memo: '행복한 어린이날 선물 🎁',
         date: new Date('2024-05-05'),
       },
 
@@ -437,7 +445,6 @@ async function main() {
         child_id: child1.id,
         type: '용돈 입금',
         description: '50,000원', // history.money와 동일
-        memo: '할머니가 주신 용돈 저축하기',
         date: new Date(), // 이건 가장 최근에 떠야 하니 현재 시간으로!
       },
 
@@ -446,7 +453,6 @@ async function main() {
         child_id: child2.id,
         type: '입출금 통장 개설',
         description: '우리 아기 첫 통장',
-        memo: '자라나라 머리머리',
         date: new Date('2010-05-05'), 
       },
 
@@ -454,7 +460,6 @@ async function main() {
         child_id: child2.id,
         type: '성년의 날',
         description: '축하합니다',
-        memo: '성인 축하해',
         date: new Date('2024-05-20'), 
       },
 
@@ -462,7 +467,6 @@ async function main() {
         child_id: child2.id,
         type: '펀드 가입',
         description: baseFund.name, // '하나없이하나마나ETF'
-        memo: 'ETF로 돈 좀 벌게 해줄게',
         date: new Date('2025-01-01'), 
       },
 
@@ -471,7 +475,6 @@ async function main() {
         child_id: child2.id,
         type: '펀드 배당금 입금',
         description: '12,500원',
-        memo: '첫 투자 배당금 받음!',
         date: new Date('2026-01-15'), 
       },
     ],
@@ -481,8 +484,11 @@ async function main() {
 }
 
 main()
-  .catch((e) => {
-    console.error('❌ 시딩 중 에러 발생:', e);
-    process.exit(1);
+  .then(async () => {
+    await prisma.$disconnect();
   })
-  .finally(() => prisma.$disconnect());
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

@@ -1,4 +1,3 @@
-// components/timeline/TimelineHeader.tsx
 'use client';
 
 import Image from 'next/image';
@@ -11,7 +10,7 @@ export default function TimelineHeader({
   childrenList: { id: number; name: string; profile_pic: string | null }[];
 }) {
   const params = useParams();
-  // URL의 childId는 문자열이지만, 비교를 위해 변환하거나 문자열로 유지
+
   const currentChildId = Number(params.childId);
 
   const activeProfileClass =

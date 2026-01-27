@@ -36,51 +36,42 @@ export default function TimelineList({
   const [isAdultModalOpen, setIsAdultModalOpen] = useState(false);
 
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+
   const [currentMessage, setCurrentMessage] = useState('');
 
-  // ✨ 성인(만 19세, 한국나이 20세) 체크 로직
+  // 성인 체크 로직
   useEffect(() => {
     if (!bornDate) return;
-
-    console.log('넘겨받은 생일:', bornDate);
-
     const today = new Date();
     const birth = new Date(bornDate);
-
-    // 👇👇 이 로그를 추가해주세요! 👇👇
-    console.log('=== 성인 체크 디버깅 ===');
-    console.log('오늘 날짜:', today);
-    console.log('받아온 생일:', bornDate);
-    console.log('변환된 생일:', birth);
-    // 만 나이 계산
     let age = today.getFullYear() - birth.getFullYear();
     const m = today.getMonth() - birth.getMonth();
     if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
       age--;
     }
-
-    // 만 19세 이상(성인)이면 1.5초 뒤 축하 팝업 등장
     if (age >= 19) {
       const timer = setTimeout(() => setIsAdultModalOpen(true), 1500);
       return () => clearTimeout(timer);
     }
   }, [bornDate]);
 
-  // 💌 메시지 모달 열기
   const handleOpenMsgModal = (id: string) => {
+    // 클릭한 아이템 찾기
     const targetItem = items.find((item) => item.id === id);
+
     setSelectedItemId(id);
     setCurrentMessage(targetItem?.message || '');
     setIsMsgModalOpen(true);
   };
 
-  // 💾 메시지 저장 로직
   const handleSaveMessage = async (text: string) => {
     if (!selectedItemId) return;
     try {
       const result = await saveTimelineMessage(childId, selectedItemId, text);
       if (result.success) {
         setIsMsgModalOpen(false);
+        // 페이지 새로고침 (데이터 반영)
+        window.location.reload();
       } else {
         alert('저장에 실패했습니다.');
       }
@@ -108,22 +99,25 @@ export default function TimelineList({
               isMessage: item.isMessage,
               message: item.message,
             }}
+            // 클릭 시 핸들러 호출
             onMessageClick={() => handleOpenMsgModal(item.id)}
           />
         ))}
       </section>
 
+      {/* 2. 메시지 모달 */}
       <TimelineMsg
         isOpen={isMsgModalOpen}
         onClose={() => setIsMsgModalOpen(false)}
         onSave={handleSaveMessage}
+        existingMessage={currentMessage}
       />
 
       <FinancialHistoryGiftModal
         isOpen={isAdultModalOpen}
         onClose={() => setIsAdultModalOpen(false)}
         childName={childName}
-        onShare={() => alert('카카오톡 공유 기능은 준비 중입니다! 📤')}
+        onShare={() => alert('~카카오톡 공유 해드렸습니다~')}
         onNext={() => setIsAdultModalOpen(false)}
       />
     </>

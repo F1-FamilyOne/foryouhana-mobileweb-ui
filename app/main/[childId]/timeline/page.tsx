@@ -64,7 +64,7 @@ export default async function TimelinePage({
     if (monthsPassed < 0) monthsPassed = 0;
   }
 
-  // 3. UI 데이터로 변환 (여기가 핵심 수정 부분입니다!)
+  // 3. UI 데이터로 변환
   const timelineItems: TimelineItemData[] = timelines.map((item) => {
     let icon: TimelineItemData['icon'] = 'business';
     let variant: TimelineItemData['variant'] = 'lightGreen';
@@ -84,8 +84,6 @@ export default async function TimelinePage({
       variant = 'lightGreen';
     }
 
-    // ⭐ [핵심 수정] DB에 저장된 메모(memo)가 있다면, 강제로 메시지 모드로 변경! ⭐
-    // 빈 문자열이 아닌 실제 내용이 있을 때만 적용
     if (item.memo && item.memo.trim().length > 0) {
       isMessage = true;
     }
@@ -98,7 +96,7 @@ export default async function TimelinePage({
       movedMoney: 0,
       icon,
       variant,
-      isMessage, // 수정된 로직이 반영된 값
+      isMessage,
       message: item.memo || '',
     };
   });
