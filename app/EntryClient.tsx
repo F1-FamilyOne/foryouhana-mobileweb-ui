@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getUserSetup } from '@/actions/getUserSetup';
 import { useUserContext } from '@/hooks/useUserContext';
 
@@ -24,16 +24,17 @@ import { useUserContext } from '@/hooks/useUserContext';
 export default function EntryClient() {
   const { userId, ready } = useUserContext();
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log(userId, ready);
     if (!ready || !userId) return;
 
     (async () => {
       const result = await getUserSetup(Number(userId));
 
       if (!result.exists) {
-        return console.error('there is no User, User must login');
+        setError('유저 정보가 없습니다. 다시 로그인해주세요.');
+        throw new Error('there is no User, User must login');
       }
 
       if (!result.hasChild) return router.replace('/onboarding/intro');
@@ -45,7 +46,7 @@ export default function EntryClient() {
 
   return (
     <div className="flex h-screen items-center justify-center">
-      초기셋팅 중...
+      {error ?? '초기셋팅 중...'}
     </div>
   );
 }
