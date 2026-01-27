@@ -2,6 +2,13 @@ import Image from 'next/image';
 import { InfoCard } from './InfoCard';
 import { IntroStatCard } from './IntroStatCard';
 
+/**
+ * @page: SlideBenefit
+ * @description: 인트로 화면의 두번째 페이지입니다.
+ * @author: seonukim
+ * @date: 2026-01-27
+ */
+
 export default function SlideBenefit() {
   return (
     <div className="flex w-full flex-col gap-2 font-hana-cm">

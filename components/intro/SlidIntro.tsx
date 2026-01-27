@@ -3,6 +3,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import FeatureCard from './FeatureCard';
 import { default as InvestChartCard } from './InvestChartCard';
 
+/**
+ * @page: onboarding/intro 화면의 첫번째 슬라이드
+ * @description: 인트로 슬라이드입니다.
+ * @author: seonukim
+ * @date: 2026-01-27
+ */
+
 export default function SlideIntro() {
   return (
     <div className="w-full">

@@ -1,5 +1,12 @@
 import { Card, CardContent } from '@/components/ui/card';
 
+/**
+ * @page: FeatureCard
+ * @description: 슬라이드 첫번째에 들어가는 둥근 원형의 루시드 아이콘을 담은 작은 카드입니다.
+ * @author: seonukim
+ * @date: 2026-01-27
+ */
+
 type Feature = {
   icon: React.ReactNode;
   title: string;

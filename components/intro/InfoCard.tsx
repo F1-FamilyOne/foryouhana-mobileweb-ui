@@ -1,5 +1,14 @@
 import InfoBadge from './IntroBadge';
 
+/**
+ * @page: InfoCard
+ * @description: InfoCard
+ * @author: seonukim
+ * @date: 2026-01-27
+ *
+ * 슬라이드 안쪽에 둥근 알약 모양의 뱃지와 함께 하는 카드 컴포넌트입니다.
+ */
+
 type InfoCardProps = {
   badge: string;
   children: React.ReactNode;

@@ -6,6 +6,15 @@ import SlideAi from '../../../components/intro/SlideAi';
 import SlideBenefit from '../../../components/intro/SlideBenefit';
 import SlideIntro from '../../../components/intro/SlidIntro';
 
+/**
+ * @page: /onboarding/intro/
+ * @description: 서비스 인트로 소개 화면입니다
+ * @author: seonukim
+ * @date: 2026-01-27
+ *
+ * 3종류의 카드가 자동으로 이동하게 설정되어있습니다.
+ */
+
 export default function ServiceInfo() {
   const cardlist = [
     { id: 'intro', node: <SlideIntro /> },

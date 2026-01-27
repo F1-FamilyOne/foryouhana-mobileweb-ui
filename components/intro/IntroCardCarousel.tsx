@@ -9,6 +9,15 @@ import {
   CarouselItem,
 } from '@/components/ui/carousel';
 
+/**
+ * @page: IntroCardCarousel
+ * @description: 온보딩 인트로 화면에 들어가는 움직이는 캐러셀 화면 컴포넌트입니다.
+ * @author: seonukim
+ * @date: 2026-01-27
+ *
+ * 현재 오토 플레이는 3초 간격으로 움직이도록 설정되어있습니다.
+ */
+
 type CarouselCard = {
   id: string;
   node: React.ReactNode;

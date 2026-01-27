@@ -14,6 +14,17 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 
+/**
+ * @page: InvestChartCard
+ * @description: 인트로 화면에 들어가는 소개 이미지 차트 컴포넌트입니다.
+ * @author: seonukim
+ * @date: 2026-01-27
+ *
+ * chartjs를 통해 생성했습니다.
+ *
+ * 다양한 중첩 (상단 글씨 표시) 등이 들어가기 때문에 다른 화면에 쓰기에 용이하진 않습니다.
+ */
+
 ChartJS.register(
   CategoryScale,
   LinearScale,

@@ -1,5 +1,12 @@
 import Image from 'next/image';
 
+/**
+ * @page: SlideAi
+ * @description: 인트로 슬라이드 3번째 페이지입니다.
+ * @author: seonukim
+ * @date: 2026-01-27
+ */
+
 export default function SlideAi() {
   return (
     <div className="relative h-full font-hana-medium">
