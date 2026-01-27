@@ -1,5 +1,6 @@
 'use client';
 
+import type { Route } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -42,7 +43,6 @@ export default function BeforeJoinFund({
     })();
   }, [ready, userId, initialChildId]);
 
-  /** derive */
   const selectedChild = useMemo(() => {
     return children.find((c) => c.childId === selectedKidId) ?? null;
   }, [children, selectedKidId]);
@@ -57,12 +57,16 @@ export default function BeforeJoinFund({
   useEffect(() => {
     if (!selectedChild) return;
 
-    if (selectedChild.hasFundAccount) {
-      router.replace(`/main/${selectedChild.childId}/home`);
-    }
+    const target = (
+      selectedChild.hasFundAccount
+        ? `/main/${selectedChild.childId}/home`
+        : `/main/${selectedChild.childId}/beforeJoin`
+    ) as Route;
+
+    router.replace(target);
   }, [selectedChild, router]);
 
-  if (!selectedChild) return null;
+  if (!selectedChild) return <div className="p-6">불러오는 중...</div>;
 
   return (
     <div className="flex min-h-dvh w-full flex-col">
@@ -79,7 +83,6 @@ export default function BeforeJoinFund({
         </div>
       </div>
 
-      {/* 메인 카드 */}
       <div className="mt-5.75 px-4">
         <div className="flex flex-col items-center rounded-2xl bg-hana-light-green py-8 shadow-sm">
           <Image
@@ -97,7 +100,7 @@ export default function BeforeJoinFund({
           </h1>
 
           <Link
-            href={`/onboarding/intro`}
+            href={`/main/${selectedKidId}/beforeJoin/test`}
             className="rounded-lg bg-hana-main hover:bg-hana-green active:bg-hana-green"
           >
             <h1 className="px-5 py-3.25 font-hana-cm text-[18px] text-white">
@@ -107,7 +110,6 @@ export default function BeforeJoinFund({
         </div>
       </div>
 
-      {/* 하단 카드 2개 */}
       <div className="mt-4 grid grid-cols-2 gap-6 px-4">
         <div className="rounded-xl bg-hana-light-purple p-4 shadow-sm">
           <h2 className="font-hana-cm text-[20px]">
