@@ -57,8 +57,8 @@ export default function verifyListPage() {
     if (savedData) {
       try {
         const giftPlan = JSON.parse(savedData);
-        if (giftPlan.is_promise_fixed === false) {
-          setPromiseFixed(false);
+        if (giftPlan.is_promise_fixed !== undefined) {
+          setPromiseFixed(giftPlan.is_promise_fixed);
         }
       } catch (error) {
         console.error('JSON 파싱 에러:', error);
