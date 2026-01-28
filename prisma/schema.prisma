@@ -50,13 +50,14 @@ model fund {
   id          Int               @id @default(autoincrement()) @db.UnsignedInt
   name        String            @db.VarChar(255)
   danger      fund_danger
-  type        fund_type         // 채권, 주식 등 펀드 유형
+  type        fund_type         // 채권, 주식 등 펀드 유형 + 신탁
   is_pension   Boolean           @default(false) // 연저펀 전용(1), 일반펀드(0)
   saving_type fund_saving_type  // 적립 방식: 정기+자유(BOTH), 정기만(REGULAR), 자유만(FREE)
   company     String            @db.VarChar(50)
   total_fee   Decimal      @db.Decimal(5, 4)
   sell_fee    Decimal      @db.Decimal(5, 4)
-  set_date    DateTime     @db.Date
+  set_date    DateTime     @db.Date      // 상장일
+  maturity_period Int?      @db.UnsignedInt  // [만기 기간] 개월 수 (ETF는 null, 펀드/신탁은 12, 36, 60 등)
   plus_1      Decimal?     @db.Decimal(7, 2) // Optional 상장 1,5,10년 안된애들 있을수있음
   plus_5      Decimal?     @db.Decimal(7, 2) // Optional
   plus_10     Decimal?     @db.Decimal(7, 2) // Optional
@@ -69,15 +70,22 @@ model account {
   id                                         Int               @id @default(autoincrement()) @db.UnsignedInt
   child_id                                   Int               @db.UnsignedInt
   fund_id                                    Int?              @db.UnsignedInt
-  acc_num                                    String            @db.VarChar(30)
+  // 연금저축펀드계좌 표시. 일반펀드/예적금/ETF계좌는 null
+  // sub_accounts가 연저펀에서 굴리는 펀드들임
+  parent_account_id                          Int?              @db.UnsignedInt 
+  parent_account                             account?          @relation("ParentChild", fields: [parent_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  sub_accounts                               account[]         @relation("ParentChild")
+  acc_num                                    String            @unique @db.VarChar(30)
   acc_type                                   account_acc_type
   opened_at                                  DateTime          @db.Date
+  target_date                                DateTime?         @db.Date  // 가입 시 계산된 만기 예정일 (ETF는 null)
   closed_at                                  DateTime?         @db.Date
   deposit                                    BigInt            @default(0) @db.UnsignedBigInt
   in_type                                    Boolean           @default(false) // 0=정기(false), 1=자유(true)
   plus_rate                                  Decimal           @default(0.00) @db.Decimal(5, 2)
   plus_money                                 BigInt            @default(0) @db.UnsignedBigInt
   in_month                                   Int?              @db.TinyInt
+  status                                     account_status    @default(ACTIVE) // Enum 추가
   child                                      child             @relation("AllAccounts", fields: [child_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_account_child")
   fund                                       fund?             @relation(fields: [fund_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_account_fund")
   history_history_source_account_idToaccount history[]         @relation("history_source_account_idToaccount")
@@ -88,6 +96,7 @@ model account {
 
   @@index([child_id], map: "fk_account_child")
   @@index([fund_id], map: "fk_account_fund")
+  @@index([parent_account_id], map: "fk_account_parent")
 }
 
 model history {
@@ -175,6 +184,7 @@ enum fund_type {
   BOND        // 채권형
   MIXED       // 혼합형
   ETF         // 상장지수펀드
+  TRUST       // 신탁형
 }
 
 enum fund_saving_type {
@@ -189,3 +199,11 @@ enum account_acc_type {
   PENSION     // 연저펀
 }
 
+enum account_status {
+  ACTIVE             // 운용 중 (공통)
+  
+  SOLD               // ETF 전용: 전량 매도 (해지 개념 아님)
+  
+  EARLY_TERMINATED   // 펀드/신탁: 중도 해지 (기간 못 채움)
+  MATURITY_TERMINATED // 펀드/신탁: 만기 해지 (기간 채움)
+}
