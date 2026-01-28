@@ -42,43 +42,44 @@ export async function processDeposit(
   }
 
   try {
-    // 2. 출금 계좌 존재 및 잔액 확인
-    const sourceAccount = await prisma.account.findUnique({
-      where: { id: sourceAccountId },
-    });
-
-    if (!sourceAccount) {
-      return { success: false, error: '출금 계좌를 찾을 수 없습니다.' };
-    }
-
-    if (Number(sourceAccount.deposit) < amount) {
-      return { success: false, error: '잔액이 부족합니다.' };
-    }
-
-    // 3. 입금 계좌 존재 확인
-    const targetAccount = await prisma.account.findUnique({
-      where: { id: targetAccountId },
-    });
-
-    if (!targetAccount) {
-      return { success: false, error: '입금 계좌를 찾을 수 없습니다.' };
-    }
-
-    // 4. 트랜잭션 실행
+    // 2. 모든 DB 작업을 트랜잭션 내부에서 수행 (Race Condition 방지)
     await prisma.$transaction(async (tx) => {
-      // 4-1. 출금 계좌 잔액 감소
+      // 2-1. 출금 계좌 조회 및 검증
+      const sourceAccount = await tx.account.findUnique({
+        where: { id: sourceAccountId },
+      });
+
+      if (!sourceAccount) {
+        throw new Error('출금 계좌를 찾을 수 없습니다.');
+      }
+
+      // 2-2. BigInt 직접 비교 (정밀도 손실 방지)
+      if (sourceAccount.deposit < BigInt(amount)) {
+        throw new Error('잔액이 부족합니다.');
+      }
+
+      // 2-3. 입금 계좌 조회 및 검증
+      const targetAccount = await tx.account.findUnique({
+        where: { id: targetAccountId },
+      });
+
+      if (!targetAccount) {
+        throw new Error('입금 계좌를 찾을 수 없습니다.');
+      }
+
+      // 2-4. 출금 계좌 잔액 감소
       await tx.account.update({
         where: { id: sourceAccountId },
         data: { deposit: { decrement: BigInt(amount) } },
       });
 
-      // 4-2. 입금 계좌 잔액 증가
+      // 2-5. 입금 계좌 잔액 증가
       await tx.account.update({
         where: { id: targetAccountId },
         data: { deposit: { increment: BigInt(amount) } },
       });
 
-      // 4-3. history 레코드 생성
+      // 2-6. history 레코드 생성
       await tx.history.create({
         data: {
           money: BigInt(amount),
@@ -87,7 +88,7 @@ export async function processDeposit(
         },
       });
 
-      // 4-4. timeline 레코드 생성
+      // 2-7. timeline 레코드 생성
       await tx.timeline.create({
         data: {
           child_id: childId,
@@ -97,7 +98,7 @@ export async function processDeposit(
         },
       });
 
-      // 4-5. alert 생성 (GIFT_COMPLETE)
+      // 2-8. alert 생성 (GIFT_COMPLETE)
       await tx.alert.create({
         data: {
           child_id: childId,
@@ -110,7 +111,7 @@ export async function processDeposit(
       });
     });
 
-    // 5. 캐시 무효화
+    // 3. 캐시 무효화
     revalidatePath(`/main/${childId}/home`);
     revalidatePath(`/main/${childId}/timeline`);
     revalidatePath(`/main/${childId}/my-product`);
@@ -118,6 +119,9 @@ export async function processDeposit(
     return { success: true };
   } catch (error) {
     console.error('Deposit error:', error);
+    if (error instanceof Error) {
+      return { success: false, error: error.message };
+    }
     return { success: false, error: '입금 처리 중 오류가 발생했습니다.' };
   }
 }
