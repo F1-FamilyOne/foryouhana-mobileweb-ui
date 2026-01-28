@@ -1,8 +1,21 @@
 'use client';
 import { useState } from 'react';
 import { CustomButton } from '@/components/cmm/CustomButton';
-import GiftPlanSection, { type GIFT_METHOD } from './GiftPlanSection';
 import PensionSelection from './PensionSelection';
+import PlanSection from './PlanSection';
+import YugiSection from './YugiSection';
+
+export enum GIFT_METHOD {
+  REGULAR = 'REGULAR', // 정기 이체
+  FLEXIBLE = 'FLEXIBLE', //자유 이제
+}
+
+export enum BLOCK_STATUS {
+  BLOCK = 'BLOCK',
+  NONBLOCK = 'NONBLOCK',
+  AFTERHOMETAX = 'AFTERHOMETAX',
+  REVERT = 'REVERT',
+}
 
 type Props = {
   isPension: boolean;
@@ -11,6 +24,7 @@ type Props = {
   isFixedGift: boolean;
   monthlyMoney: number;
 };
+
 export default function MainSection({
   isPension,
   method,
@@ -18,7 +32,12 @@ export default function MainSection({
   isFixedGift,
   monthlyMoney,
 }: Props) {
-  const [blocked, setBlocked] = useState<boolean>(false);
+  const [giftMethod, setGiftMethod] = useState<GIFT_METHOD>(
+    isFixedGift ? GIFT_METHOD.REGULAR : method,
+  );
+  const [blocked, setBlocked] = useState<BLOCK_STATUS>(BLOCK_STATUS.NONBLOCK);
+  const [fixed, setFixed] = useState<boolean>(isFixedGift);
+
   return (
     <div>
       <main className="flex-1">
@@ -29,19 +48,32 @@ export default function MainSection({
         </div>
         <div className="my-2 grid justify-center gap-2 rounded-2xl border border-hana-gray-300 p-4">
           <PensionSelection prev={isPension} />
-          <GiftPlanSection
-            method={method}
+          <PlanSection
+            method={giftMethod}
             period={period}
             amount={Number(monthlyMoney)}
             isFixed={isFixedGift}
-            isBlocked={blocked}
-            onBlockedChange={(b: boolean) => setBlocked(b)}
+            blockStatus={blocked}
+            onMethodChange={setGiftMethod}
+          />
+          <hr className="my-4 border-hana-gray-400" />
+          <YugiSection
+            prev={isFixedGift}
+            isFixed={fixed}
+            onChange={(v: boolean) => {
+              setFixed(v);
+              if (v) setGiftMethod(GIFT_METHOD.REGULAR);
+            }}
+            onBlockedChange={setBlocked}
           />
         </div>
       </main>
       <div className="grid justify-center gap-2 pt-4">
         <CustomButton preset="lightgraylong">돌아가기</CustomButton>
-        <CustomButton preset="greenlong" disabled={blocked}>
+        <CustomButton
+          preset="greenlong"
+          disabled={blocked === BLOCK_STATUS.BLOCK}
+        >
           이 플랜으로 변경하기
         </CustomButton>
       </div>

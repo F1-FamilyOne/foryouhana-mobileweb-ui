@@ -1,13 +1,9 @@
 import { notFound } from 'next/navigation';
-import { CustomButton } from '@/components/cmm/CustomButton';
 import Header from '@/components/cmm/Header';
 import { account_acc_type } from '@/lib/generated/prisma/enums';
 import { prisma } from '@/lib/prisma';
 import { getGiftPeriodMonths } from '@/lib/utils';
-import FixedPlanSection from './FixedPlanSection';
-import GiftPlanSection, { GIFT_METHOD } from './GiftPlanSection';
-import MainSection from './MainSection';
-import PensionSelection from './PensionSelection';
+import MainSection, { GIFT_METHOD } from './MainSection';
 
 /**
  * @page: 증여 플랜 수정 페이지
@@ -17,13 +13,6 @@ import PensionSelection from './PensionSelection';
  * @date: 2026-01-27
  */
 
-// type PlanFormState = {
-//   isPension: boolean;
-//   isFixedGift: boolean;
-//   isRegular: boolean;
-//   monthlyMoney: number;
-//   inMonth: number;
-// };
 type PageProps = {
   params: {
     childId: string;
@@ -74,7 +63,7 @@ export default async function PlanEdit({ params }: PageProps) {
         isFixedGift={isFixedGift}
         method={method}
         isPension={isPension}
-      ></MainSection>
+      />
     </div>
   );
 }
