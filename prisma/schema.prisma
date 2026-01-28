@@ -14,7 +14,7 @@ model mydata {
 
 model parent {
   id        Int     @id @default(autoincrement()) @db.UnsignedInt
-  mydata_id Int?    @unique @db.UnsignedInt 
+  mydata_id Int?    @unique @db.UnsignedInt
   child     child[]
   mydata    mydata? @relation(fields: [mydata_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_parent_mydata")
 
@@ -47,8 +47,8 @@ model child {
 }
 
 model fund {
-  id          Int               @id @default(autoincrement()) @db.UnsignedInt
-  name        String            @db.VarChar(255)
+  id          Int              @id @default(autoincrement()) @db.UnsignedInt
+  name        String           @db.VarChar(255)
   danger      fund_danger
   type        fund_type         // 채권, 주식 등 펀드 유형 + 신탁
   is_pension   Boolean           @default(false) // 연저펀 전용(1), 일반펀드(0)
@@ -100,29 +100,27 @@ model account {
 }
 
 model history {
-  id                BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  created_at        DateTime @default(now()) @db.DateTime(6)
-  money             BigInt   @db.UnsignedBigInt
-  source_account_id Int      @db.UnsignedInt
-  target_account_id Int      @db.UnsignedInt
-
-  account_history_source_account_idToaccount account @relation("history_source_account_idToaccount", fields: [source_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_history_source")
-  account_history_target_account_idToaccount account @relation("history_target_account_idToaccount", fields: [target_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_history_target")
+  id                                         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  created_at                                 DateTime @default(now()) @db.DateTime(6)
+  money                                      BigInt   @db.UnsignedBigInt
+  source_account_id                          Int      @db.UnsignedInt
+  target_account_id                          Int      @db.UnsignedInt
+  account_history_source_account_idToaccount account  @relation("history_source_account_idToaccount", fields: [source_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_history_source")
+  account_history_target_account_idToaccount account  @relation("history_target_account_idToaccount", fields: [target_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_history_target")
 
   @@index([source_account_id], map: "fk_history_source")
   @@index([target_account_id], map: "fk_history_target")
 }
 
 model auto_transfer {
-  id                Int    @id @default(autoincrement()) @db.UnsignedInt
-  transfer_day      Int    @db.UnsignedTinyInt   // 납입일 (매월 몇 일, 1-31)
-  transfer_count    Int    @db.UnsignedTinyInt   // 총 납입횟수
-  amount            BigInt @db.UnsignedBigInt    // 납입금액
-  source_account_id Int    @db.UnsignedInt       // 납부계좌 (출금)
-  target_account_id Int    @db.UnsignedInt       // 입금계좌
-
-  source_account account @relation("auto_transfer_source", fields: [source_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_auto_transfer_source")
-  target_account account @relation("auto_transfer_target", fields: [target_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_auto_transfer_target")
+  id                Int     @id @default(autoincrement()) @db.UnsignedInt
+  transfer_day      Int     @db.UnsignedTinyInt
+  transfer_count    Int     @db.UnsignedTinyInt
+  amount            BigInt  @db.UnsignedBigInt
+  source_account_id Int     @db.UnsignedInt
+  target_account_id Int     @db.UnsignedInt
+  source_account    account @relation("auto_transfer_source", fields: [source_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_auto_transfer_source")
+  target_account    account @relation("auto_transfer_target", fields: [target_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_auto_transfer_target")
 
   @@index([source_account_id], map: "fk_auto_transfer_source")
   @@index([target_account_id], map: "fk_auto_transfer_target")
@@ -130,11 +128,10 @@ model auto_transfer {
 
 model chatlog {
   id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  child_id   Int      @db.UnsignedInt    
-  log        String   @db.VarChar(500)         
+  child_id   Int      @db.UnsignedInt
+  log        String   @db.VarChar(500)
   created_at DateTime @default(now()) @db.DateTime(6)
-  is_sent    Boolean  @default(false)    
-  
+  is_sent    Boolean  @default(false)
   child      child    @relation(fields: [child_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_chatlog_child")
 
   @@index([child_id], map: "fk_chatlog_child")
@@ -145,13 +142,12 @@ model alert {
   child_id    Int      @db.UnsignedInt
   type        String   @db.VarChar(25)
   title       String   @db.VarChar(25)
-  description String?  @db.Text                
-  button_text String   @default("확인") @db.VarChar(20) 
-  status      Boolean  @default(false)            
-  priority    Int      @default(0) @db.UnsignedTinyInt 
-  created_at  DateTime @default(now()) @db.DateTime(6) 
+  description String?  @db.Text
+  button_text String   @default("확인") @db.VarChar(20)
+  status      Boolean  @default(false)
+  priority    Int      @default(0) @db.UnsignedTinyInt
+  created_at  DateTime @default(now()) @db.DateTime(6)
   screen      String   @db.VarChar(50)
-  
   child       child    @relation(fields: [child_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_alert_child")
 
   @@index([child_id], map: "fk_alert_child")
@@ -161,9 +157,9 @@ model timeline {
   id          Int      @id @default(autoincrement()) @db.UnsignedInt
   child_id    Int      @db.UnsignedInt
   date        DateTime @default(now()) @db.DateTime(6)
-  type        String   @db.VarChar(20) 
+  type        String   @db.VarChar(20)
   description String?  @db.VarChar(50)
-  memo        String?  @db.VarChar(50) 
+  memo        String?  @db.VarChar(50)
 }
 
 enum fund_danger {
@@ -188,15 +184,15 @@ enum fund_type {
 }
 
 enum fund_saving_type {
-  BOTH        // 정기+자유 둘 다 허용
-  REGULAR     // 정기적립식만
-  FREE        // 자유적립식만
+  BOTH
+  REGULAR
+  FREE
 }
 
 enum account_acc_type {
   DEPOSIT
   FUND
-  PENSION     // 연저펀
+  PENSION
 }
 
 enum account_status {

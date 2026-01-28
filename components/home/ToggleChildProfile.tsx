@@ -20,7 +20,7 @@ type Props = {
   onSelect: (kidId: number) => void;
   selectedKidId: number;
   kids: KidProfile[];
-  onAddKid: () => void;
+  onAddKid?: () => void;
 };
 
 export default function ToggleChildProfile({
