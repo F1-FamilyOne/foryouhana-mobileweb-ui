@@ -59,12 +59,16 @@ export async function GET(req: Request) {
       isCanceled ? '해지' : '운용중',
     ];
 
+    const evaluated = a.deposit + a.plus_money;
+
     return {
       id: String(a.id),
       variant: isCanceled ? 'canceled' : 'active',
       title: a.fund?.name ?? '상품명 없음',
       tags,
-      totalAmountWonText: formatWon(a.deposit),
+
+      totalAmountWonText: formatWon(evaluated),
+
       profitRateText: a.plus_rate.toString(),
       monthlyPayWonText: monthly ? formatWon(monthly) : undefined,
       inType: a.in_type,

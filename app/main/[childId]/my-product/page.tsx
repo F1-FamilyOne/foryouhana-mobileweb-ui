@@ -1,8 +1,5 @@
-'use client';
-
 import Header from '@/components/cmm/Header';
 import { BottomNavBar } from '@/components/cmm/NavBar';
-
 import { MyProductUi } from './my-product-ui';
 
 /**
@@ -13,17 +10,20 @@ import { MyProductUi } from './my-product-ui';
  */
 
 type Props = {
-  params: { childId: string };
+  params: Promise<{ childId: string }>;
 };
 
-export default function MyProductPage({ params }: Props) {
-  const childIdNum = Number(params.childId);
-  const childId = Number.isNaN(childIdNum) ? 1 : childIdNum;
+export default async function MyProductPage({ params }: Props) {
+  const { childId } = await params;
+
+  const childIdNum = Number(childId);
+  const parsedChildId =
+    Number.isFinite(childIdNum) && childIdNum > 0 ? childIdNum : 1;
 
   return (
     <div className="relative min-h-full bg-white">
-      <Header content={'현재 가입 상품'} />
-      <MyProductUi childId={childId} />
+      <Header content="현재 가입 상품" />
+      <MyProductUi childId={parsedChildId} />
       <BottomNavBar />
     </div>
   );

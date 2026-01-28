@@ -82,7 +82,7 @@ export function MyFundDetailCard({
       {/* 정보 */}
       <div className={cn('mt-2')}>
         <div className="flex items-center justify-between font-hana-regular text-[15px]">
-          <span>누적 금액</span>
+          <span>평가금</span>
           <span>{totalAmountWonText} 원</span>
         </div>
 

@@ -62,7 +62,7 @@ export default async function ProductListPage({ searchParams }: Props) {
 
   const items = funds.map((f) => ({
     id: f.id,
-    title: isPension ? `연금저축펀드 ${f.id}` : `일반펀드 ${f.id}`,
+    title: f.name,
     risk: dangerToRisk(f.danger),
     extraBadgeText: undefined as string | undefined,
     subText: isPension ? undefined : f.name,
