@@ -52,7 +52,7 @@ export default function BeforeJoinFund({
   if (!selectedChild) return <div className="p-6">불러오는 중...</div>;
 
   return (
-    <div className="relative flex min-h-full w-full flex-col">
+    <div className="flex min-h-full w-full flex-col">
       <div className="relative">
         <MainCute />
 
