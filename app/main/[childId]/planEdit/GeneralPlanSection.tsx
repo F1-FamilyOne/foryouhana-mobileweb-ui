@@ -1,9 +1,7 @@
 import { InfoIcon } from 'lucide-react';
 import { BinaryToggle } from '@/components/cmm/BinaryToggle';
 import { CustomButton } from '@/components/cmm/CustomButton';
-import { InputMonth } from '@/components/cmm/InputDayAmount';
 import ShowPlanInput from '@/components/cmm/ShowPlanInput';
-import TitlePlanSelect from '@/components/cmm/TitlePlanSelect';
 import { formatWonNatural } from '@/lib/utils';
 import { type BLOCK_STATUS, GIFT_METHOD, YUGI_STATUS } from './MainSection';
 
@@ -23,10 +21,8 @@ export default function GeneralPlanSection({
   isRegular,
   yugi,
   onChange,
-  isFixed,
   period,
   amount,
-  blockStatus,
   onChangeAmount,
   onChangePeriod,
 }: Props) {

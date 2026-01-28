@@ -1,7 +1,6 @@
 'use server';
 
 import { randomBytes, randomInt } from 'node:crypto';
-import type { Prisma } from '@/lib/generated/prisma/client';
 import { account_acc_type, invest_type } from '@/lib/generated/prisma/enums';
 import { prisma } from '@/lib/prisma';
 
