@@ -37,10 +37,9 @@ export default function CardChatbot({
     setMounted(true);
   }, []);
 
-  if (!mounted) return null; // ✅ 서버 & 첫 CSR 동일
+  if (!mounted) return null;
 
-  const sanitizedContent = purifierRef.current?.sanitize(content);
-
+  const sanitizedContent = purifierRef.current?.sanitize(content) || '';
   return (
     <div className="relative pt-[20px]">
       <div className="pointer-events-none absolute top-0 left-0 z-20">
@@ -60,7 +59,6 @@ export default function CardChatbot({
           </h2>
 
           <div className="flex-1 space-y-8 rounded-lg bg-white p-6">
-            {/* 🔥 HTML 태그(빨간 글씨 등) 해석을 위해 수정 */}
             <div
               className="whitespace-pre-wrap font-hana-light text-[14px] text-hana-gray-600 leading-relaxed"
               // biome-ignore lint/security/noDangerouslySetInnerHtml: fix
@@ -68,12 +66,11 @@ export default function CardChatbot({
             />
           </div>
 
-          {/* 🔥 !isScenario -> isScenario로 변경 (시나리오일 때 버튼 보여야 함) */}
           {isScenario && (
             <div className="mt-8 flex justify-end gap-3">
               <button
                 type="button"
-                onClick={onRefresh} // 🔥 함수 연결
+                onClick={onRefresh}
                 className="cursor-pointer rounded-md border bg-white px-6 py-2.5 font-hana-bold text-hana-main text-sm shadow-sm transition-colors hover:bg-hana-gray-50"
               >
                 자산 갱신
@@ -81,7 +78,7 @@ export default function CardChatbot({
 
               <button
                 type="button"
-                onClick={onAnalyze} // 🔥 함수 연결
+                onClick={onAnalyze}
                 className="cursor-pointer rounded-md bg-hana-main px-6 py-2.5 font-hana-bold text-sm text-white shadow-sm transition-colors hover:bg-hana-main/70"
               >
                 정밀 분석

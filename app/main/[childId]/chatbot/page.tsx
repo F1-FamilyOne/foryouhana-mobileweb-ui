@@ -1,16 +1,21 @@
 'use client';
 
-// [Biome] Import 정렬: next/image -> next/navigation -> react 순
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
-// [Biome] 컴포넌트 Import 정렬
 import CardChatbot from '@/components/cmm/CardChatbot';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import Header from '@/components/cmm/Header';
 import InputChat from '@/components/cmm/InputChat';
 import { IMAGES_PATH } from '@/constants/images';
+
+/**
+ * @page: 메인 챗봇
+ * @description: 메인 챗봇 입니다. 자산 분석 및 대화형 자산 정밀분석을 도와줍니다. openAi Api를 사용해 구현했습니다.
+ * @author: 승빈
+ * @date: 2026-01-28
+ */
 
 type Message = {
   id: number;
@@ -26,10 +31,8 @@ export default function ChatbotSignProcess() {
   const childId = Number(params.childId);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // ✅ 화면 상태 제어 (입력창 보임 여부)
   const [showInput, setShowInput] = useState(false);
 
-  // ✅ 초기 메시지 (isScenario: true -> 카드 안에 버튼이 보임)
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -57,7 +60,6 @@ export default function ChatbotSignProcess() {
     }
   }, [messages, loading]);
 
-  // ✅ [핸들러] 자산 갱신
   const handleRefreshData = () => {
     setLoading(true);
     setTimeout(() => {
@@ -76,7 +78,6 @@ export default function ChatbotSignProcess() {
     }, 800);
   };
 
-  // ✅ [핸들러] 정밀 분석 (입력창 열기)
   const handleStartAnalysis = () => {
     setLoading(true);
     setTimeout(() => {
@@ -95,15 +96,14 @@ export default function ChatbotSignProcess() {
 • 되도록 확실한 정보만 입력해 주세요.
 • 분석 결과는 참고용으로 사용해 주세요.
 `.trim(),
-          isScenario: false, // 이제 입력창으로 넘어가니까 버튼 숨김
+          isScenario: false,
         },
       ]);
       setLoading(false);
-      setShowInput(true); // 입력창 등장!
+      setShowInput(true);
     }, 500);
   };
 
-  // ✅ 메인 API 호출 핸들러
   const handleSendMessage = async (text: string) => {
     if (loading) return;
 
@@ -145,7 +145,6 @@ export default function ChatbotSignProcess() {
           },
         ]);
       } else {
-        // 🔥 세션 스토리지 저장 (isSigned: false)
         if (data.dbData) {
           const sessionData = {
             child_id: childId,
@@ -226,13 +225,12 @@ ${data.usePensionFund ? '💸 연금저축펀드: 추천' : ''}
               <div key={msg.id} className="w-full animate-fade-in-up">
                 {msg.role === 'ai' ? (
                   <div className="w-full">
-                    {/* 🔥 CardChatbot에 버튼 핸들러 전달! */}
                     <CardChatbot
                       mainTitle={msg.mainTitle || ''}
                       content={msg.content}
                       isScenario={msg.isScenario || false}
-                      onRefresh={handleRefreshData} // 👈 자산 갱신 연결
-                      onAnalyze={handleStartAnalysis} // 👈 정밀 분석 연결
+                      onRefresh={handleRefreshData}
+                      onAnalyze={handleStartAnalysis}
                     />
                   </div>
                 ) : (
@@ -265,7 +263,6 @@ ${data.usePensionFund ? '💸 연금저축펀드: 추천' : ''}
         )}
       </div>
       {/* 3. 입력창 (하단 고정) */}
-      {/* 🔥 버튼 영역 삭제됨! 입력창만 남음 (showInput일 때만 보임) */}
       {showInput && (
         <InputChat
           placeholder={

@@ -1,17 +1,22 @@
 'use client';
 
-// [Biome] Import 정렬: next/image -> next/navigation -> react 순
 import Image from 'next/image';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-
-// [Biome] 컴포넌트 Import 정렬
+import { getNextChildId } from '@/actions/chatbot.action';
 import CardChatbot from '@/components/cmm/CardChatbot';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import Header from '@/components/cmm/Header';
 import InputChat from '@/components/cmm/InputChat';
 import { IMAGES_PATH } from '@/constants/images';
 import type { DraftPlanPayload } from '../result/page';
+
+/**
+ * @page: 가입 중 챗봇
+ * @description: 가입 중 챗봇입니다. openAi api를 활용하여 증여 도우미 챗벗을 제작했습니다.
+ * @author: 승빈
+ * @date: 2026-01-28
+ */
 
 type Message = {
   id: number;
@@ -23,11 +28,10 @@ type Message = {
 
 export default function chatbotSignProcess() {
   const route = useRouter();
-  const params = useParams();
-  const childId = Number(params.childId);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // 초기 메시지
+  const [currentChildId, setCurrentChildId] = useState<string | null>(null);
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -41,6 +45,14 @@ export default function chatbotSignProcess() {
 
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    async function initId() {
+      const uniqueId = await getNextChildId();
+      setCurrentChildId(uniqueId);
+    }
+    initId();
+  }, []);
+
   // 스크롤 자동 이동
   useEffect(() => {
     if (messages || loading) {
@@ -49,7 +61,7 @@ export default function chatbotSignProcess() {
   }, [messages, loading]);
 
   const handleSendMessage = async (text: string) => {
-    if (loading) return;
+    if (loading || !currentChildId) return;
 
     // 1. 유저 메시지 추가
     const userMsgId = Date.now();
@@ -66,7 +78,7 @@ export default function chatbotSignProcess() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          childId,
+          childId: currentChildId,
           userInput: text,
           parentIncome: 60000000,
           parentAssets: 300000000,
@@ -86,11 +98,10 @@ export default function chatbotSignProcess() {
             role: 'ai',
             mainTitle: '앗, 답변하기 어려워요 😅',
             content: data.error,
-            isScenario: false, // 에러일 때도 버튼 숨김
+            isScenario: false,
           },
         ]);
       } else {
-        // 🔥 [추가] 세션 스토리지 저장 (isSigned: false)
         if (data.dbData) {
           const raw = sessionStorage.getItem('giftPlan');
           const prevData: DraftPlanPayload = raw
@@ -101,17 +112,13 @@ export default function chatbotSignProcess() {
               };
 
           const sessionData = {
-            child_id: null,
-            isSigned: false, // ✅ 요청하신 대로 false 설정
+            child_id: currentChildId,
+            isSigned: false,
             updated_at: new Date().toISOString(),
             plan: { ...prevData.plan, ...data.dbData },
           };
 
           sessionStorage.setItem('giftPlan', JSON.stringify(sessionData));
-          console.log(
-            '✅ 플랜 데이터 저장 완료 (isSigned: false):',
-            sessionData,
-          );
         }
 
         const summaryText = `
@@ -133,7 +140,7 @@ ${data.usePensionFund ? '💸 연금저축펀드: 추천' : ''}
             role: 'ai',
             mainTitle: '✨ 별벗 맞춤 증여 플랜 도착!',
             content: summaryText,
-            isScenario: false, // ✅ 버튼 아예 안 보이게 설정 (true -> false)
+            isScenario: false,
           },
         ]);
       }
@@ -156,13 +163,10 @@ ${data.usePensionFund ? '💸 연금저축펀드: 추천' : ''}
 
   return (
     <div className="flex h-screen w-full flex-col">
-      {/* 1. 상단 헤더 (고정) */}
       <Header content="AI 맞춤 증여 플랜" />
 
-      {/* 2. 채팅 영역 (스크롤) */}
       <div className="scrollbar-hide -p-3 w-full flex-1 overflow-y-auto pb-24">
         <div className="flex w-full flex-col p-4">
-          {/* (1) 상단 일러스트 및 멘트 */}
           <div className="my-6 flex animate-fade-in-down flex-col items-center justify-center">
             <Image
               src={IMAGES_PATH.STARBOT3D}
@@ -180,7 +184,6 @@ ${data.usePensionFund ? '💸 연금저축펀드: 추천' : ''}
             </div>
           </div>
 
-          {/* (2) 메시지 리스트 */}
           <div className="w-full space-y-6">
             {messages.map((msg) => (
               <div key={msg.id} className="w-full animate-fade-in-up">
@@ -189,7 +192,7 @@ ${data.usePensionFund ? '💸 연금저축펀드: 추천' : ''}
                     <CardChatbot
                       mainTitle={msg.mainTitle || ''}
                       content={msg.content}
-                      isScenario={msg.isScenario || false} // ✅ 여기서도 확실하게 false 처리
+                      isScenario={msg.isScenario || false}
                     />
                   </div>
                 ) : (
@@ -212,7 +215,6 @@ ${data.usePensionFund ? '💸 연금저축펀드: 추천' : ''}
             <div ref={messagesEndRef} />
           </div>
 
-          {/* 완료 버튼 (로딩 중 아닐 때만 보임) */}
           {!loading && (
             <div className="mt-6 flex w-full justify-center">
               <CustomButton
@@ -226,7 +228,6 @@ ${data.usePensionFund ? '💸 연금저축펀드: 추천' : ''}
         </div>
       </div>
 
-      {/* 3. 입력창 (하단 고정) */}
       <InputChat
         placeholder={
           loading ? '잠시만 기다려주세요...' : '궁금한 점을 물어보세요'
