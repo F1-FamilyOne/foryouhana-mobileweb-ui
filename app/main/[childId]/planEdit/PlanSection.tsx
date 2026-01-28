@@ -28,7 +28,6 @@ export default function PlanSection({
       {isFixed ? (
         <FixedPlanSection
           yugi={yugi}
-          fixed={isFixed}
           amount={
             (blockStatus === BLOCK_STATUS.REVERT ? amount : newAmount) ?? 0
           }

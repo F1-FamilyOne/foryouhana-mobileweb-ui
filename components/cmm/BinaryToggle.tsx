@@ -13,6 +13,7 @@ type BinaryToggleProps = {
   onChange: (v: boolean) => void;
   trueLabel: string;
   falseLabel: string;
+  disabled?: boolean;
 };
 
 export function BinaryToggle({
@@ -20,16 +21,19 @@ export function BinaryToggle({
   onChange,
   trueLabel,
   falseLabel,
+  disabled = false,
 }: BinaryToggleProps) {
   return (
     <div className="flex w-full justify-between">
       <CustomButton
+        disabled={disabled}
         preset={value ? 'lightgreenshort' : 'lightgrayshort'}
         onClick={() => onChange(true)}
       >
         {trueLabel}
       </CustomButton>
       <CustomButton
+        disabled={disabled}
         preset={!value ? 'lightgreenshort' : 'lightgrayshort'}
         onClick={() => onChange(false)}
       >

@@ -2,9 +2,22 @@ import { InfoIcon } from 'lucide-react';
 import { BinaryToggle } from '@/components/cmm/BinaryToggle';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import { InputMonth } from '@/components/cmm/InputDayAmount';
+import ShowPlanInput from '@/components/cmm/ShowPlanInput';
 import TitlePlanSelect from '@/components/cmm/TitlePlanSelect';
 import { formatWonNatural } from '@/lib/utils';
-import { BLOCK_STATUS, GIFT_METHOD, type YUGI_STATUS } from './MainSection';
+import { type BLOCK_STATUS, GIFT_METHOD, YUGI_STATUS } from './MainSection';
+
+type Props = {
+  isRegular: boolean;
+  onChange: (v: GIFT_METHOD) => void;
+  isFixed: boolean;
+  period: number;
+  amount: number;
+  yugi: YUGI_STATUS;
+  blockStatus: BLOCK_STATUS;
+  onChangeAmount: (value: number | null) => void;
+  onChangePeriod: (value: number | null) => void;
+};
 
 export default function GeneralPlanSection({
   isRegular,
@@ -16,33 +29,30 @@ export default function GeneralPlanSection({
   blockStatus,
   onChangeAmount,
   onChangePeriod,
-}: {
-  isRegular: boolean;
-  onChange: (v: GIFT_METHOD) => void;
-  isFixed: boolean;
-  period: number;
-  amount: number;
-  yugi: YUGI_STATUS;
-  blockStatus: BLOCK_STATUS;
-  onChangeAmount: (value: number | null) => void;
-  onChangePeriod: (value: number | null) => void;
-}) {
+}: Props) {
   return (
     <div>
-      {isRegular ? (
-        <div>
-          <BinaryToggle
-            falseLabel="자유 이체"
-            trueLabel="정기 이체"
-            value={isRegular}
-            onChange={(v) => {
-              onChange(v === true ? GIFT_METHOD.REGULAR : GIFT_METHOD.FLEXIBLE);
-            }}
-          />
-        </div>
+      {yugi === YUGI_STATUS.CHANGE ? (
+        <CustomButton disabled preset="lightgraylong" className="grid gap-0">
+          <span className="text-[14px] text-hana-black">정기 이체 방식</span>
+          <span className="text-[9px] text-hana-black">유기정기금 운용 중</span>
+        </CustomButton>
       ) : (
         <div>
-          {!isRegular && (
+          {isRegular ? (
+            <div>
+              <BinaryToggle
+                falseLabel="자유 이체"
+                trueLabel="정기 이체"
+                value={isRegular}
+                onChange={(v) => {
+                  onChange(
+                    v === true ? GIFT_METHOD.REGULAR : GIFT_METHOD.FLEXIBLE,
+                  );
+                }}
+              />
+            </div>
+          ) : (
             <div>
               <CustomButton
                 preset="lightgreenlong"
@@ -58,34 +68,32 @@ export default function GeneralPlanSection({
           )}
         </div>
       )}
-      {isRegular && (
-        <div className="flex justify-between pt-4">
-          <div>
-            <TitlePlanSelect title="증여 기간" />
-            <InputMonth
-              disabled={
-                (isFixed && !(blockStatus === BLOCK_STATUS.BLOCK)) ?? false
-              }
-              value={period ?? undefined}
-              unit="개월"
-              className="h-[42px] w-[155px] bg-hana-light-green font-hana-regular"
-              onChange={(v) => onChangePeriod(v ?? null)}
+      {yugi === YUGI_STATUS.CHANGE ? (
+        <div>
+          {isRegular && (
+            <ShowPlanInput
+              amount={amount}
+              onChangeAmount={onChangeAmount}
+              period={period}
+              onChangePeriod={onChangePeriod}
+              disabled={true}
             />
-          </div>
-          <div>
-            <TitlePlanSelect title="월 증여액" />
-            <InputMonth
-              disabled={
-                (isFixed && !(blockStatus === BLOCK_STATUS.BLOCK)) ?? false
-              }
-              value={amount ?? undefined}
-              unit="원"
-              className="h-[42px] w-[155px] bg-hana-light-green font-hana-regular"
-              onChange={(v) => onChangeAmount(v ?? null)}
+          )}
+        </div>
+      ) : (
+        <div>
+          {isRegular && (
+            <ShowPlanInput
+              amount={amount}
+              onChangeAmount={onChangeAmount}
+              period={period}
+              onChangePeriod={onChangePeriod}
+              disabled={false}
             />
-          </div>
+          )}
         </div>
       )}
+
       {isRegular && (
         <div className="grid gap-2 pt-3">
           <div className="flex gap-1">

@@ -14,13 +14,23 @@ import { Card, CardContent } from '../ui/card';
 
 interface HometaxReportCardProps {
   onReportComplete: () => void;
+  onStopComplete?: () => void;
+  isStop?: boolean;
 }
 
 export const HometaxReportCard = ({
   onReportComplete,
+  isStop = false,
+  onStopComplete,
 }: HometaxReportCardProps) => {
   return (
-    <Card className="h-[230px] w-[345px] rounded-2xl border-0 bg-hana-gray-50">
+    <Card
+      className={
+        isStop
+          ? 'h-full w-[322px] rounded-2xl border-0 bg-hana-gray-50'
+          : 'h-[172px] w-[322px] rounded-2xl border-0 bg-hana-gray-50'
+      }
+    >
       <CardContent className="space-y-1 rounded-2xl bg-hana-gray-50 p-3 pt-0">
         <div className="space-y-0">
           <p className="font-hana-medium text-[15px]">
@@ -60,14 +70,31 @@ export const HometaxReportCard = ({
             <span className="mx-2">내용을 적용해주세요.</span>
           </p>
 
-          <div className="flex justify-center">
-            <Button
-              onClick={onReportComplete}
-              className="mt-1 h-8 w-52.5 bg-hana-blue text-[13px] hover:bg-hana-blue"
-            >
-              신고 완료
-            </Button>
-          </div>
+          {isStop ? (
+            <div className="grid justify-center gap-2 pt-7">
+              <Button
+                onClick={onStopComplete}
+                className="h-6.75 w-52.5 bg-hana-badge-red text-[10px] hover:bg-hana-badge-red"
+              >
+                중단 신고 완료
+              </Button>
+              <Button
+                onClick={onReportComplete}
+                className="h-6.75 w-52.5 bg-hana-blue text-[10px] hover:bg-hana-blue"
+              >
+                변경 신고 완료
+              </Button>
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              <Button
+                onClick={onReportComplete}
+                className="h-6.75 w-52.5 bg-hana-blue text-[10px] hover:bg-hana-blue"
+              >
+                신고 완료
+              </Button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
