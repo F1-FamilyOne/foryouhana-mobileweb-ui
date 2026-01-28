@@ -66,6 +66,7 @@ export default function MainSection({
           />
           <hr className="my-4 border-hana-gray-400" />
           <YugiSection
+            yugi={yugi}
             setYugi={setYugi}
             prev={isFixedGift}
             isFixed={fixed}

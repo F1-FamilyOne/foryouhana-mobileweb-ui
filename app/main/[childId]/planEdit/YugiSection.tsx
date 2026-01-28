@@ -6,12 +6,14 @@ import { BLOCK_STATUS, YUGI_STATUS } from './MainSection';
 
 export default function YugiSection({
   isFixed,
+  yugi,
   prev,
   onChange,
   onBlockedChange,
   setYugi,
 }: {
   isFixed: boolean;
+  yugi: YUGI_STATUS;
   onChange: (v: boolean) => void;
   prev: boolean;
   onBlockedChange: (v: BLOCK_STATUS) => void;
@@ -72,15 +74,34 @@ export default function YugiSection({
               신고하기
             </CustomButton>
           ) : (
-            <CustomButton
-              preset="lightgreenlong"
-              onClick={() => {
-                onChange(!isFixed);
-                onBlockedChange(BLOCK_STATUS.REVERT);
-              }}
-            >
-              신고하지 않기
-            </CustomButton>
+            <div>
+              {yugi === YUGI_STATUS.CHANGE ? (
+                <div>
+                  <CustomButton
+                    disabled
+                    preset="lightgreenlong"
+                    onClick={() => {
+                      onChange(!isFixed);
+                      onBlockedChange(BLOCK_STATUS.REVERT);
+                    }}
+                  >
+                    신고 완료
+                  </CustomButton>
+                </div>
+              ) : (
+                <div>
+                  <CustomButton
+                    preset="lightgreenlong"
+                    onClick={() => {
+                      onChange(!isFixed);
+                      onBlockedChange(BLOCK_STATUS.REVERT);
+                    }}
+                  >
+                    신고하지 않기
+                  </CustomButton>
+                </div>
+              )}
+            </div>
           )}
           {isFixed && (
             <div className="flex items-center justify-center pt-4">

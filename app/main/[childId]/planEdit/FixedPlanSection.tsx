@@ -1,32 +1,31 @@
 import { BinaryToggle } from '@/components/cmm/BinaryToggle';
 import { CustomButton } from '@/components/cmm/CustomButton';
-import { InputMonth } from '@/components/cmm/InputDayAmount';
 import ShowPlanInput from '@/components/cmm/ShowPlanInput';
 import TitlePlanSelect from '@/components/cmm/TitlePlanSelect';
 import { formatWonNatural } from '@/lib/utils';
 import { BLOCK_STATUS, GIFT_METHOD, YUGI_STATUS } from './MainSection';
 
-export default function FixedPlanSection({
-  yugi,
-  method,
-  fixed,
-  period,
-  amount,
-  blockStatus,
-  onMethodChange,
-  onChangeAmount,
-  onChangePeriod,
-}: {
+type Props = {
   yugi: YUGI_STATUS;
   method: GIFT_METHOD;
-  fixed: boolean;
   period: number;
   amount: number;
   blockStatus: BLOCK_STATUS;
   onMethodChange: (v: GIFT_METHOD) => void;
   onChangeAmount: (value: number) => void;
   onChangePeriod: (value: number) => void;
-}) {
+};
+
+export default function FixedPlanSection({
+  yugi,
+  method,
+  period,
+  amount,
+  blockStatus,
+  onMethodChange,
+  onChangeAmount,
+  onChangePeriod,
+}: Props) {
   return (
     <div>
       <TitlePlanSelect title="증여 방식" />
@@ -62,7 +61,6 @@ export default function FixedPlanSection({
                     {yugi === YUGI_STATUS.STOP && (
                       <div>
                         <BinaryToggle
-                          // disabled={true}
                           falseLabel="자유 이체"
                           trueLabel="정기 이체"
                           value={method === GIFT_METHOD.REGULAR}

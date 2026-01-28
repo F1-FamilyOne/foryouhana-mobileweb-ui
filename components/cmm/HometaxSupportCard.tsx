@@ -13,13 +13,23 @@ import { Button } from '../ui/button';
 
 interface HometaxReportCardProps {
   onReportComplete: () => void;
+  onStopComplete?: () => void;
+  isStop?: boolean;
 }
 
 export const HometaxReportCard = ({
   onReportComplete,
+  isStop = false,
+  onStopComplete,
 }: HometaxReportCardProps) => {
   return (
-    <Card className="h-[172px] w-[322px] rounded-2xl border-0 bg-hana-gray-50">
+    <Card
+      className={
+        isStop
+          ? 'h-full w-[322px] rounded-2xl border-0 bg-hana-gray-50'
+          : 'h-[172px] w-[322px] rounded-2xl border-0 bg-hana-gray-50'
+      }
+    >
       <CardContent className="space-y-1 rounded-2xl bg-hana-gray-50 p-3 pt-0">
         <div className="space-y-0">
           <p className="font-hana-medium text-[10px]">
@@ -58,14 +68,31 @@ export const HometaxReportCard = ({
             3. 신고 후 아래의 버튼을 눌러 본 서비스에 변경 내용을 적용해주세요.
           </p>
 
-          <div className="flex justify-center">
-            <Button
-              onClick={onReportComplete}
-              className="h-6.75 w-52.5 bg-hana-blue text-[10px] hover:bg-hana-blue"
-            >
-              신고 완료
-            </Button>
-          </div>
+          {isStop ? (
+            <div className="grid justify-center gap-2 pt-7">
+              <Button
+                onClick={onStopComplete}
+                className="h-6.75 w-52.5 bg-hana-badge-red text-[10px] hover:bg-hana-badge-red"
+              >
+                중단 신고 완료
+              </Button>
+              <Button
+                onClick={onReportComplete}
+                className="h-6.75 w-52.5 bg-hana-blue text-[10px] hover:bg-hana-blue"
+              >
+                변경 신고 완료
+              </Button>
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              <Button
+                onClick={onReportComplete}
+                className="h-6.75 w-52.5 bg-hana-blue text-[10px] hover:bg-hana-blue"
+              >
+                신고 완료
+              </Button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
