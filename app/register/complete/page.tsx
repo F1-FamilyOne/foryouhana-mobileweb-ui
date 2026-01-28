@@ -47,7 +47,7 @@ export default function RegisterComplete() {
 
       if (result.success && result.childId) {
         sessionStorage.clear();
-        route.push(`/main/${result.childId}/beforeJoin/test`);
+        route.push(`/main/${result.childId}/beforeJoin`);
       } else {
         alert(result.error || '저장 중 오류가 발생했습니다.');
         setIsSubmitting(false);
