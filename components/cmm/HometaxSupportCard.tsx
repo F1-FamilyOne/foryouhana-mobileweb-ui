@@ -95,6 +95,31 @@ export const HometaxReportCard = ({
               </Button>
             </div>
           )}
+          {isStop ? (
+            <div className="grid justify-center gap-2 pt-7">
+              <Button
+                onClick={onStopComplete}
+                className="h-6.75 w-52.5 bg-hana-badge-red text-[10px] hover:bg-hana-badge-red"
+              >
+                중단 신고 완료
+              </Button>
+              <Button
+                onClick={onReportComplete}
+                className="h-6.75 w-52.5 bg-hana-blue text-[10px] hover:bg-hana-blue"
+              >
+                변경 신고 완료
+              </Button>
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              <Button
+                onClick={onReportComplete}
+                className="h-6.75 w-52.5 bg-hana-blue text-[10px] hover:bg-hana-blue"
+              >
+                신고 완료
+              </Button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
