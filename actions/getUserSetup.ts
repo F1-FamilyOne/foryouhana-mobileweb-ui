@@ -32,12 +32,14 @@ export async function getUserSetup(parentId: number): Promise<UserSetupReturn> {
         take: 1,
         select: {
           id: true,
-          account: {
-            where: {
-              acc_type: account_acc_type.FUND,
+          _count: {
+            select: {
+              account: {
+                where: {
+                  acc_type: account_acc_type.FUND,
+                },
+              },
             },
-            select: { id: true },
-            take: 1,
           },
         },
       },
@@ -58,6 +60,75 @@ export async function getUserSetup(parentId: number): Promise<UserSetupReturn> {
     exists: true,
     hasChild: true,
     firstChildId: firstChild.id,
-    hasFundAccount: firstChild.account.length > 0,
+    hasFundAccount: firstChild._count.account > 0,
   };
+}
+
+export type ChildListItem = {
+  childId: number;
+  profile: string | null;
+  hasFundAccount: boolean;
+};
+
+type AllChildWithIsHaveFundReturn =
+  | {
+      exists: false;
+    }
+  | {
+      exists: true;
+      children: ChildListItem[];
+    };
+
+export async function getAllChildWithIsHaveFund(
+  parentId: number,
+): Promise<AllChildWithIsHaveFundReturn> {
+  const parent = await prisma.parent.findUnique({
+    where: { id: parentId },
+    select: {
+      child: {
+        orderBy: { id: 'asc' },
+        select: {
+          id: true,
+          profile_pic: true,
+          _count: {
+            select: {
+              account: {
+                where: {
+                  acc_type: account_acc_type.FUND,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!parent) {
+    return { exists: false };
+  }
+
+  return {
+    exists: true,
+    children: parent.child.map((c) => ({
+      childId: c.id,
+      profile: c.profile_pic,
+      hasFundAccount: c._count.account > 0,
+    })),
+  };
+}
+
+export async function getAllChildWithIsHaveFundByChild(
+  childId: number,
+): Promise<AllChildWithIsHaveFundReturn> {
+  const child = await prisma.child.findUnique({
+    where: { id: childId },
+    select: {
+      parent_id: true,
+    },
+  });
+
+  if (!child) return { exists: false };
+
+  return getAllChildWithIsHaveFund(child.parent_id);
 }

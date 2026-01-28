@@ -40,7 +40,7 @@ export default function EntryClient() {
 
       if (!result.hasChild) return router.replace('/onboarding/intro');
       if (!result.hasFundAccount)
-        return router.replace(`/main/${result.firstChildId}/beforeJoin/`);
+        return router.replace(`/main/${result.firstChildId}/beforeJoin`);
       return router.replace(`/main/${result.firstChildId}/home`);
     })();
   }, [ready, userId, router]);
