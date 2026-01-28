@@ -15,38 +15,38 @@ export default function ChildProfileEdit() {
 
   const initialImage = '/file/자녀1.jpg';
 
-  // 초기값 설정
   const [previewUrl, setPreviewUrl] = useState<string>(initialImage);
   const [nickname, setNickname] = useState('우리 아이');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 페이지가 로드될 때, 저장된 이름이 있는지 확인해서 불러오기
+  // 페이지 로드 시 저장된 데이터 불러오기
   useEffect(() => {
-    // 브라우저 저장소에서 'child_ID_name' 키로 저장된 값을 찾음
     const savedName = localStorage.getItem(`child_${childId}_name`);
-    const savedImage = localStorage.getItem(`child_${childId}_image`);
+    const savedImage = localStorage.getItem(`child_${childId}_image`); // 이미지도 불러옴
 
-    if (savedName) {
-      setNickname(savedName);
-    }
-    if (savedImage) {
-      setPreviewUrl(savedImage);
-    }
+    if (savedName) setNickname(savedName);
+    if (savedImage) setPreviewUrl(savedImage);
   }, [childId]);
 
+  // [중요] 이미지를 문자열(Base64)로 변환하는 함수
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // 읽기가 끝나면 결과물(긴 문자열)을 상태에 저장
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file); // 파일을 문자열로 읽기 시작
     }
   };
 
   const handleSave = async () => {
-    // 저장 버튼 클릭 시 브라우저 저장소에 영구 저장 (DB 대용)
+    // 이름 저장
     localStorage.setItem(`child_${childId}_name`, nickname);
-    console.log(`[저장 완료] ID: ${childId}, 닉네임: ${nickname}`);
-    alert('프로필이 저장되었습니다.');
+
+    localStorage.setItem(`child_${childId}_image`, previewUrl);
+
     router.push(`/main/${childId}/menu`);
   };
 

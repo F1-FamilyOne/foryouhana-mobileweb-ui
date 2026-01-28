@@ -13,7 +13,6 @@ export default function menu() {
   const kidsProfile = [
     { id: 1, avatarUrl: '/file/자녀1.jpg' },
     { id: 2, avatarUrl: '/file/자녀2.jpg' },
-    { id: 3, avatarUrl: '/file/자녀3.jpg' },
   ];
   const [selectedKidId, setSelectedKidId] = useState<number>(kidsProfile[0].id);
 
