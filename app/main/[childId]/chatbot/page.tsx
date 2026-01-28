@@ -4,19 +4,11 @@ import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { getChildAge } from '@/actions/chatbot.action';
-// [추가] 자녀 정보를 가져올 액션 임포트 (경로는 프로젝트 구조에 맞게 수정하세요)
 import CardChatbot from '@/components/cmm/CardChatbot';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import Header from '@/components/cmm/Header';
 import InputChat from '@/components/cmm/InputChat';
 import { IMAGES_PATH } from '@/constants/images';
-
-/**
- * @page: 메인 챗봇
- * @description: 메인 챗봇 입니다. 자산 분석 및 대화형 자산 정밀분석을 도와줍니다. openAi Api를 사용해 구현했습니다.
- * @author: 승빈
- * @date: 2026-01-28
- */
 
 type Message = {
   id: number;
@@ -33,7 +25,6 @@ export default function ChatbotSignProcess() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [showInput, setShowInput] = useState(false);
-  // [추가] DB에서 불러온 자녀 나이를 저장할 상태
   const [dbChildAge, setDbChildAge] = useState<number>(0);
 
   const [messages, setMessages] = useState<Message[]>([
@@ -56,15 +47,12 @@ export default function ChatbotSignProcess() {
 
   const [loading, setLoading] = useState(false);
 
-  // [추가] 컴포넌트 마운트 시 DB에서 자녀 나이 정보 가져오기
   useEffect(() => {
     const fetchChildInfo = async () => {
       if (!childId) return;
       try {
         const childDataAge = await getChildAge(childId);
-        if (childDataAge) {
-          setDbChildAge(childDataAge);
-        }
+        setDbChildAge(childDataAge);
       } catch (error) {
         console.error('자녀 정보 로드 실패:', error);
       }
@@ -72,7 +60,6 @@ export default function ChatbotSignProcess() {
     fetchChildInfo();
   }, [childId]);
 
-  // 스크롤 자동 이동
   useEffect(() => {
     if (messages || loading) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -112,7 +99,7 @@ export default function ChatbotSignProcess() {
 • 가족 여행 경비, 자녀 독립 자금과 같이 고정적인 지출 외에 추가적인 지출
 
 💡 **주의 사항**
-• 되도록 확실한 정보만 입력해 주세요.
+• 되대로 확실한 정보만 입력해 주세요.
 • 분석 결과는 참고용으로 사용해 주세요.
 `.trim(),
           isScenario: false,
@@ -126,7 +113,6 @@ export default function ChatbotSignProcess() {
   const handleSendMessage = async (text: string) => {
     if (loading) return;
 
-    // 1. 유저 메시지 추가
     const userMsgId = Date.now();
     setMessages((prev) => [
       ...prev,
@@ -136,7 +122,6 @@ export default function ChatbotSignProcess() {
     setLoading(true);
 
     try {
-      // 2. API 호출
       const res = await fetch('/api/chatbot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -145,13 +130,12 @@ export default function ChatbotSignProcess() {
           userInput: text,
           parentIncome: 60000000,
           parentAssets: 300000000,
-          childAge: dbChildAge, // 👈 DB에서 받아온 나이 적용
+          childAge: dbChildAge,
         }),
       });
 
       const data = await res.json();
 
-      // 3. AI 응답 처리
       if (data.error) {
         setMessages((prev) => [
           ...prev,
@@ -165,12 +149,24 @@ export default function ChatbotSignProcess() {
         ]);
       } else {
         if (data.dbData) {
+          let prevPlan = {};
+          const rawData = sessionStorage.getItem('giftPlan');
+
+          if (rawData) {
+            try {
+              const parsed = JSON.parse(rawData);
+              prevPlan = parsed.plan || {};
+            } catch (e) {
+              console.error('Session storage parse error:', e);
+            }
+          }
+
           const sessionData = {
             child_id: childId,
             isSigned: true,
             isChatbot: true,
             updated_at: new Date().toISOString(),
-            plan: data.dbData,
+            plan: { ...prevPlan, ...data.dbData },
           };
           sessionStorage.setItem('giftPlan', JSON.stringify(sessionData));
           console.log('✅ 플랜 데이터 저장 완료:', sessionData);
@@ -219,8 +215,7 @@ ${data.usePensionFund ? '💸 연금저축펀드: 추천' : ''}
   return (
     <div className="flex h-screen w-full flex-col">
       <Header content="AI 맞춤 증여 플랜" />
-
-      <div className="scrollbar-hide -p-3 w-full flex-1 overflow-y-auto pb-24">
+      <div className="scrollbar-hide w-full flex-1 overflow-y-auto pb-24">
         <div className="flex w-full flex-col p-4">
           <div className="my-6 flex animate-fade-in-down flex-col items-center justify-center">
             <Image
@@ -258,7 +253,6 @@ ${data.usePensionFund ? '💸 연금저축펀드: 추천' : ''}
                 )}
               </div>
             ))}
-
             {loading && (
               <div className="flex justify-start pl-2">
                 <span className="animate-pulse text-gray-400 text-xs">
