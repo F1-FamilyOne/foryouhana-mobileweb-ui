@@ -1,11 +1,9 @@
 'use client';
 
-// [Biome] Import 정렬: next/image -> next/navigation -> react 순
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
-// [Biome] 컴포넌트 Import 정렬
 import CardChatbot from '@/components/cmm/CardChatbot';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import Header from '@/components/cmm/Header';
@@ -66,6 +64,14 @@ export default function chatbotSignProcess() {
     setLoading(true);
 
     try {
+      const storedData = sessionStorage.getItem('giftPlan');
+      let currentChildAge = 0; // 기본값
+
+      if (storedData) {
+        const parsed = JSON.parse(storedData);
+        currentChildAge = parsed.plan?.child_birth?.age ?? 0;
+      }
+
       // 2. API 호출
       const res = await fetch('/api/chatbot', {
         method: 'POST',
@@ -75,7 +81,7 @@ export default function chatbotSignProcess() {
           userInput: text,
           parentIncome: 60000000,
           parentAssets: 300000000,
-          childAge: 5,
+          childAge: currentChildAge,
         }),
       });
 
@@ -106,7 +112,7 @@ export default function chatbotSignProcess() {
 
           const sessionData = {
             child_id: null,
-            isSigned: false, // ✅ 요청하신 대로 false 설정
+            isSigned: false,
             updated_at: new Date().toISOString(),
             plan: { ...prevData.plan, ...data.dbData },
           };
@@ -137,7 +143,7 @@ ${data.usePensionFund ? '💸 연금저축펀드: 추천' : ''}
             role: 'ai',
             mainTitle: '✨ 별벗 맞춤 증여 플랜 도착!',
             content: summaryText,
-            isScenario: false, // ✅ 버튼 아예 안 보이게 설정 (true -> false)
+            isScenario: false,
           },
         ]);
       }
