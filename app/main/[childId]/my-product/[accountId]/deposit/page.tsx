@@ -31,6 +31,11 @@ export default async function DepositPage({ params }: Props) {
     notFound();
   }
 
+  // 입금 대상은 FUND 또는 PENSION 계좌만 허용
+  if (targetAccount.acc_type === 'DEPOSIT') {
+    notFound();
+  }
+
   // 2. 자녀 정보 조회 (gift_account_id 확인용)
   const child = await prisma.child.findUnique({
     where: { id: childIdNum },
@@ -47,7 +52,10 @@ export default async function DepositPage({ params }: Props) {
   });
 
   const sourceAccounts = allAccounts.filter(
-    (acc) => acc.acc_type === 'DEPOSIT' && acc.id !== child.gift_account_id,
+    (acc) =>
+      acc.acc_type === 'DEPOSIT' &&
+      acc.id !== child.gift_account_id &&
+      acc.id !== accountIdNum,
   );
 
   // BigInt를 직렬화 가능한 형태로 변환
