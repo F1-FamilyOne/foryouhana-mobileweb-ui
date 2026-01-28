@@ -1,11 +1,17 @@
 'use client';
-import { useState } from 'react';
 import { BinaryToggle } from '@/components/cmm/BinaryToggle';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import TitlePlanSelect from '@/components/cmm/TitlePlanSelect';
 
-export default function PensionSelection({ prev }: { prev: boolean }) {
-  const [isPension, setIsPension] = useState<boolean>(prev);
+export default function PensionSelection({
+  prev,
+  now,
+  onChange,
+}: {
+  prev: boolean;
+  now: boolean;
+  onChange: (b: boolean) => void;
+}) {
   return (
     <div>
       <TitlePlanSelect title="연금 저축 펀드" />
@@ -18,8 +24,8 @@ export default function PensionSelection({ prev }: { prev: boolean }) {
           <BinaryToggle
             trueLabel="신청"
             falseLabel="신청 안함"
-            value={isPension}
-            onChange={setIsPension}
+            value={now}
+            onChange={onChange}
           />
         )}
       </div>

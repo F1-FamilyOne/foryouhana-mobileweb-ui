@@ -1,4 +1,5 @@
 'use client';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import PensionSelection from './PensionSelection';
@@ -29,14 +30,27 @@ type Props = {
   period: number;
   isFixedGift: boolean;
   monthlyMoney: number;
+  childId: number;
+  onSave: (params: {
+    childId: number;
+    form: {
+      fixed: boolean;
+      amount: number;
+      period: number;
+      pension: boolean;
+      method: GIFT_METHOD;
+    };
+  }) => Promise<void>;
 };
 
 export default function MainSection({
   isPension,
   method,
+  childId,
   period,
   isFixedGift,
   monthlyMoney,
+  onSave,
 }: Props) {
   const [giftMethod, setGiftMethod] = useState<GIFT_METHOD>(
     isFixedGift ? GIFT_METHOD.REGULAR : method,
@@ -44,6 +58,12 @@ export default function MainSection({
   const [blocked, setBlocked] = useState<BLOCK_STATUS>(BLOCK_STATUS.NONBLOCK);
   const [fixed, setFixed] = useState<boolean>(isFixedGift);
   const [yugi, setYugi] = useState<YUGI_STATUS>(YUGI_STATUS.SAME);
+  const router = useRouter();
+  const [newPension, setNewPension] = useState<boolean>(isPension);
+  const [newAmount, setNewAmount] = useState<number | null>(
+    Number(monthlyMoney),
+  );
+  const [newPeriod, setNewPeriod] = useState<number | null>(period);
 
   return (
     <div>
@@ -54,7 +74,11 @@ export default function MainSection({
           </h1>
         </div>
         <div className="my-2 grid justify-center gap-2 rounded-2xl border border-hana-gray-300 p-4">
-          <PensionSelection prev={isPension} />
+          <PensionSelection
+            prev={isPension}
+            now={newPension}
+            onChange={setNewPension}
+          />
           <PlanSection
             yugi={yugi}
             method={giftMethod}
@@ -63,6 +87,10 @@ export default function MainSection({
             isFixed={isFixedGift}
             blockStatus={blocked}
             onMethodChange={setGiftMethod}
+            newAmount={newAmount}
+            newPeriod={newPeriod}
+            onAmountChange={setNewAmount}
+            onPeriodChange={setNewPeriod}
           />
           <hr className="my-4 border-hana-gray-400" />
           <YugiSection
@@ -79,9 +107,29 @@ export default function MainSection({
         </div>
       </main>
       <div className="grid justify-center gap-2 pt-4">
-        <CustomButton preset="lightgraylong">돌아가기</CustomButton>
+        <CustomButton preset="lightgraylong" onClick={router.back}>
+          돌아가기
+        </CustomButton>
         <CustomButton
           preset="greenlong"
+          onClick={async () => {
+            await onSave({
+              childId,
+              form: {
+                fixed,
+                amount: newAmount ?? monthlyMoney,
+                period: newPeriod ?? period,
+                pension: newPension,
+                method: giftMethod,
+              },
+            });
+
+            if (!isPension && newPension) {
+              router.push('/main/product-list');
+            } else {
+              router.back();
+            }
+          }}
           disabled={blocked === BLOCK_STATUS.BLOCK}
         >
           이 플랜으로 변경하기

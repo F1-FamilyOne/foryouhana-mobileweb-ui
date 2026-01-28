@@ -1,8 +1,21 @@
 'use client';
-import { useState } from 'react';
 import FixedPlanSection from './FixedPlanSection';
 import GeneralPlanSection from './GeneralPlanSection';
 import { BLOCK_STATUS, GIFT_METHOD, type YUGI_STATUS } from './MainSection';
+
+type Props = {
+  yugi: YUGI_STATUS;
+  method: GIFT_METHOD;
+  period: number | null;
+  newPeriod: number | null;
+  amount: number | null;
+  newAmount: number | null;
+  isFixed: boolean;
+  blockStatus: BLOCK_STATUS;
+  onMethodChange: (v: GIFT_METHOD) => void;
+  onAmountChange: (v: number | null) => void;
+  onPeriodChange: (v: number | null) => void;
+};
 
 export default function PlanSection({
   yugi,
@@ -10,19 +23,13 @@ export default function PlanSection({
   period,
   amount,
   isFixed,
+  newPeriod,
+  newAmount,
   blockStatus,
+  onPeriodChange,
+  onAmountChange,
   onMethodChange,
-}: {
-  yugi: YUGI_STATUS;
-  method: GIFT_METHOD;
-  period: number | null;
-  amount: number | null;
-  isFixed: boolean;
-  blockStatus: BLOCK_STATUS;
-  onMethodChange: (v: GIFT_METHOD) => void;
-}) {
-  const [newAmount, setNewAmount] = useState<number | null>(amount);
-  const [newPeriod, setNewPeriod] = useState<number | null>(period);
+}: Props) {
   return (
     <div>
       {isFixed ? (
@@ -36,8 +43,8 @@ export default function PlanSection({
           }
           method={method}
           blockStatus={blockStatus}
-          onChangeAmount={(v) => setNewAmount(v)}
-          onChangePeriod={(v) => setNewPeriod(v)}
+          onChangeAmount={(v) => onAmountChange(v)}
+          onChangePeriod={(v) => onPeriodChange(v)}
           onMethodChange={(v) => onMethodChange(v)}
         />
       ) : (
@@ -53,8 +60,8 @@ export default function PlanSection({
           period={
             (blockStatus === BLOCK_STATUS.REVERT ? period : newPeriod) ?? 0
           }
-          onChangeAmount={setNewAmount}
-          onChangePeriod={setNewPeriod}
+          onChangeAmount={onAmountChange}
+          onChangePeriod={onPeriodChange}
         />
       )}
     </div>

@@ -2,6 +2,7 @@ import { InfoIcon } from 'lucide-react';
 import { BinaryToggle } from '@/components/cmm/BinaryToggle';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import ShowPlanInput from '@/components/cmm/ShowPlanInput';
+import TitlePlanSelect from '@/components/cmm/TitlePlanSelect';
 import { formatWonNatural } from '@/lib/utils';
 import { type BLOCK_STATUS, GIFT_METHOD, YUGI_STATUS } from './MainSection';
 
@@ -37,6 +38,7 @@ export default function GeneralPlanSection({
         <div>
           {isRegular ? (
             <div>
+              <TitlePlanSelect title="증여 방식" />
               <BinaryToggle
                 falseLabel="자유 이체"
                 trueLabel="정기 이체"

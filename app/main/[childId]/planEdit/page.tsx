@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { saveEditPlan } from '@/actions/plan.action';
 import Header from '@/components/cmm/Header';
 import { account_acc_type } from '@/lib/generated/prisma/enums';
 import { prisma } from '@/lib/prisma';
@@ -63,6 +64,8 @@ export default async function PlanEdit({ params }: PageProps) {
         isFixedGift={isFixedGift}
         method={method}
         isPension={isPension}
+        onSave={saveEditPlan}
+        childId={childIdNumber}
       />
     </div>
   );
