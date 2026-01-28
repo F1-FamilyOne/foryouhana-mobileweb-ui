@@ -2,18 +2,20 @@
 import { CustomButton } from '@/components/cmm/CustomButton';
 import { HometaxReportCard } from '@/components/cmm/HometaxSupportCard';
 import TitlePlanSelect from '@/components/cmm/TitlePlanSelect';
-import { BLOCK_STATUS } from './MainSection';
+import { BLOCK_STATUS, YUGI_STATUS } from './MainSection';
 
 export default function YugiSection({
   isFixed,
   prev,
   onChange,
   onBlockedChange,
+  setYugi,
 }: {
   isFixed: boolean;
   onChange: (v: boolean) => void;
   prev: boolean;
   onBlockedChange: (v: BLOCK_STATUS) => void;
+  setYugi: (y: YUGI_STATUS) => void;
 }) {
   return (
     <div>
@@ -43,9 +45,15 @@ export default function YugiSection({
               </CustomButton>
               <div className="flex items-center justify-center pt-4">
                 <HometaxReportCard
-                  onReportComplete={() =>
-                    onBlockedChange(BLOCK_STATUS.AFTERHOMETAX)
-                  }
+                  isStop={true}
+                  onReportComplete={() => {
+                    setYugi(YUGI_STATUS.CHANGE);
+                    onBlockedChange(BLOCK_STATUS.AFTERHOMETAX);
+                  }}
+                  onStopComplete={() => {
+                    setYugi(YUGI_STATUS.STOP);
+                    onBlockedChange(BLOCK_STATUS.AFTERHOMETAX);
+                  }}
                 />
               </div>
             </div>
@@ -77,9 +85,10 @@ export default function YugiSection({
           {isFixed && (
             <div className="flex items-center justify-center pt-4">
               <HometaxReportCard
-                onReportComplete={() =>
-                  onBlockedChange(BLOCK_STATUS.AFTERHOMETAX)
-                }
+                onReportComplete={() => {
+                  setYugi(YUGI_STATUS.CHANGE);
+                  onBlockedChange(BLOCK_STATUS.AFTERHOMETAX);
+                }}
               />
             </div>
           )}

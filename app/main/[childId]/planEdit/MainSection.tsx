@@ -10,6 +10,12 @@ export enum GIFT_METHOD {
   FLEXIBLE = 'FLEXIBLE', //자유 이제
 }
 
+export enum YUGI_STATUS {
+  STOP = 'STOP',
+  CHANGE = 'CHANGE',
+  SAME = 'SAME',
+}
+
 export enum BLOCK_STATUS {
   BLOCK = 'BLOCK',
   NONBLOCK = 'NONBLOCK',
@@ -37,6 +43,7 @@ export default function MainSection({
   );
   const [blocked, setBlocked] = useState<BLOCK_STATUS>(BLOCK_STATUS.NONBLOCK);
   const [fixed, setFixed] = useState<boolean>(isFixedGift);
+  const [yugi, setYugi] = useState<YUGI_STATUS>(YUGI_STATUS.SAME);
 
   return (
     <div>
@@ -49,6 +56,7 @@ export default function MainSection({
         <div className="my-2 grid justify-center gap-2 rounded-2xl border border-hana-gray-300 p-4">
           <PensionSelection prev={isPension} />
           <PlanSection
+            yugi={yugi}
             method={giftMethod}
             period={period}
             amount={Number(monthlyMoney)}
@@ -58,6 +66,7 @@ export default function MainSection({
           />
           <hr className="my-4 border-hana-gray-400" />
           <YugiSection
+            setYugi={setYugi}
             prev={isFixedGift}
             isFixed={fixed}
             onChange={(v: boolean) => {
