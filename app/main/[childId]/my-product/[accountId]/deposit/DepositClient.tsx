@@ -19,6 +19,9 @@ import { processDeposit } from './actions';
 /** 최대 입금 금액 (10억 원) */
 const MAX_DEPOSIT_AMOUNT = 1_000_000_000;
 
+/** 빠른 입금 버튼에서 '전액'을 의미하는 특수 값 */
+const QUICK_AMOUNT_ALL = -1;
+
 type SerializedFund = {
   id: number;
   name: string;
@@ -110,7 +113,7 @@ export default function DepositClient({
       return;
     }
 
-    if (value === -1) {
+    if (value === QUICK_AMOUNT_ALL) {
       // 전액
       const max = selectedSource.deposit;
       setAmount(max);
@@ -175,7 +178,7 @@ export default function DepositClient({
     { label: '5만', value: 50000 },
     { label: '10만', value: 100000 },
     { label: '100만', value: 1000000 },
-    { label: '전액', value: -1 },
+    { label: '전액', value: QUICK_AMOUNT_ALL },
   ];
 
   return (
