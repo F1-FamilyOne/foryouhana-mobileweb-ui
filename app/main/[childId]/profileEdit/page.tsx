@@ -13,7 +13,10 @@ export default function ChildProfileEdit() {
   const router = useRouter();
   const { childId } = useParams();
 
-  const initialImage = '/file/자녀1.jpg';
+const DEFAULT_CHILD_IMAGE = '/file/자녀1.jpg';
+
+  // 초기값 설정
+  const [previewUrl, setPreviewUrl] = useState<string>(DEFAULT_CHILD_IMAGE);
 
   // 초기값 설정
   const [previewUrl, setPreviewUrl] = useState<string>(initialImage);
