@@ -34,13 +34,13 @@ export function LivingTrustModal({
           >
             <X className="h-6 w-6 text-hana-gray-500" />
           </button>
-          <h2 className="px-8 font-hana-bold text-lg text-black">
+          <h2 className="px-8 font-hana-bold text-black text-lg">
             자산이 많이 모였어요 🏛️
           </h2>
         </div>
 
         {/* Description */}
-        <p className="mb-8 text-center font-hana-regular text-base leading-relaxed text-hana-gray-600">
+        <p className="mb-8 text-center font-hana-regular text-base text-hana-gray-600 leading-relaxed">
           지금까지 모은 자산을
           <br />
           상속·증여까지 이어서 관리해보세요.

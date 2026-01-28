@@ -26,13 +26,13 @@ export function TaxSavingModal({
       <div className="w-[340px] rounded-[30px] bg-white px-6 py-8">
         {/* Header - No X Button */}
         <div className="mb-6 flex items-center justify-center">
-          <h2 className="font-hana-bold text-lg text-black">
+          <h2 className="font-hana-bold text-black text-lg">
             이번 달도 세금을 아꼈어요 💰
           </h2>
         </div>
 
         {/* Description */}
-        <p className="mb-8 text-center font-hana-regular text-base leading-relaxed text-hana-gray-600">
+        <p className="mb-8 text-center font-hana-regular text-base text-hana-gray-600 leading-relaxed">
           아이앞으로를 이용해
           <br />
           이번 달{' '}

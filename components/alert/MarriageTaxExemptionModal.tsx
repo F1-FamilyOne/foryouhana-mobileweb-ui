@@ -23,13 +23,13 @@ export function MarriageTaxExemptionModal({
       <div className="w-[340px] rounded-[30px] bg-white px-6 py-8">
         {/* Header - No X Button */}
         <div className="mb-6 flex items-center justify-center">
-          <h2 className="font-hana-bold text-lg text-black">
+          <h2 className="font-hana-bold text-black text-lg">
             이건 몰랐을 수도 있어요 💡
           </h2>
         </div>
 
         {/* Description */}
-        <p className="mb-8 text-center font-hana-regular text-base leading-relaxed text-hana-gray-600">
+        <p className="mb-8 text-center font-hana-regular text-base text-hana-gray-600 leading-relaxed">
           결혼·출산 시 1억,
           <br />
           창업 시 5억원까지
