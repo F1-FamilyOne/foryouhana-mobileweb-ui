@@ -15,9 +15,11 @@ export default async function Page({
   }
 
   return (
-    <BeforeJoinFund
-      initialChildId={Number(childId)}
-      childList={result.children}
-    />
+    <div className="relative min-h-full">
+      <BeforeJoinFund
+        initialChildId={Number(childId)}
+        childList={result.children}
+      />
+    </div>
   );
 }
