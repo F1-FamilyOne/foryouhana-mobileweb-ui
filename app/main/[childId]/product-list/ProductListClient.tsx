@@ -2,7 +2,12 @@
 
 import type { Route } from 'next';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import { CustomTab } from '@/components/cmm/CustomTab';
 import { FundListItemCard } from '@/components/cmm/FundListItemCard';
 
@@ -40,6 +45,8 @@ export function ProductListClient({ type, items }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const params = useParams();
+  const childId = params.childId as string;
 
   const handleChange = (nextValue: string) => {
     const next = nextValue === 'pension' ? 'pension' : 'general';
@@ -73,7 +80,7 @@ export function ProductListClient({ type, items }: Props) {
             <Link
               key={it.id}
               href={{
-                pathname: `/main/product-list/${it.id}`,
+                pathname: `/main/${childId}/product-list/${it.id}`,
                 query: { type },
               }}
               className="block"
