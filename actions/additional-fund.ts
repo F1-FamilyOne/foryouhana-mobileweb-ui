@@ -50,43 +50,45 @@ export async function createFundAccount(
     const accNum = generateAccountNumber();
 
     // 정기적립식의 경우 필수 값 검증
-    if (investType === 'REGULAR') {
-      if (!monthlyAmount || !transferDay) {
-        return {
-          success: false,
-          error: '정기적립식은 월 납입액과 납입일이 필요합니다.',
-        };
-      }
+    if (investType === 'REGULAR' && (!monthlyAmount || !transferDay)) {
+      return {
+        success: false,
+        error: '정기적립식은 월 납입액과 납입일이 필요합니다.',
+      };
     }
 
-    // 펀드 계좌 생성
-    const newAccount = await prisma.account.create({
-      data: {
-        child_id: childId,
-        fund_id: fundId,
-        acc_num: accNum,
-        acc_type: 'FUND',
-        opened_at: new Date(),
-        deposit: BigInt(0),
-        in_type: investType === 'FREE', // 0=정기(false), 1=자유(true)
-        plus_rate: 0,
-        plus_money: BigInt(0),
-        in_month: months,
-      },
-    });
-
-    // 정기적립식인 경우 auto_transfer 생성
-    if (investType === 'REGULAR' && monthlyAmount && transferDay) {
-      await prisma.auto_transfer.create({
+    const newAccount = await prisma.$transaction(async (tx) => {
+      // 펀드 계좌 생성
+      const account = await tx.account.create({
         data: {
-          transfer_day: transferDay,
-          transfer_count: months, // 총 납입횟수
-          amount: BigInt(monthlyAmount * 10000), // 만원 → 원 변환
-          source_account_id: depositAccountId,
-          target_account_id: newAccount.id,
+          child_id: childId,
+          fund_id: fundId,
+          acc_num: accNum,
+          acc_type: 'FUND',
+          opened_at: new Date(),
+          deposit: BigInt(0),
+          in_type: investType === 'FREE', // 0=정기(false), 1=자유(true)
+          plus_rate: 0,
+          plus_money: BigInt(0),
+          in_month: months,
         },
       });
-    }
+
+      // 정기적립식인 경우 auto_transfer 생성
+      if (investType === 'REGULAR' && monthlyAmount && transferDay) {
+        await tx.auto_transfer.create({
+          data: {
+            transfer_day: transferDay,
+            transfer_count: months, // 총 납입횟수
+            amount: BigInt(monthlyAmount * 10000), // 만원 → 원 변환
+            source_account_id: depositAccountId,
+            target_account_id: account.id,
+          },
+        });
+      }
+
+      return account;
+    });
 
     return {
       success: true,
