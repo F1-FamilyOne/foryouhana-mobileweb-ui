@@ -4,15 +4,15 @@ import { CustomButton } from '@/components/cmm/CustomButton';
 import { InputMonth } from '@/components/cmm/InputDayAmount';
 import TitlePlanSelect from '@/components/cmm/TitlePlanSelect';
 import { formatWonNatural } from '@/lib/utils';
-import { GIFT_METHOD } from './GiftPlanSection';
+import { BLOCK_STATUS, GIFT_METHOD } from './MainSection';
 
-export default function MethodSection({
+export default function GeneralPlanSection({
   isRegular,
   onChange,
   isFixed,
   period,
   amount,
-  isBlocked,
+  blockStatus,
   onChangeAmount,
   onChangePeriod,
 }: {
@@ -21,7 +21,7 @@ export default function MethodSection({
   isFixed: boolean;
   period: number;
   amount: number;
-  isBlocked: boolean;
+  blockStatus: BLOCK_STATUS;
   onChangeAmount: (value: number | null) => void;
   onChangePeriod: (value: number | null) => void;
 }) {
@@ -61,7 +61,9 @@ export default function MethodSection({
           <div>
             <TitlePlanSelect title="증여 기간" />
             <InputMonth
-              disabled={(isFixed && !isBlocked) ?? false}
+              disabled={
+                (isFixed && !(blockStatus === BLOCK_STATUS.BLOCK)) ?? false
+              }
               value={period ?? undefined}
               unit="개월"
               className="h-[42px] w-[155px] bg-hana-light-green font-hana-regular"
@@ -71,7 +73,9 @@ export default function MethodSection({
           <div>
             <TitlePlanSelect title="월 증여액" />
             <InputMonth
-              disabled={(isFixed && !isBlocked) ?? false}
+              disabled={
+                (isFixed && !(blockStatus === BLOCK_STATUS.BLOCK)) ?? false
+              }
               value={amount ?? undefined}
               unit="원"
               className="h-[42px] w-[155px] bg-hana-light-green font-hana-regular"
