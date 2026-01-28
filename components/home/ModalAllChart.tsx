@@ -18,6 +18,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 export type KidGiftAmount = {
   name: string;
   giftamount: number;
+  profitAmount: number;
 };
 
 type ModalAllChartProps = {
@@ -34,19 +35,41 @@ const backgroundColor = [
 
 export default function ModalAllChart({ onClose, kids }: ModalAllChartProps) {
   const [activeTab, setActiveTab] = useState<'ratio' | 'contribution'>('ratio');
-  const totalGiftAmount: number = kids.reduce((acc, cur) => {
-    return acc + cur.giftamount;
-  }, 0);
-  const data = {
+
+  // 전체 금액 합산
+  const totalGiftAmount: number = kids.reduce(
+    (acc, cur) => acc + cur.giftamount,
+    0,
+  );
+  const totalProfitAmount: number = kids.reduce(
+    (acc, cur) => acc + cur.profitAmount,
+    0,
+  );
+
+  // 파이 차트 데이터 설정
+  const chartData = {
     labels: kids.map((kid) => kid.name),
     datasets: [
       {
-        label: '증여된 금액',
-        data: kids.map((kid) => kid.giftamount),
+        data:
+          activeTab === 'ratio'
+            ? kids.map((kid) => kid.giftamount)
+            : kids.map((kid) => kid.profitAmount),
         backgroundColor,
-        hoverOffset: 5,
+        hoverOffset: 10,
+        borderWidth: 2,
+        borderColor: '#ffffff',
       },
     ],
+  };
+
+  const chartOptions = {
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false, // 하단 리스트가 있으므로 범례는 숨겼소.
+      },
+    },
   };
 
   return (
@@ -58,22 +81,24 @@ export default function ModalAllChart({ onClose, kids }: ModalAllChartProps) {
         className="absolute inset-0 bg-hana-main/30"
       ></button>
 
-      <div className="relative w-88.25 rounded-3xl bg-white shadow-2xl">
-        <div className="grid gap-3 p-4">
+      <div className="relative w-88.25 overflow-hidden rounded-3xl bg-white font-hana-cm shadow-2xl">
+        <div className="grid gap-4 p-6">
+          {/* 헤더 */}
           <div className="flex items-center gap-3">
             <ChartPie className="text-hana-main" />
-            <h1>전체통계</h1>
+            <h1 className="font-bold text-hana-black text-xl">전체 통계</h1>
           </div>
-          <div className="flex gap-3">
+
+          {/* 탭 버튼 */}
+          <div className="flex gap-2">
             <CustomButton
               preset={
                 activeTab === 'ratio' ? 'maingreenshort' : 'lightgrayshort'
               }
               onClick={() => setActiveTab('ratio')}
             >
-              자녀별 증여 비중
+              펀드 납입액
             </CustomButton>
-
             <CustomButton
               preset={
                 activeTab === 'contribution'
@@ -82,48 +107,69 @@ export default function ModalAllChart({ onClose, kids }: ModalAllChartProps) {
               }
               onClick={() => setActiveTab('contribution')}
             >
-              자녀별 수익 기여도
+              펀드 수익금
             </CustomButton>
           </div>
-          <div className="flex h-24 w-fill flex-col justify-center gap-2 rounded-[14px] bg-hana-light-green p-4">
-            <div className="text-hana-gray-600 text-sm">전체 증여 금액</div>
-            <div className="text-hana-main">
-              {totalGiftAmount.toLocaleString('ko-KR')}원
+
+          {/* 요약 카드 영역 */}
+          <div
+            className={`flex h-24 w-full flex-col justify-center gap-1 rounded-2xl p-4 transition-colors ${
+              activeTab === 'ratio' ? 'bg-hana-light-green' : 'bg-[#FDF2F8]'
+            }`}
+          >
+            <div className="font-medium text-hana-gray-600 text-sm">
+              {activeTab === 'ratio' ? '전체 납입 금액' : '전체 수익 금액'}
+            </div>
+            <div
+              className={`font-bold text-2xl ${
+                activeTab === 'ratio' ? 'text-hana-main' : 'text-[#D61F69]'
+              }`}
+            >
+              {activeTab === 'ratio'
+                ? `${totalGiftAmount.toLocaleString()}원`
+                : `${totalProfitAmount.toLocaleString()}원`}
             </div>
           </div>
-          <div className="flex h-66 w-fill items-center justify-center">
-            <Pie data={data}></Pie>
+
+          {/* 차트 영역 */}
+          <div className="relative flex h-56 w-full items-center justify-center py-2">
+            <Pie data={chartData} options={chartOptions} />
           </div>
-          <div>
-            <ul>
-              {data.labels.map((kid, idx) => {
+
+          {/* 하단 리스트 영역 */}
+          <div className="max-h-44 overflow-y-auto pr-1">
+            <ul className="grid gap-4">
+              {kids.map((kid, idx) => {
+                const currentVal =
+                  activeTab === 'ratio' ? kid.giftamount : kid.profitAmount;
+                const totalVal =
+                  activeTab === 'ratio' ? totalGiftAmount : totalProfitAmount;
+                const percentage =
+                  totalVal > 0 ? Math.round((currentVal / totalVal) * 100) : 0;
+
                 return (
-                  <li key={kid}>
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-1">
-                        <span
-                          style={{
-                            color:
-                              data.datasets[0].backgroundColor[
-                                idx % backgroundColor.length
-                              ],
-                          }}
-                        >
-                          ●
-                        </span>
-                        {kid}
+                  <li
+                    key={kid.name}
+                    className="flex items-center justify-between text-[15px]"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span
+                        className="h-3 w-3 rounded-full shadow-sm"
+                        style={{
+                          backgroundColor:
+                            backgroundColor[idx % backgroundColor.length],
+                        }}
+                      ></span>
+                      <span className="font-medium text-hana-black">
+                        {kid.name}
+                      </span>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-bold text-hana-black">
+                        {currentVal.toLocaleString()}원
                       </div>
-                      <div>
-                        <div>
-                          {data.datasets[0].data[idx].toLocaleString('ko-KR')}원
-                        </div>
-                        <div className="text-right text-hana-gray-600 text-xs">
-                          {Math.round(
-                            (data.datasets[0].data[idx] / totalGiftAmount) *
-                              100,
-                          )}{' '}
-                          %
-                        </div>
+                      <div className="mt-0.5 text-hana-gray-500 text-xs">
+                        {percentage}%
                       </div>
                     </div>
                   </li>

@@ -175,7 +175,7 @@ export default function InvestTestResult() {
             <CustomButton
               preset="greenlong"
               className="mt-5 h-[56px] w-full font-hana-cm text-[18px] shadow-lg hover:cursor-pointer"
-              onClick={() => route.push('/main/product-list')}
+              onClick={() => route.push(`/main/${childId}/product-list`)}
             >
               펀드 투자상품 보러가기
             </CustomButton>
