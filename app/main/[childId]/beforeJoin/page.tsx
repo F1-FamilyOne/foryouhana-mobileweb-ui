@@ -15,7 +15,7 @@ export default async function Page({
   }
 
   return (
-    <div className="relative min-h-full">
+    <div className="min-h-full overflow-y-scroll">
       <BeforeJoinFund
         initialChildId={Number(childId)}
         childList={result.children}
