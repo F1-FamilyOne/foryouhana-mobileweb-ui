@@ -4,10 +4,11 @@ import { CustomButton } from '@/components/cmm/CustomButton';
 import { InputMonth } from '@/components/cmm/InputDayAmount';
 import TitlePlanSelect from '@/components/cmm/TitlePlanSelect';
 import { formatWonNatural } from '@/lib/utils';
-import { BLOCK_STATUS, GIFT_METHOD } from './MainSection';
+import { BLOCK_STATUS, GIFT_METHOD, type YUGI_STATUS } from './MainSection';
 
 export default function GeneralPlanSection({
   isRegular,
+  yugi,
   onChange,
   isFixed,
   period,
@@ -21,6 +22,7 @@ export default function GeneralPlanSection({
   isFixed: boolean;
   period: number;
   amount: number;
+  yugi: YUGI_STATUS;
   blockStatus: BLOCK_STATUS;
   onChangeAmount: (value: number | null) => void;
   onChangePeriod: (value: number | null) => void;

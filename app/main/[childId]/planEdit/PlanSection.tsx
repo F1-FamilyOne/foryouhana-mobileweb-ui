@@ -2,9 +2,10 @@
 import { useState } from 'react';
 import FixedPlanSection from './FixedPlanSection';
 import GeneralPlanSection from './GeneralPlanSection';
-import { BLOCK_STATUS, GIFT_METHOD } from './MainSection';
+import { BLOCK_STATUS, GIFT_METHOD, type YUGI_STATUS } from './MainSection';
 
 export default function PlanSection({
+  yugi,
   method,
   period,
   amount,
@@ -12,6 +13,7 @@ export default function PlanSection({
   blockStatus,
   onMethodChange,
 }: {
+  yugi: YUGI_STATUS;
   method: GIFT_METHOD;
   period: number | null;
   amount: number | null;
@@ -25,6 +27,8 @@ export default function PlanSection({
     <div>
       {isFixed ? (
         <FixedPlanSection
+          yugi={yugi}
+          fixed={isFixed}
           amount={
             (blockStatus === BLOCK_STATUS.REVERT ? amount : newAmount) ?? 0
           }
@@ -39,6 +43,7 @@ export default function PlanSection({
         />
       ) : (
         <GeneralPlanSection
+          yugi={yugi}
           blockStatus={blockStatus}
           isRegular={method === GIFT_METHOD.REGULAR}
           onChange={onMethodChange}

@@ -1,12 +1,15 @@
 import { BinaryToggle } from '@/components/cmm/BinaryToggle';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import { InputMonth } from '@/components/cmm/InputDayAmount';
+import ShowPlanInput from '@/components/cmm/ShowPlanInput';
 import TitlePlanSelect from '@/components/cmm/TitlePlanSelect';
 import { formatWonNatural } from '@/lib/utils';
-import { BLOCK_STATUS, GIFT_METHOD } from './MainSection';
+import { BLOCK_STATUS, GIFT_METHOD, YUGI_STATUS } from './MainSection';
 
 export default function FixedPlanSection({
+  yugi,
   method,
+  fixed,
   period,
   amount,
   blockStatus,
@@ -14,25 +17,98 @@ export default function FixedPlanSection({
   onChangeAmount,
   onChangePeriod,
 }: {
+  yugi: YUGI_STATUS;
   method: GIFT_METHOD;
+  fixed: boolean;
   period: number;
   amount: number;
   blockStatus: BLOCK_STATUS;
   onMethodChange: (v: GIFT_METHOD) => void;
-  onChangeAmount: (value: number | null) => void;
-  onChangePeriod: (value: number | null) => void;
+  onChangeAmount: (value: number) => void;
+  onChangePeriod: (value: number) => void;
 }) {
   return (
     <div>
       <TitlePlanSelect title="증여 방식" />
       <div>
         {blockStatus !== BLOCK_STATUS.BLOCK ? (
-          <CustomButton disabled preset="lightgraylong" className="grid gap-0">
-            <span className="text-[14px] text-hana-black">정기 이체 방식</span>
-            <span className="text-[9px] text-hana-black">
-              유기정기금 운용 중
-            </span>
-          </CustomButton>
+          <div>
+            {blockStatus === BLOCK_STATUS.AFTERHOMETAX ? (
+              <div>
+                {yugi === YUGI_STATUS.CHANGE ? (
+                  <div>
+                    <CustomButton
+                      disabled
+                      preset="lightgraylong"
+                      className="grid gap-0"
+                    >
+                      <span className="text-[14px] text-hana-black">
+                        정기 이체 방식
+                      </span>
+                      <span className="text-[9px] text-hana-black">
+                        유기정기금 운용 중
+                      </span>
+                    </CustomButton>
+                    <ShowPlanInput
+                      amount={amount}
+                      onChangeAmount={onChangeAmount}
+                      period={period}
+                      onChangePeriod={onChangePeriod}
+                      disabled={true}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    {yugi === YUGI_STATUS.STOP && (
+                      <div>
+                        <BinaryToggle
+                          // disabled={true}
+                          falseLabel="자유 이체"
+                          trueLabel="정기 이체"
+                          value={method === GIFT_METHOD.REGULAR}
+                          onChange={(v) => {
+                            onMethodChange(
+                              v ? GIFT_METHOD.REGULAR : GIFT_METHOD.FLEXIBLE,
+                            );
+                          }}
+                        />
+
+                        <ShowPlanInput
+                          amount={amount}
+                          onChangeAmount={onChangeAmount}
+                          period={period}
+                          onChangePeriod={onChangePeriod}
+                          disabled={false}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div>
+                <CustomButton
+                  disabled
+                  preset="lightgraylong"
+                  className="grid gap-0"
+                >
+                  <span className="text-[14px] text-hana-black">
+                    정기 이체 방식
+                  </span>
+                  <span className="text-[9px] text-hana-black">
+                    유기정기금 운용 중
+                  </span>
+                </CustomButton>
+                <ShowPlanInput
+                  amount={amount}
+                  onChangeAmount={onChangeAmount}
+                  period={period}
+                  onChangePeriod={onChangePeriod}
+                  disabled={true}
+                />
+              </div>
+            )}
+          </div>
         ) : (
           <div>
             <BinaryToggle
@@ -43,39 +119,16 @@ export default function FixedPlanSection({
                 onMethodChange(v ? GIFT_METHOD.REGULAR : GIFT_METHOD.FLEXIBLE);
               }}
             />
+            <ShowPlanInput
+              amount={amount}
+              onChangeAmount={onChangeAmount}
+              period={period}
+              onChangePeriod={onChangePeriod}
+              disabled={false}
+            />
           </div>
         )}
 
-        <div className="flex justify-between pt-4">
-          <div>
-            <TitlePlanSelect title="증여 기간" />
-            <InputMonth
-              disabled={!(blockStatus === BLOCK_STATUS.BLOCK)}
-              value={period ?? undefined}
-              unit="개월"
-              className={
-                !(blockStatus === BLOCK_STATUS.BLOCK)
-                  ? 'h-[42px] w-[155px] bg-hana-gray-300 font-hana-regular text-hana-gray-600'
-                  : 'h-[42px] w-[155px] bg-hana-light-green font-hana-regular'
-              }
-              onChange={(v) => onChangePeriod(v ?? null)}
-            />
-          </div>
-          <div>
-            <TitlePlanSelect title="월 증여액" />
-            <InputMonth
-              disabled={!(blockStatus === BLOCK_STATUS.BLOCK)}
-              value={amount ?? undefined}
-              unit="원"
-              className={
-                !(blockStatus === BLOCK_STATUS.BLOCK)
-                  ? 'h-[42px] w-[155px] bg-hana-gray-300 font-hana-regular text-hana-gray-600'
-                  : 'h-[42px] w-[155px] bg-hana-light-green font-hana-regular'
-              }
-              onChange={(v) => onChangeAmount(v ?? null)}
-            />
-          </div>
-        </div>
         <div className="grid gap-2 pt-3">
           <TitlePlanSelect title="총 증여액" />
           <div className="grid justify-center rounded-xl bg-hana-light-green px-10 py-5">
