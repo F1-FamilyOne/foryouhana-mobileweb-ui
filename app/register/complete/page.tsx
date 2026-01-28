@@ -2,10 +2,11 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react'; // useEffect 추가
 import { createChildAndAccount } from '@/actions/child.action';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import { IMAGES_PATH } from '@/constants/images';
+import { useUserContext } from '@/hooks/useUserContext';
 
 /**
  * @page: 서비스 가입완료
@@ -17,9 +18,18 @@ import { IMAGES_PATH } from '@/constants/images';
 export default function RegisterComplete() {
   const route = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { ready, userId } = useUserContext();
+
+  // 화면 진입 시 userId가 준비되면 sessionStorage에 parentId 동기화
+  useEffect(() => {
+    if (ready && userId) {
+      sessionStorage.setItem('parentId', userId);
+    }
+  }, [ready, userId]);
 
   const handleStartService = async () => {
-    if (isSubmitting) return;
+    // 유저 정보 로딩 중이거나 제출 중이면 방어
+    if (!ready || !userId || isSubmitting) return;
 
     const rawData = sessionStorage.getItem('giftPlan');
     if (!rawData) {
@@ -33,7 +43,7 @@ export default function RegisterComplete() {
     try {
       const sessionData = JSON.parse(rawData);
 
-      const result = await createChildAndAccount(sessionData);
+      const result = await createChildAndAccount(sessionData, Number(userId));
 
       if (result.success && result.childId) {
         sessionStorage.clear();
@@ -93,7 +103,7 @@ export default function RegisterComplete() {
           preset="greenlong"
           className="font-hana-cm text-[20px] hover:cursor-pointer disabled:opacity-70"
           onClick={handleStartService}
-          disabled={isSubmitting}
+          disabled={isSubmitting || !ready} // ready 아닐 때도 비활성화
         >
           {isSubmitting
             ? '아이 정보를 등록 중...'
