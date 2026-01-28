@@ -1,6 +1,7 @@
 'use client';
 
 import { CirclePlus } from 'lucide-react';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -18,8 +19,6 @@ import { cn } from '@/lib/utils';
  */
 
 type TabValue = 'free' | 'regular';
-
-const PRODUCT_LIST_URL = 'http://localhost:3000/main/product-list?type=pension';
 
 function SectionTitleLine({ title }: { title: string }) {
   return (
@@ -56,11 +55,13 @@ function FundSummaryCard({
 
 function GoProductsButton({
   bgVariant,
+  href,
 }: {
   bgVariant: 'activeLike' | 'canceledLike';
+  href: Route;
 }) {
   return (
-    <Link href={PRODUCT_LIST_URL} aria-label="새로운 상품 보러 가기 링크">
+    <Link href={href} aria-label="새로운 상품 보러 가기 링크">
       <Button
         type="button"
         aria-label="새로운 상품 보러 가기"
@@ -79,7 +80,7 @@ function GoProductsButton({
   );
 }
 
-function EmptyActiveState() {
+function EmptyActiveState({ href }: { href: Route }) {
   return (
     <div className="py-30 text-center">
       <p className="font-hana-regular text-[15px] text-hana-gray-500">
@@ -87,7 +88,7 @@ function EmptyActiveState() {
       </p>
 
       <div className="mt-6 flex justify-center">
-        <GoProductsButton bgVariant="canceledLike" />
+        <GoProductsButton href={href} bgVariant="canceledLike" />
       </div>
     </div>
   );
@@ -102,6 +103,8 @@ export function MyProductUi({ childId }: Props) {
 
   const { activeCards, canceledCards, isLoading, isError } =
     useMyFunds(childId);
+
+  const productListHref = `/main/${childId}/product-list?type=pension` as Route;
 
   const activeCount = activeCards.length;
   const canceledCount = canceledCards.length;
@@ -122,7 +125,7 @@ export function MyProductUi({ childId }: Props) {
       <div className="flex items-center gap-2">
         <h2 className="font-hana-medium text-[25px]">상품 리스트</h2>
 
-        <Link href={PRODUCT_LIST_URL} aria-label="상품 리스트로 이동">
+        <Link href={productListHref} aria-label="상품 리스트로 이동">
           <button
             type="button"
             className="flex items-center justify-center"
@@ -184,7 +187,7 @@ export function MyProductUi({ childId }: Props) {
                 </div>
               </>
             ) : (
-              <EmptyActiveState />
+              <EmptyActiveState href={productListHref} />
             )}
           </div>
 
@@ -209,7 +212,10 @@ export function MyProductUi({ childId }: Props) {
             {/* 운용중 카드가 있을 때만 하단 버튼 보임 */}
             {hasActive ? (
               <div className="flex justify-center pt-2">
-                <GoProductsButton bgVariant="activeLike" />
+                <GoProductsButton
+                  href={productListHref}
+                  bgVariant="activeLike"
+                />
               </div>
             ) : null}
           </div>
