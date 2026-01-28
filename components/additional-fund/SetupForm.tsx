@@ -127,17 +127,15 @@ export function SetupForm({
 
   return (
     <div className="flex h-[calc(100%-65px-12px)] flex-col">
-      <main className="flex-1 overflow-y-auto px-3">
-        <h1 className="mt-6 font-bold text-[18px] text-hana-gray-800">
-          납입 금액과 기간을
-          <br />
-          설정해 주세요
+      <main className="flex-1 px-3">
+        <h1 className="mt-4 font-bold text-[18px] text-hana-gray-800">
+          납입 금액과 기간을 설정해 주세요
         </h1>
 
-        {/* 설정 카드 */}
-        <div className="mt-6 rounded-[15px] bg-hana-gray-100 p-5">
+        {/* 설정 카드 - 정기적립식 기준 고정 높이 */}
+        <div className="mt-4 h-[388px] rounded-[15px] bg-hana-gray-100 p-4">
           {/* 납입 방식 */}
-          <div className="mb-5">
+          <div className="mb-4">
             <p className="mb-3 font-medium text-[14px] text-hana-gray-700">
               납입 방식
             </p>
@@ -165,7 +163,7 @@ export function SetupForm({
               </div>
 
               {/* 월 납입일 */}
-              <div className="mb-5">
+              <div className="mb-4">
                 <p className="mb-2 text-[14px] text-hana-gray-600">월 납입일</p>
                 <InputDayFlex value={transferDay} onChange={setTransferDay} />
               </div>
@@ -188,7 +186,7 @@ export function SetupForm({
               </div>
 
               {/* 증여세 안내 */}
-              <p className="mt-3 text-[11px] text-hana-gray-500 leading-relaxed">
+              <p className="mt-2 text-[11px] text-hana-gray-500 leading-relaxed">
                 ※ 증여세 공제는 10년마다 새로 적용돼요.
                 <br />
                 19세 미만은 2,000만원, 성인은 5,000만원까지 공제되며, 한도를
@@ -211,17 +209,22 @@ export function SetupForm({
       </main>
 
       {/* 하단 버튼 */}
-      <div className="shrink-0 flex flex-col gap-3 px-3 pb-6">
+      <div className="flex shrink-0 flex-col gap-2 px-3 pb-4">
         {errorMessage && (
           <p className="text-center text-[14px] text-red-500">{errorMessage}</p>
         )}
-        <CustomButton preset="graylong" onClick={handleBack}>
+        <CustomButton
+          preset="graylong"
+          onClick={handleBack}
+          className="h-[40px]"
+        >
           돌아가기
         </CustomButton>
         <CustomButton
           preset="greenlong"
           onClick={handleSubmit}
           disabled={!isFormValid || isPending}
+          className="h-[40px]"
         >
           {isPending ? '처리 중...' : '상품 가입하기'}
         </CustomButton>
