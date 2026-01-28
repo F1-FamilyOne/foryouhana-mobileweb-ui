@@ -73,6 +73,78 @@ export default async function ProductDetailPage({ params }: Props) {
           },
         });
 
+  const ok = !isInvalidChildId && !isInvalidFundId && fund;
+
+  let content: React.ReactNode = null;
+
+  if (isInvalidChildId || isInvalidFundId) {
+    content = (
+      <div className="p-4 font-hana-cm text-[14px] text-hana-dark-navy">
+        잘못된 접근입니다.
+      </div>
+    );
+  } else if (!fund) {
+    content = (
+      <div className="p-4 font-hana-cm text-[14px] text-hana-dark-navy">
+        상품을 찾을 수 없습니다.
+      </div>
+    );
+  } else {
+    const risk = dangerToRisk(fund.danger);
+    const icon = pickIcon(fund.is_pension, fund.type);
+    const logoSrc = getLogoSrc(icon);
+
+    content = (
+      <div className="px-4">
+        <FundHeaderSection
+          company={fund.company}
+          logoSrc={logoSrc}
+          icon={icon}
+        />
+
+        <div className="my-3 h-px w-full bg-hana-gray-200" />
+
+        <FundRiskBadge risk={risk} />
+
+        <div className="pt-3 font-hana-bold text-[24px] text-black">
+          {fund.name}
+        </div>
+
+        <div className="pt-2 font-hana-cm text-[14px] text-hana-gray-600">
+          <div>글로벌 우량 기업에 투자하여</div>
+          <div>안정적인 수익을 추구하는 펀드</div>
+        </div>
+
+        <FundStatSection
+          plus1={fund.plus_1}
+          totalMoney={fund.total_money}
+          setDate={new Date(fund.set_date)}
+        />
+
+        <div className="my-2 mt-10 h-[8px] w-full bg-hana-gray-100" />
+
+        <PriceTrendSection defaultValue="m6" />
+
+        <FundOverviewSection />
+
+        <FundMetaGrid
+          company={fund.company}
+          setDate={new Date(fund.set_date)}
+          totalFee={fund.total_fee}
+          sellFee={fund.sell_fee}
+        />
+
+        <div className="pt-15 font-hana-bold text-[16px] text-black">
+          이 펀드의 핵심 포인트
+        </div>
+
+        <FundKeyPointsSection />
+
+        <div className="h-6" />
+      </div>
+    );
+  }
+
   return (
     <div className="relative h-full w-full">
       <div className="grid h-full grid-rows-[auto_1fr_auto] overflow-hidden">
@@ -85,76 +157,10 @@ export default async function ProductDetailPage({ params }: Props) {
             msOverflowStyle: 'none',
           }}
         >
-          {isInvalidChildId || isInvalidFundId ? (
-            <div className="p-4 font-hana-cm text-[14px] text-hana-dark-navy">
-              잘못된 접근입니다.
-            </div>
-          ) : !fund ? (
-            <div className="p-4 font-hana-cm text-[14px] text-hana-dark-navy">
-              상품을 찾을 수 없습니다.
-            </div>
-          ) : (
-            <div className="px-4">
-              {(() => {
-                const risk = dangerToRisk(fund.danger);
-                const icon = pickIcon(fund.is_pension, fund.type);
-                const logoSrc = getLogoSrc(icon);
-
-                return (
-                  <>
-                    <FundHeaderSection
-                      company={fund.company}
-                      logoSrc={logoSrc}
-                      icon={icon}
-                    />
-
-                    <div className="my-3 h-px w-full bg-hana-gray-200" />
-
-                    <FundRiskBadge risk={risk} />
-
-                    <div className="pt-3 font-hana-bold text-[24px] text-black">
-                      {fund.name}
-                    </div>
-
-                    <div className="pt-2 font-hana-cm text-[14px] text-hana-gray-600">
-                      <div>글로벌 우량 기업에 투자하여</div>
-                      <div>안정적인 수익을 추구하는 펀드</div>
-                    </div>
-
-                    <FundStatSection
-                      plus1={fund.plus_1}
-                      totalMoney={fund.total_money}
-                      setDate={new Date(fund.set_date)}
-                    />
-
-                    <div className="my-2 mt-10 h-[8px] w-full bg-hana-gray-100" />
-
-                    <PriceTrendSection defaultValue="m6" />
-
-                    <FundOverviewSection />
-
-                    <FundMetaGrid
-                      company={fund.company}
-                      setDate={new Date(fund.set_date)}
-                      totalFee={fund.total_fee}
-                      sellFee={fund.sell_fee}
-                    />
-
-                    <div className="pt-15 font-hana-bold text-[16px] text-black">
-                      이 펀드의 핵심 포인트
-                    </div>
-
-                    <FundKeyPointsSection />
-
-                    <div className="h-6" />
-                  </>
-                );
-              })()}
-            </div>
-          )}
+          {content}
         </main>
 
-        <JoinButton childId={parsedChildId} fundId={fundId} />
+        {ok ? <JoinButton childId={parsedChildId} fundId={fundId} /> : <div />}
       </div>
     </div>
   );

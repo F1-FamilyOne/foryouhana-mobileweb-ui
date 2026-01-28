@@ -112,12 +112,9 @@ export function MyProductUi({ childId }: Props) {
 
   const hasActive = activeCount > 0;
 
-  const activeFiltered = activeCards.filter((c) => {
-    if (tab === 'free') {
-      return c.inType === true;
-    }
-    return c.inType === false;
-  });
+  const activeFiltered = activeCards.filter(
+    (c) => c.inType === (tab === 'free'),
+  );
 
   return (
     <main className="mx-auto w-full max-w-md px-4 pt-4 pb-24">
@@ -125,14 +122,8 @@ export function MyProductUi({ childId }: Props) {
       <div className="flex items-center gap-2">
         <h2 className="font-hana-medium text-[25px]">상품 리스트</h2>
 
-        <Link href={productListHref} aria-label="상품 리스트로 이동">
-          <button
-            type="button"
-            className="flex items-center justify-center"
-            aria-label="상품 리스트 추가 버튼"
-          >
-            <CirclePlus className="h-6 w-6 text-hana-gray-700 hover:text-hana-main" />
-          </button>
+        <Link href={productListHref} aria-label="상품 리스트 추가 버튼">
+          <CirclePlus className="h-6 w-6 text-hana-gray-700 hover:text-hana-main" />
         </Link>
       </div>
 

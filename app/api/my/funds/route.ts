@@ -15,19 +15,13 @@ function formatWon(n: bigint) {
 }
 
 function fundTypeTag(t?: string) {
-  if (t === 'BOND') {
-    return '채권';
-  }
-  if (t === 'ETF') {
-    return 'ETF';
-  }
-  if (t === 'STOCK') {
-    return '주식';
-  }
-  if (t === 'MIXED') {
-    return '혼합';
-  }
-  return '상품';
+  const typeMap: Record<string, string> = {
+    BOND: '채권',
+    ETF: 'ETF',
+    STOCK: '주식',
+    MIXED: '혼합',
+  };
+  return (t && typeMap[t]) || '상품';
 }
 
 export async function GET(req: Request) {
@@ -61,7 +55,7 @@ export async function GET(req: Request) {
 
     const tags: [string?, string?, string?] = [
       fundTypeTag(a.fund?.type),
-      a.in_type ? '자유 적립' : '정기 납입',
+      a.in_type ? '자유 적립' : '정기 적립',
       isCanceled ? '해지' : '운용중',
     ];
 
@@ -77,8 +71,20 @@ export async function GET(req: Request) {
     };
   });
 
-  const activeCards = cards.filter((c) => c.variant === 'active');
-  const canceledCards = cards.filter((c) => c.variant === 'canceled');
+  const { activeCards, canceledCards } = cards.reduce(
+    (acc, card) => {
+      if (card.variant === 'active') {
+        acc.activeCards.push(card);
+      } else {
+        acc.canceledCards.push(card);
+      }
+      return acc;
+    },
+    { activeCards: [], canceledCards: [] } as {
+      activeCards: typeof cards;
+      canceledCards: typeof cards;
+    },
+  );
 
   return NextResponse.json({ activeCards, canceledCards });
 }
