@@ -1,5 +1,4 @@
 import Header from '@/components/cmm/Header';
-import { BottomNavBar } from '@/components/cmm/NavBar';
 import type { fund_danger, fund_type } from '@/lib/generated/prisma/enums';
 import { prisma } from '@/lib/prisma';
 import { FundHeaderSection } from './fund-header-section';
@@ -8,6 +7,7 @@ import { FundMetaGrid } from './fund-meta-grid';
 import { FundOverviewSection } from './fund-overview-section';
 import { FundRiskBadge } from './fund-risk-badge';
 import { FundStatSection } from './fund-stat-section';
+import { JoinButton } from './join-button.client';
 import { PriceTrendSection } from './price-trend-section.client';
 
 /**
@@ -18,7 +18,7 @@ import { PriceTrendSection } from './price-trend-section.client';
  */
 
 type Props = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ childId: string; id: string }>;
   searchParams?: Promise<{ type?: string }>;
 };
 
@@ -43,32 +43,35 @@ function getLogoSrc(icon: DetailIcon) {
 }
 
 export default async function ProductDetailPage({ params }: Props) {
-  const { id } = await params;
+  const { childId, id } = await params;
 
+  const parsedChildId = Number(childId);
   const fundId = Number(id);
 
-  const isInvalidId = !Number.isFinite(fundId);
+  const isInvalidChildId = !Number.isFinite(parsedChildId);
+  const isInvalidFundId = !Number.isFinite(fundId);
 
-  const fund = isInvalidId
-    ? null
-    : await prisma.fund.findUnique({
-        where: { id: fundId },
-        select: {
-          id: true,
-          name: true,
-          company: true,
-          danger: true,
-          type: true,
-          total_fee: true,
-          sell_fee: true,
-          set_date: true,
-          total_money: true,
-          plus_1: true,
-          plus_5: true,
-          plus_10: true,
-          is_pension: true,
-        },
-      });
+  const fund =
+    isInvalidChildId || isInvalidFundId
+      ? null
+      : await prisma.fund.findUnique({
+          where: { id: fundId },
+          select: {
+            id: true,
+            name: true,
+            company: true,
+            danger: true,
+            type: true,
+            total_fee: true,
+            sell_fee: true,
+            set_date: true,
+            total_money: true,
+            plus_1: true,
+            plus_5: true,
+            plus_10: true,
+            is_pension: true,
+          },
+        });
 
   return (
     <div className="relative h-full w-full">
@@ -82,7 +85,7 @@ export default async function ProductDetailPage({ params }: Props) {
             msOverflowStyle: 'none',
           }}
         >
-          {isInvalidId ? (
+          {isInvalidChildId || isInvalidFundId ? (
             <div className="p-4 font-hana-cm text-[14px] text-hana-dark-navy">
               잘못된 접근입니다.
             </div>
@@ -151,7 +154,7 @@ export default async function ProductDetailPage({ params }: Props) {
           )}
         </main>
 
-        <BottomNavBar />
+        <JoinButton childId={parsedChildId} fundId={fundId} />
       </div>
     </div>
   );
