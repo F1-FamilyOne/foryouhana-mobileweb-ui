@@ -124,7 +124,7 @@ export default function MainSection({
               },
             });
 
-            if (!isPension && newPension) {
+            if (isPension === false && newPension === true) {
               router.push('/main/product-list');
             } else {
               router.back();

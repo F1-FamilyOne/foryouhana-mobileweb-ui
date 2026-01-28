@@ -49,10 +49,14 @@ export default async function PlanEdit({ params }: PageProps) {
     start_date: startDate,
     end_date: endDate,
   } = child;
-  const method: GIFT_METHOD =
-    monthlyMoney != null && goalMoney != null
+  const method =
+    monthlyMoney !== null && goalMoney !== null
       ? GIFT_METHOD.REGULAR
       : GIFT_METHOD.FLEXIBLE;
+
+  console.log('method : ', method);
+  console.log('MONTHLYMOney : ', monthlyMoney);
+  console.log('MONTHLYMOney : ', goalMoney);
   const period = getGiftPeriodMonths(startDate, endDate);
 
   return (

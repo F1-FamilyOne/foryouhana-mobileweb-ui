@@ -28,7 +28,7 @@ export const HometaxReportCard = ({
       className={
         isStop
           ? 'h-full w-[322px] rounded-2xl border-0 bg-hana-gray-50'
-          : 'h-[172px] w-[322px] rounded-2xl border-0 bg-hana-gray-50'
+          : 'h-full w-[322px] rounded-2xl border-0 bg-hana-gray-50'
       }
     >
       <CardContent className="space-y-1 rounded-2xl bg-hana-gray-50 p-3 pt-0">

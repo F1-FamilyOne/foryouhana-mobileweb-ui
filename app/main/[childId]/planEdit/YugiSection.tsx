@@ -28,7 +28,7 @@ export default function YugiSection({
             <CustomButton
               preset="redlong"
               onClick={() => {
-                onChange(!isFixed);
+                // onChange(!isFixed);
                 onBlockedChange(BLOCK_STATUS.BLOCK);
               }}
             >
@@ -39,7 +39,7 @@ export default function YugiSection({
               <CustomButton
                 preset="greenlong"
                 onClick={() => {
-                  onChange(!isFixed);
+                  // onChange(!isFixed);
                   onBlockedChange(BLOCK_STATUS.REVERT);
                 }}
               >
@@ -51,10 +51,12 @@ export default function YugiSection({
                   onReportComplete={() => {
                     setYugi(YUGI_STATUS.CHANGE);
                     onBlockedChange(BLOCK_STATUS.AFTERHOMETAX);
+                    onChange(true);
                   }}
                   onStopComplete={() => {
                     setYugi(YUGI_STATUS.STOP);
                     onBlockedChange(BLOCK_STATUS.AFTERHOMETAX);
+                    onChange(false);
                   }}
                 />
               </div>
