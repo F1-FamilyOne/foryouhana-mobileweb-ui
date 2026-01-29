@@ -139,3 +139,17 @@ export function formatWonNatural(amount: number): string {
 
   return `${parts.join(' ')}원`;
 }
+
+export function getGiftPeriodMonths(
+  startDate?: Date | null,
+  endDate?: Date | null,
+): number | null {
+  if (!startDate || !endDate) return null;
+
+  const startYear = startDate.getFullYear();
+  const startMonth = startDate.getMonth(); // 0-based
+  const endYear = endDate.getFullYear();
+  const endMonth = endDate.getMonth();
+
+  return (endYear - startYear) * 12 + (endMonth - startMonth);
+}

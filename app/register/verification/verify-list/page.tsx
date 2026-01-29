@@ -28,7 +28,7 @@ import ProgressBar from '@/components/cmm/ProgressBar';
 export default function verifyListPage() {
   const router = useRouter();
 
-  const [isPromiseFixed, setPromiseFixed] = useState<boolean>(false);
+  const [isPromiseFixed, setPromiseFixed] = useState<boolean>(true);
 
   const [verifyStatus, setVerifyStatus] = useState({
     family: false,
@@ -58,7 +58,10 @@ export default function verifyListPage() {
       try {
         const giftPlan = JSON.parse(savedData);
         if (giftPlan.is_promise_fixed !== undefined) {
-          setPromiseFixed(giftPlan.is_promise_fixed);
+          const fixedValue =
+            giftPlan.is_promise_fixed === true ||
+            giftPlan.is_promise_fixed === 'true';
+          setPromiseFixed(fixedValue);
         }
       } catch (error) {
         console.error('JSON 파싱 에러:', error);

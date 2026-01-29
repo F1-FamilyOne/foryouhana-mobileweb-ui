@@ -1,5 +1,4 @@
 import Header from '@/components/cmm/Header';
-import { BottomNavBar } from '@/components/cmm/NavBar';
 import type { fund_danger, fund_type } from '@/lib/generated/prisma/enums';
 import { prisma } from '@/lib/prisma';
 import { FundHeaderSection } from './fund-header-section';
@@ -8,6 +7,7 @@ import { FundMetaGrid } from './fund-meta-grid';
 import { FundOverviewSection } from './fund-overview-section';
 import { FundRiskBadge } from './fund-risk-badge';
 import { FundStatSection } from './fund-stat-section';
+import { JoinButton } from './join-button.client';
 import { PriceTrendSection } from './price-trend-section.client';
 
 /**
@@ -18,7 +18,7 @@ import { PriceTrendSection } from './price-trend-section.client';
  */
 
 type Props = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ childId: string; id: string }>;
   searchParams?: Promise<{ type?: string }>;
 };
 
@@ -43,64 +43,59 @@ function getLogoSrc(icon: DetailIcon) {
 }
 
 export default async function ProductDetailPage({ params }: Props) {
-  const { id } = await params;
+  const { childId, id } = await params;
 
+  const parsedChildId = Number(childId);
   const fundId = Number(id);
-  if (!Number.isFinite(fundId)) {
-    return (
-      <div>
-        <Header content="상품 상세보기" />
-        <div className="p-4 font-hana-cm text-[14px] text-hana-dark-navy">
-          잘못된 접근입니다.
-        </div>
-        <div className="pb-24" />
-        <BottomNavBar />
+
+  const isInvalidChildId = !Number.isFinite(parsedChildId);
+  const isInvalidFundId = !Number.isFinite(fundId);
+
+  const fund =
+    isInvalidChildId || isInvalidFundId
+      ? null
+      : await prisma.fund.findUnique({
+          where: { id: fundId },
+          select: {
+            id: true,
+            name: true,
+            company: true,
+            danger: true,
+            type: true,
+            total_fee: true,
+            sell_fee: true,
+            set_date: true,
+            total_money: true,
+            plus_1: true,
+            plus_5: true,
+            plus_10: true,
+            is_pension: true,
+          },
+        });
+
+  const ok = !isInvalidChildId && !isInvalidFundId && fund;
+
+  let content: React.ReactNode = null;
+
+  if (isInvalidChildId || isInvalidFundId) {
+    content = (
+      <div className="p-4 font-hana-cm text-[14px] text-hana-dark-navy">
+        잘못된 접근입니다.
       </div>
     );
-  }
-
-  const fund = await prisma.fund.findUnique({
-    where: { id: fundId },
-    select: {
-      id: true,
-      name: true,
-      company: true,
-      danger: true,
-      type: true,
-      total_fee: true,
-      sell_fee: true,
-      set_date: true,
-      total_money: true,
-      plus_1: true,
-      plus_5: true,
-      plus_10: true,
-      is_pension: true,
-    },
-  });
-
-  if (!fund) {
-    return (
-      <div>
-        <Header content="상품 상세보기" />
-        <div className="p-4 font-hana-cm text-[14px] text-hana-dark-navy">
-          상품을 찾을 수 없습니다.
-        </div>
-        <div className="pb-24" />
-        <BottomNavBar />
+  } else if (!fund) {
+    content = (
+      <div className="p-4 font-hana-cm text-[14px] text-hana-dark-navy">
+        상품을 찾을 수 없습니다.
       </div>
     );
-  }
+  } else {
+    const risk = dangerToRisk(fund.danger);
+    const icon = pickIcon(fund.is_pension, fund.type);
+    const logoSrc = getLogoSrc(icon);
 
-  const risk = dangerToRisk(fund.danger);
-
-  const icon = pickIcon(fund.is_pension, fund.type);
-  const logoSrc = getLogoSrc(icon);
-
-  return (
-    <div>
-      <Header content="상품 상세보기" />
-
-      <div className="px-4 pb-24">
+    content = (
+      <div className="px-4">
         <FundHeaderSection
           company={fund.company}
           logoSrc={logoSrc}
@@ -142,10 +137,31 @@ export default async function ProductDetailPage({ params }: Props) {
         <div className="pt-15 font-hana-bold text-[16px] text-black">
           이 펀드의 핵심 포인트
         </div>
-        <FundKeyPointsSection />
-      </div>
 
-      <BottomNavBar />
+        <FundKeyPointsSection />
+
+        <div className="h-6" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative h-full w-full">
+      <div className="grid h-full grid-rows-[auto_1fr_auto] overflow-hidden">
+        <Header content="상품 상세보기" />
+
+        <main
+          className="overflow-y-auto pb-20 [::-webkit-scrollbar]:hidden"
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+          }}
+        >
+          {content}
+        </main>
+
+        {ok ? <JoinButton childId={parsedChildId} fundId={fundId} /> : <div />}
+      </div>
     </div>
   );
 }

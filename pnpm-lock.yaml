@@ -87,6 +87,9 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.18
+      '@types/chart.js':
+        specifier: ^4.0.1
+        version: 4.0.1
       '@types/node':
         specifier: ^20
         version: 20.19.30
@@ -1013,6 +1016,10 @@ packages:
 
   '@tailwindcss/postcss@4.1.18':
     resolution: {integrity: sha512-Ce0GFnzAOuPyfV5SxjXGn0CubwGcuDB0zcdaPuCSzAa/2vII24JTkH+I6jcbXLb1ctjZMZZI6OjDaLPJQL1S0g==}
+
+  '@types/chart.js@4.0.1':
+    resolution: {integrity: sha512-OwXJ6Eg14eFpCsTG6sljiGnvVpit5R9rapG7nwDnQlljsdplVIOYVuCSwy07IduCtihrOwvOnbhXKLyp3nvPcw==}
+    deprecated: This is a stub types definition. chart.js provides its own type definitions, so you do not need this installed.
 
   '@types/geojson@7946.0.16':
     resolution: {integrity: sha512-6C8nqWur3j98U6+lXDfTUWIfgvZU+EumvpHKcYjujKH7woYyLj2sUmff0tRhrqM7BohUw7Pz3ZB1jj2gW9Fvmg==}
@@ -2267,6 +2274,10 @@ snapshots:
       '@tailwindcss/oxide': 4.1.18
       postcss: 8.5.6
       tailwindcss: 4.1.18
+
+  '@types/chart.js@4.0.1':
+    dependencies:
+      chart.js: 4.5.1
 
   '@types/geojson@7946.0.16': {}
 

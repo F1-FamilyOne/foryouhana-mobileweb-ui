@@ -62,7 +62,7 @@ export default async function ProductListPage({ searchParams }: Props) {
 
   const items = funds.map((f) => ({
     id: f.id,
-    title: isPension ? `연금저축펀드 ${f.id}` : `일반펀드 ${f.id}`,
+    title: f.name,
     risk: dangerToRisk(f.danger),
     extraBadgeText: undefined as string | undefined,
     subText: isPension ? undefined : f.name,
@@ -71,13 +71,22 @@ export default async function ProductListPage({ searchParams }: Props) {
   }));
 
   return (
-    <div>
-      <Header content="상품 리스트" />
+    <div className="relative h-full w-full">
+      <div className="grid h-full grid-rows-[auto_1fr_auto] overflow-hidden">
+        <Header content="상품 리스트" />
 
-      <ProductListClient type={type} items={items} />
+        <main
+          className="overflow-y-auto pb-20 [::-webkit-scrollbar]:hidden"
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+          }}
+        >
+          <ProductListClient type={type} items={items} />
+        </main>
 
-      <div className="pb-24" />
-      <BottomNavBar />
+        <BottomNavBar />
+      </div>
     </div>
   );
 }

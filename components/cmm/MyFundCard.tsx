@@ -23,9 +23,9 @@ type Props = {
 
 function getPaymentLabel(paymentType: PaymentType) {
   if (paymentType === 'regular') {
-    return '정기 납입';
+    return '정기 적립';
   }
-  return '비정기 납입';
+  return '자유 적립';
 }
 
 export function MyFundCard({
@@ -39,7 +39,7 @@ export function MyFundCard({
   return (
     <article
       className={cn(
-        'w-78 rounded-2xl border border-hana-gray-300 bg-white p-5 shadow-md',
+        'w-78 rounded-2xl border border-hana-gray-300 bg-white p-5',
         className,
       )}
       aria-label="내 펀드 카드"

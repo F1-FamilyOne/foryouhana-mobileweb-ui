@@ -47,6 +47,7 @@ const buttonVariants = cva(
         greenlong: `${SIZE.long} bg-hana-main hover:bg-hana-main/80 text-white`,
         graylong: `${SIZE.long} bg-hana-gray-400 hover:bg-hana-gray-400/80 text-white`,
         lightgraylong: `${SIZE.long} bg-hana-gray-300 hover:bg-hana-gray-300/80 text-black`,
+        lightgreenlong: `${SIZE.long} bg-hana-light-green hover:bg-hana-light-green/70 text-black`,
         redlong: `${SIZE.long} bg-hana-red/90 hover:bg-hana-red/80 text-white`,
         lightgrayshort: `${SIZE.short} bg-hana-gray-300 hover:bg-hana-gray-300/70 text-black`,
         maingreenshort: `${SIZE.short} bg-hana-main hover:bg-hana-main/90`,

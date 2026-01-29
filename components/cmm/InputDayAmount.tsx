@@ -37,6 +37,7 @@ type InputAmountProps = {
   label?: string;
   showLabel?: boolean;
   className?: string;
+  disabled?: boolean;
 };
 
 const MAX_INT = 2147483647;
@@ -107,6 +108,7 @@ type InputMonthProps = {
   onChange?: (value?: number) => void;
   placeholder?: string;
   className?: string;
+  disabled?: boolean; // ✅ 추가
 };
 
 export function InputMonth({
@@ -115,6 +117,7 @@ export function InputMonth({
   onChange,
   placeholder = '',
   className,
+  disabled = false,
 }: InputMonthProps) {
   const [inputValue, setInputValue] = useState(value?.toString() ?? '');
 
@@ -155,6 +158,7 @@ export function InputMonth({
         value={inputValue}
         onChange={handleChange}
         placeholder={placeholder}
+        disabled={disabled} // ✅ 핵심
         className="w-full bg-transparent text-center font-medium outline-none placeholder:text-hana-gray-400"
       />
       <span className="ml-2 shrink-0 text-hana-gray-600">{unit}</span>
@@ -169,6 +173,7 @@ export function InputAmount({
   placeholder = '',
   label = '월 증여액',
   showLabel = true,
+  disabled = false,
   className,
 }: InputAmountProps) {
   const [inputValue, setInputValue] = useState(value?.toLocaleString() ?? '');
@@ -210,6 +215,7 @@ export function InputAmount({
           value={inputValue}
           onChange={handleChange}
           placeholder={placeholder}
+          disabled={disabled}
           className="w-full bg-transparent text-center font-medium outline-none placeholder:text-hana-gray-400"
         />
         <span className="ml-2 shrink-0 text-hana-gray-600">{unit}</span>

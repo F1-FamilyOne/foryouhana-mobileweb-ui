@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { AgreeTerms } from '@/components/cmm/AgreeTerms';
 import { CustomButton } from '@/components/cmm/CustomButton';
@@ -41,11 +41,18 @@ export default function ChildInfoPage() {
     serviceAgree &&
     thirdPartyAgree;
 
-  const [name, setName] = useState('');
+  const params = useParams();
+
+  const [name, setName] = useState(params.name || '');
   const [bornDate, setBornDate] = useState('');
   const [rrnBack, setRrnBack] = useState('');
 
   const handleNext = () => {
+    if (!name || (name as string).trim() === '') {
+      alert('자녀 이름을 입력해주세요!');
+      return;
+    }
+
     if (bornDate.length !== 6 || rrnBack.length !== 7) {
       alert('주민등록번호를 정확히 입력해주세요.');
       return;
@@ -79,7 +86,11 @@ export default function ChildInfoPage() {
       const parsed = JSON.parse(stored);
 
       if (parsed.child_name) {
-        setName(parsed.child_name);
+        if (typeof parsed.child_name === 'object') {
+          setName('');
+        } else {
+          setName(parsed.child_name);
+        }
       }
     } catch (error) {
       console.error('데이터 로드 중 에러:', error);
@@ -105,7 +116,11 @@ export default function ChildInfoPage() {
       </h1>
       <Input
         value={name}
-        onChange={(e) => setName(e.target.value)}
+        onChange={(e) => {
+          const noNumbers = e.target.value.replace(/[0-9]/g, '');
+          setName(noNumbers);
+        }}
+        placeholder="자녀의 이름을 입력하세요."
         className="mx-3 w-85 rounded-none border-0 border-b px-0 focus-visible:ring-0"
       />
 
