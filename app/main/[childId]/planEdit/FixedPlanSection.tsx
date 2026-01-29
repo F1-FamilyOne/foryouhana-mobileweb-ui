@@ -1,5 +1,6 @@
 import { BinaryToggle } from '@/components/cmm/BinaryToggle';
 import { CustomButton } from '@/components/cmm/CustomButton';
+import PlanStartEndInput from '@/components/cmm/PlanStartEndInput';
 import ShowPlanInput from '@/components/cmm/ShowPlanInput';
 import TitlePlanSelect from '@/components/cmm/TitlePlanSelect';
 import {
@@ -18,6 +19,12 @@ type Props = {
   period: number;
   amount: number;
   blockStatus: BlockStatus;
+  startDate: string;
+  endDate: string;
+  newStart: string;
+  newEnd: string;
+  onChangeStart: (v: string | null) => void;
+  onChangeEnd: (v: string | null) => void;
   onMethodChange: (v: GiftMethod) => void;
   onChangeAmount: (value: number) => void;
   onChangePeriod: (value: number) => void;
@@ -29,6 +36,12 @@ export default function FixedPlanSection({
   period,
   amount,
   blockStatus,
+  startDate,
+  endDate,
+  newStart,
+  newEnd,
+  onChangeEnd,
+  onChangeStart,
   onMethodChange,
   onChangeAmount,
   onChangePeriod,
@@ -55,6 +68,14 @@ export default function FixedPlanSection({
                         유기정기금 운용 중
                       </span>
                     </CustomButton>
+                    <PlanStartEndInput
+                      endDate={newEnd}
+                      startDate={newStart}
+                      startDisable={true}
+                      endDisable={false}
+                      onChangeEnd={onChangeEnd}
+                      onChangeStart={onChangeStart}
+                    />
                     <ShowPlanInput
                       amount={amount}
                       onChangeAmount={onChangeAmount}
@@ -77,7 +98,14 @@ export default function FixedPlanSection({
                             );
                           }}
                         />
-
+                        <PlanStartEndInput
+                          endDate={newEnd}
+                          startDate={newStart}
+                          startDisable={true}
+                          endDisable={false}
+                          onChangeEnd={onChangeEnd}
+                          onChangeStart={onChangeStart}
+                        />
                         <ShowPlanInput
                           amount={amount}
                           onChangeAmount={onChangeAmount}

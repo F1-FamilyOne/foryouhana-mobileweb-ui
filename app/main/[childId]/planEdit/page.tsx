@@ -43,12 +43,17 @@ export default async function PlanEdit({ params }: PageProps) {
   });
   if (child === null) notFound();
 
+  const { start_date: startDate, end_date: endDate } = child;
+
+  const startDateString = startDate
+    ? startDate.toISOString().split('T')[0]
+    : '';
+  const endDateString = endDate ? endDate.toISOString().split('T')[0] : '';
+
   const {
     is_promise_fixed: isFixedGift,
     monthly_money: monthlyMoney,
     goal_money: goalMoney,
-    start_date: startDate,
-    end_date: endDate,
   } = child;
 
   if (isFixedGift === null) notFound();
@@ -71,6 +76,8 @@ export default async function PlanEdit({ params }: PageProps) {
         isPension={isPension}
         onSave={saveEditPlan}
         childId={childIdNumber}
+        startDate={startDateString}
+        endDate={endDateString}
       />
     </div>
   );

@@ -1,4 +1,5 @@
 'use client';
+import type { Route } from 'next';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { CustomButton } from '@/components/cmm/CustomButton';
@@ -21,6 +22,8 @@ type Props = {
   isFixedGift: boolean;
   monthlyMoney: number;
   childId: number;
+  startDate: string;
+  endDate: string;
   onSave: (params: {
     childId: number;
     form: {
@@ -40,6 +43,8 @@ export default function MainSection({
   period,
   isFixedGift,
   monthlyMoney,
+  startDate,
+  endDate,
   onSave,
 }: Props) {
   const [giftMethod, setGiftMethod] = useState<GiftMethod>(
@@ -54,6 +59,8 @@ export default function MainSection({
     Number(monthlyMoney),
   );
   const [newPeriod, setNewPeriod] = useState<number | null>(period);
+  const [newStart, setNewStart] = useState<string | null>(startDate);
+  const [newEnd, setNewEnd] = useState<string | null>(endDate);
 
   return (
     <div>
@@ -79,6 +86,12 @@ export default function MainSection({
             onMethodChange={setGiftMethod}
             newAmount={newAmount}
             newPeriod={newPeriod}
+            startDate={startDate}
+            endDate={endDate}
+            newStart={newStart}
+            newEnd={newEnd}
+            onChangeStart={setNewStart}
+            onChangeEnd={setNewEnd}
             onAmountChange={setNewAmount}
             onPeriodChange={setNewPeriod}
           />
@@ -115,7 +128,7 @@ export default function MainSection({
             });
 
             if (isPension === false && newPension === true) {
-              router.push(`/main/${childId}/product-list`);
+              router.push(`/main/${childId}/product-list` as Route);
               console.log(childId);
             } else {
               router.back();

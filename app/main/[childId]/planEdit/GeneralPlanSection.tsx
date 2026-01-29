@@ -1,6 +1,7 @@
 import { InfoIcon } from 'lucide-react';
 import { BinaryToggle } from '@/components/cmm/BinaryToggle';
 import { CustomButton } from '@/components/cmm/CustomButton';
+import PlanStartEndInput from '@/components/cmm/PlanStartEndInput';
 import ShowPlanInput from '@/components/cmm/ShowPlanInput';
 import TitlePlanSelect from '@/components/cmm/TitlePlanSelect';
 import {
@@ -19,6 +20,10 @@ type Props = {
   period: number;
   amount: number;
   yugi: YugiStatus;
+  newStart: string;
+  newEnd: string;
+  onChangeEnd: (v: string | null) => void;
+  onChangeStart: (v: string | null) => void;
   blockStatus: BlockStatus;
   onChangeAmount: (value: number | null) => void;
   onChangePeriod: (value: number | null) => void;
@@ -30,6 +35,10 @@ export default function GeneralPlanSection({
   onChange,
   period,
   amount,
+  newStart,
+  newEnd,
+  onChangeEnd,
+  onChangeStart,
   onChangeAmount,
   onChangePeriod,
 }: Props) {
@@ -75,25 +84,45 @@ export default function GeneralPlanSection({
       {yugi === YUGI_STATUS.CHANGE ? (
         <div>
           {isRegular && (
-            <ShowPlanInput
-              amount={amount}
-              onChangeAmount={onChangeAmount}
-              period={period}
-              onChangePeriod={onChangePeriod}
-              disabled={true}
-            />
+            <div>
+              <PlanStartEndInput
+                endDate={newEnd}
+                startDate={newStart}
+                startDisable={true}
+                endDisable={true}
+                onChangeEnd={onChangeEnd}
+                onChangeStart={onChangeStart}
+              />
+              <ShowPlanInput
+                amount={amount}
+                onChangeAmount={onChangeAmount}
+                period={period}
+                onChangePeriod={onChangePeriod}
+                disabled={true}
+              />
+            </div>
           )}
         </div>
       ) : (
         <div>
           {isRegular && (
-            <ShowPlanInput
-              amount={amount}
-              onChangeAmount={onChangeAmount}
-              period={period}
-              onChangePeriod={onChangePeriod}
-              disabled={false}
-            />
+            <div>
+              <PlanStartEndInput
+                endDate={newEnd}
+                startDate={newStart}
+                startDisable={false}
+                endDisable={false}
+                onChangeEnd={onChangeEnd}
+                onChangeStart={onChangeStart}
+              />
+              <ShowPlanInput
+                amount={amount}
+                onChangeAmount={onChangeAmount}
+                period={period}
+                onChangePeriod={onChangePeriod}
+                disabled={false}
+              />
+            </div>
           )}
         </div>
       )}
