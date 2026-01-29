@@ -24,23 +24,14 @@ type UserSetupReturn =
     };
 
 export async function getUserSetup(parentId: number): Promise<UserSetupReturn> {
-  const parent = await prisma.parent.findUnique({
+  const parent = await prisma.user.findUnique({
     where: { id: parentId },
     select: {
-      child: {
+      reading_list: {
         orderBy: { id: 'asc' },
         take: 1,
         select: {
-          id: true,
-          _count: {
-            select: {
-              account: {
-                where: {
-                  acc_type: account_acc_type.FUND,
-                },
-              },
-            },
-          },
+          provider_id: true,
         },
       },
     },
@@ -50,19 +41,36 @@ export async function getUserSetup(parentId: number): Promise<UserSetupReturn> {
     return { exists: false };
   }
 
-  if (parent.child.length === 0) {
+  if (parent.reading_list.length === 0) {
     return { exists: true, hasChild: false };
   }
 
-  const firstChild = parent.child[0];
+  const firstChild = parent.reading_list[0].provider_id;
+
+  const fundAccount = await prisma.account.findFirst({
+    where: {
+      user_id: firstChild,
+      acc_type: account_acc_type.FUND,
+    },
+    select: {
+      id: true,
+    },
+  });
 
   return {
     exists: true,
     hasChild: true,
-    firstChildId: firstChild.id,
-    hasFundAccount: firstChild._count.account > 0,
+    firstChildId: firstChild,
+    hasFundAccount: !!fundAccount,
   };
 }
+
+/**
+ * @page: getAllChildWithIsHaveFund
+ * @description: beforeJoin 첫번째 화면 자녀 토글 분기 로직
+ * @author: seonukim
+ * @date: 2026-01-29
+ */
 
 export type ChildListItem = {
   childId: number;
@@ -70,7 +78,7 @@ export type ChildListItem = {
   hasFundAccount: boolean;
 };
 
-type AllChildWithIsHaveFundReturn =
+export type AllChildWithIsHaveFundReturn =
   | {
       exists: false;
     }
@@ -82,23 +90,12 @@ type AllChildWithIsHaveFundReturn =
 export async function getAllChildWithIsHaveFund(
   parentId: number,
 ): Promise<AllChildWithIsHaveFundReturn> {
-  const parent = await prisma.parent.findUnique({
+  const parent = await prisma.user.findUnique({
     where: { id: parentId },
     select: {
-      child: {
-        orderBy: { id: 'asc' },
+      reading_list: {
         select: {
-          id: true,
-          profile_pic: true,
-          _count: {
-            select: {
-              account: {
-                where: {
-                  acc_type: account_acc_type.FUND,
-                },
-              },
-            },
-          },
+          provider_id: true,
         },
       },
     },
@@ -108,27 +105,34 @@ export async function getAllChildWithIsHaveFund(
     return { exists: false };
   }
 
-  return {
-    exists: true,
-    children: parent.child.map((c) => ({
-      childId: c.id,
-      profile: c.profile_pic,
-      hasFundAccount: c._count.account > 0,
-    })),
-  };
-}
+  const childIds = parent.reading_list.map((r) => r.provider_id);
 
-export async function getAllChildWithIsHaveFundByChild(
-  childId: number,
-): Promise<AllChildWithIsHaveFundReturn> {
-  const child = await prisma.child.findUnique({
-    where: { id: childId },
+  const children = await prisma.user.findMany({
+    where: { id: { in: childIds } },
     select: {
-      parent_id: true,
+      id: true,
+      profile_pic: true,
     },
   });
 
-  if (!child) return { exists: false };
+  const fundAccounts = await prisma.account.findMany({
+    where: {
+      user_id: { in: childIds },
+      acc_type: account_acc_type.FUND,
+    },
+    select: {
+      user_id: true,
+    },
+  });
 
-  return getAllChildWithIsHaveFund(child.parent_id);
+  const fundUserSet = new Set(fundAccounts.map((a) => a.user_id));
+
+  return {
+    exists: true,
+    children: children.map((c) => ({
+      childId: c.id,
+      profile: c.profile_pic,
+      hasFundAccount: fundUserSet.has(c.id),
+    })),
+  };
 }
