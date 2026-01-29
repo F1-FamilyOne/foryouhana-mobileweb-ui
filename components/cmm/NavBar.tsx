@@ -1,9 +1,11 @@
 'use client';
 
 import { CircleEllipsisIcon } from 'lucide-react';
+import type { Route } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
-import { useState } from 'react';
 
 /**
  * @page: BottomNavBar (공통 하단 네비게이션바)
@@ -30,8 +32,42 @@ function NavIcon({ children }: { children: ReactNode }) {
   return <div className="flex h-8 items-center justify-center">{children}</div>;
 }
 
+/**
+ * @page: getTabPath
+ * @description: 탭 경로 판단 function
+ * @author: seonukim
+ * @date: 2026-01-29
+ * /main/[childId]/{tab} 형식으로 경로 생성
+ * @example
+ * /main/123/home → /main/123/timeline
+ * /main/456/menu?query=1 → /main/456/timeline
+ */
+
+function getTabPath(currentPath: string, newTab: NavTab): Route {
+  const pathWithoutQuery = currentPath.split('?')[0];
+  const segments = pathWithoutQuery.split('/').filter(Boolean);
+
+  const childId = segments[1];
+  return `/main/${childId}/${newTab}` as Route;
+}
+
+function getActiveTab(pathname: string): NavTab {
+  const pathWithoutQuery = pathname.split('?')[0];
+  const segments = pathWithoutQuery.split('/').filter(Boolean);
+  const lastSegment = segments[segments.length - 1];
+
+  if (['home', 'timeline', 'menu'].includes(lastSegment)) {
+    return lastSegment as NavTab;
+  }
+
+  // 기본값
+  return 'home';
+}
+
 export function BottomNavBar() {
-  const [activeTab, setActiveTab] = useState<NavTab>('home');
+  const pathname = usePathname();
+  const activeTab = getActiveTab(pathname);
+
   const menuColor =
     activeTab === 'menu'
       ? 'var(--color-hana-pastel-mint)'
@@ -44,9 +80,8 @@ export function BottomNavBar() {
     >
       <div className="flex h-full items-center justify-around px-5 pb-0">
         {/* 홈 */}
-        <button
-          type="button"
-          onClick={() => setActiveTab('home')}
+        <Link
+          href={getTabPath(pathname, 'home')}
           className="flex flex-col items-center gap-0.5"
         >
           <NavIcon>
@@ -70,12 +105,11 @@ export function BottomNavBar() {
           >
             홈
           </span>
-        </button>
+        </Link>
 
         {/* 타임라인 */}
-        <button
-          type="button"
-          onClick={() => setActiveTab('timeline')}
+        <Link
+          href={getTabPath(pathname, 'timeline')}
           className="flex flex-col items-center gap-0.5"
         >
           <NavIcon>
@@ -101,12 +135,11 @@ export function BottomNavBar() {
           >
             타임라인
           </span>
-        </button>
+        </Link>
 
         {/* 메뉴 */}
-        <button
-          type="button"
-          onClick={() => setActiveTab('menu')}
+        <Link
+          href={getTabPath(pathname, 'menu')}
           className="flex flex-col items-center gap-0.5"
         >
           <NavIcon>
@@ -124,7 +157,7 @@ export function BottomNavBar() {
           >
             메뉴
           </span>
-        </button>
+        </Link>
       </div>
     </nav>
   );

@@ -35,6 +35,7 @@ export default function Page({
       try {
         setIsLoading(true);
         const res = await getAllChildWithIsHaveFund(Number(userId));
+        console.log(res);
         setResult(res);
       } catch (error) {
         console.error('Failed to fetch children:', error);
@@ -58,7 +59,9 @@ export default function Page({
   if (!result.exists) notFound();
 
   const childIdNum = Number(childId);
-  const childExists = result.children.some((child) => child.id === childIdNum);
+  const childExists = result.children.some(
+    (child) => child.childId === childIdNum,
+  );
 
   if (!childExists) {
     notFound();
