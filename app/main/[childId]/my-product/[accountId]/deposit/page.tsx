@@ -33,36 +33,36 @@ export default async function DepositPage({ params }: Props) {
   }
 
   // 입금 대상은 FUND 또는 PENSION 계좌만 허용
-  if (targetAccount.acc_type === 'DEPOSIT') {
+  if (targetAccount.acc_type === 'DEPOSIT' || targetAccount.acc_type === 'GIFT_DEPOSIT') {
     notFound();
   }
 
   // target 계좌가 해당 child 소유인지 확인
-  if (targetAccount.child_id !== childIdNum) {
+  if (targetAccount.user_id !== childIdNum) {
     notFound();
   }
 
-  // 2. 자녀 정보 조회 (gift_account_id 확인용)
-  const child = await prisma.child.findUnique({
-    where: { id: childIdNum },
+  // 2. read_auth로 부모 조회
+  const auth = await prisma.read_auth.findFirst({
+    where: { provider_id: childIdNum },
   });
 
-  if (!child) {
+  if (!auth) {
     notFound();
   }
 
-  // 3. 출금 가능한 계좌 조회
-  // 증여 수신 계좌(gift_account)를 제외한 DEPOSIT 계좌들
-  const allAccounts = await prisma.account.findMany({
-    where: { child_id: childIdNum },
-  });
+  const parentUserId = auth.reader_id;
 
-  const sourceAccounts = allAccounts.filter(
-    (acc) =>
-      acc.acc_type === 'DEPOSIT' &&
-      acc.id !== child.gift_account_id &&
-      acc.id !== accountIdNum,
-  );
+  // 3. 출금 가능한 계좌 조회: 부모 DEPOSIT + 자녀 GIFT_DEPOSIT
+  const sourceAccounts = await prisma.account.findMany({
+    where: {
+      OR: [
+        { user_id: parentUserId, acc_type: 'DEPOSIT', status: 'ACTIVE' },
+        { user_id: childIdNum, acc_type: 'GIFT_DEPOSIT', status: 'ACTIVE' },
+      ],
+      id: { not: accountIdNum },
+    },
+  });
 
   // BigInt/Decimal을 직렬화 가능한 형태로 변환
   const serializedTargetAccount = serializeAccountWithFund(targetAccount);
