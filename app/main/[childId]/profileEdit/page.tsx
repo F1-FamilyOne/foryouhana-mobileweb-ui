@@ -14,45 +14,43 @@ export default function ChildProfileEdit() {
   const { childId } = useParams();
 
   const initialImage = '/file/자녀1.jpg';
-
   const [previewUrl, setPreviewUrl] = useState<string>(initialImage);
   const [nickname, setNickname] = useState('우리 아이');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 페이지 로드 시 저장된 데이터 불러오기
   useEffect(() => {
     const savedName = localStorage.getItem(`child_${childId}_name`);
-    const savedImage = localStorage.getItem(`child_${childId}_image`); // 이미지도 불러옴
+    const savedImage = localStorage.getItem(`child_${childId}_image`);
 
     if (savedName) setNickname(savedName);
     if (savedImage) setPreviewUrl(savedImage);
   }, [childId]);
 
-  // [중요] 이미지를 문자열(Base64)로 변환하는 함수
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        // 읽기가 끝나면 결과물(긴 문자열)을 상태에 저장
         setPreviewUrl(reader.result as string);
       };
-      reader.readAsDataURL(file); // 파일을 문자열로 읽기 시작
+      reader.readAsDataURL(file);
     }
   };
 
   const handleSave = async () => {
-    // 이름 저장
     localStorage.setItem(`child_${childId}_name`, nickname);
-
     localStorage.setItem(`child_${childId}_image`, previewUrl);
-
     router.push(`/main/${childId}/menu`);
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="p-5 pb-32">
+    // 1. 타임라인과 동일한 구조: relative + min-h-screen
+    <div className="relative bg-white font-hana-regular">
+      {/* 2. 컨텐츠 영역: 
+          딱 이만큼이 맞음. 376px가 유격이 제일 잘 맞다...
+      */}
+      <div className="p-5 pb-[376px]">
+        {/* 헤더 */}
         <div className="mb-10 flex items-center justify-between">
           <button
             type="button"
@@ -66,7 +64,8 @@ export default function ChildProfileEdit() {
           </h1>
         </div>
 
-        <div className="mb-12 flex flex-col items-center">
+        {/* 프로필 이미지 */}
+        <div className="mb-8 flex flex-col items-center">
           <div className="relative">
             <div className="relative h-32 w-32 overflow-hidden rounded-full border-4 border-[#66d2ce]">
               <Image
@@ -77,7 +76,6 @@ export default function ChildProfileEdit() {
                 priority
               />
             </div>
-
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
@@ -85,7 +83,6 @@ export default function ChildProfileEdit() {
             >
               <Camera size={18} />
             </button>
-
             <input
               type="file"
               ref={fileInputRef}
@@ -99,25 +96,25 @@ export default function ChildProfileEdit() {
           </p>
         </div>
 
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <label
-              htmlFor="nickname"
-              className="ml-1 font-hana-medium text-gray-500 text-sm"
-            >
-              자녀 이름(닉네임)
-            </label>
-            <Input
-              id="nickname"
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              className="h-14 rounded-xl border-gray-300 text-[18px] focus:ring-2 focus:ring-hana-mint"
-              placeholder="이름을 입력해 주세요"
-            />
-          </div>
+        {/* 입력 폼 */}
+        <div className="space-y-2">
+          <label
+            htmlFor="nickname"
+            className="ml-1 font-hana-medium text-gray-500 text-sm"
+          >
+            자녀 이름(닉네임)
+          </label>
+          <Input
+            id="nickname"
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+            className="h-14 rounded-xl border-gray-300 text-[18px] focus:ring-2 focus:ring-hana-mint"
+            placeholder="이름을 입력해 주세요"
+          />
         </div>
 
-        <div className="mt-10">
+        {/* 3. 저장 버튼 */}
+        <div className="mt-6">
           <Button
             onClick={handleSave}
             style={{ backgroundColor: '#008485' }}
@@ -128,9 +125,7 @@ export default function ChildProfileEdit() {
         </div>
       </div>
 
-      <div className="-translate-x-1/2 fixed bottom-0 left-1/2 z-50">
-        <BottomNavBar />
-      </div>
+      <BottomNavBar />
     </div>
   );
 }
