@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
@@ -49,6 +51,13 @@ export function MyFundDetailCard({
     (t) => typeof t === 'string' && t.trim().length > 0,
   );
 
+  const params = useParams<{ childId: string; accountId: string }>();
+  const childId = params.childId;
+  const accountId = params.accountId;
+
+  const depositHref =
+    `/main/${childId}/my-product/${accountId}/deposit` as const;
+
   return (
     <article
       className={cn(
@@ -59,7 +68,12 @@ export function MyFundDetailCard({
       aria-label="내 펀드 상세 카드"
     >
       {/* 제목 */}
-      <div className={cn('font-hana-regular text-[15px]')}>{title}</div>
+      <div className={cn('flex justify-between font-hana-regular text-[15px]')}>
+        {title}
+        <Link href={depositHref} className="font-hana-light">
+          입금하기
+        </Link>
+      </div>
 
       {/* 태그 */}
       {visibleTags.length > 0 ? (
