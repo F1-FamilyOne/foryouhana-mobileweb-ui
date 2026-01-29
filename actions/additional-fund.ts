@@ -73,7 +73,7 @@ export async function createFundAccount(
       // 펀드 계좌 생성
       const account = await tx.account.create({
         data: {
-          child_id: childId,
+          user_id: childId,
           fund_id: fundId,
           acc_num: accNum,
           acc_type: 'FUND',

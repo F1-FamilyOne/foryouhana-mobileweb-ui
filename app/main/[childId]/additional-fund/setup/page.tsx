@@ -35,7 +35,7 @@ export default async function AdditionalFundSetupPage({
     }),
     prisma.account.findFirst({
       where: {
-        child_id: Number(childId),
+        user_id: Number(childId),
         acc_type: 'DEPOSIT',
       },
       select: { id: true },
