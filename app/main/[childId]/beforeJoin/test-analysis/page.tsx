@@ -41,7 +41,6 @@ export default function InvestTestAnalysis() {
       const elapsed = timestamp - startTimeRef.current;
       const ratio = Math.min(elapsed / TOTAL_DURATION, 1);
 
-      // ✅ 프로그레스바 속도 조절 로직 (변수 할당 방식 수정)
       const elasticProgress =
         ratio < 0.25
           ? ratio * 140
@@ -160,7 +159,6 @@ export default function InvestTestAnalysis() {
             <div className="relative h-2 w-full overflow-hidden rounded-full bg-gray-100 shadow-inner">
               <div
                 className="h-full animate-shimmer bg-[length:200%_100%] bg-gradient-to-r from-hana-main via-[#4ADE80] to-hana-main shadow-[0_0_10px_rgba(74,222,128,0.5)]"
-                // ✅ 수정: transition-all duration-500 ease-out 클래스를 제거하여 실시간 width 반영
                 style={{ width: `${progress}%` }}
               />
             </div>
