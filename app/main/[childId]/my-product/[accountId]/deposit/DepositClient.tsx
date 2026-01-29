@@ -41,7 +41,7 @@ type SerializedFund = {
 
 type SerializedAccount = {
   id: number;
-  child_id: number;
+  user_id: number;
   fund_id: number | null;
   acc_num: string;
   acc_type: string;
