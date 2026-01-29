@@ -33,7 +33,6 @@ export default async function TimelinePage({
 
   const [targetChild, myChildren, timelines] = await Promise.all([
     // 현재 보고 있는 자녀 정보 조회
-    // 조건: ID가 일치하고 AND "나(Parent)에게 정보를 제공(provided_to)하는 관계"여야 함
     prisma.user.findFirst({
       where: {
         id: childIdInt,
@@ -46,7 +45,6 @@ export default async function TimelinePage({
     }),
 
     // 토글 바에 표시할 "내 자녀들" 목록 조회
-    // 조건: "나(Parent)를 Reader로 지정한 유저들"만 가져오기
     prisma.user.findMany({
       where: {
         provided_to: {
@@ -55,7 +53,7 @@ export default async function TimelinePage({
           },
         },
       },
-      orderBy: { born_date: 'asc' }, // 첫째, 둘째 순서
+      orderBy: { born_date: 'asc' },
     }),
 
     prisma.timeline.findMany({
@@ -66,7 +64,6 @@ export default async function TimelinePage({
     }),
   ]);
 
-  // 보안 체크: URL로 남의 자녀 ID를 입력했거나, 존재하지 않는 경우 메인으로 튕겨냄
   if (!targetChild) {
     console.log('⛔ 접근 권한이 없거나 존재하지 않는 유저입니다.');
     return redirect('/main' as Route);
@@ -74,7 +71,7 @@ export default async function TimelinePage({
 
   const kidProfiles: KidProfile[] = myChildren.map((child) => ({
     id: child.id,
-    avatarUrl: child.profile_pic || '', // profile_pic이 null일 경우 대비
+    avatarUrl: child.profile_pic || '',
   }));
 
   const timelineItems = timelines.map((item) => {
@@ -96,12 +93,13 @@ export default async function TimelinePage({
   const depositCount = timelines.filter((t) => t.type.includes('입금')).length;
 
   return (
-    <main className="min-h-screen bg-white font-hana-regular">
+    // 1. 가장 바깥쪽 main에 'relative'와 'min-h-screen'을 적용하여 기준점으로 만듭니다.
+    <main className="relative min-h-screen bg-white font-hana-regular">
       {/* 고정 상단 헤더 */}
       <Header content="타임라인" />
 
-      {/* 컨텐츠 영역 */}
-      <div className="p-6 pb-32">
+      {/* 2. 컨텐츠 영역: 하단바 높이만큼(약 80px) 패딩을 주어 내용이 가려지지 않게 합니다. */}
+      <div className="p-6 pb-[80px]">
         {/* 상단 자녀 선택 토글 */}
         <TimelineChildToggle kids={kidProfiles} selectedKidId={childIdInt} />
 
@@ -118,10 +116,11 @@ export default async function TimelinePage({
         <TimelineFooter />
       </div>
 
-      {/* 하단 네비게이션 */}
-      <div className="-translate-x-1/2 fixed bottom-0 left-1/2 z-50">
-        <BottomNavBar />
-      </div>
+      {/* 3. 하단 네비게이션: 복잡한 위치 설정 제거하고 컴포넌트 자체 속성 사용 */}
+
+      {/* 가이드대로 부모가 relative이므로, BottomNavBar 내부의 fixed/absolute가 이 영역 기준(또는 뷰포트)으로 잡히게 됩니다. */}
+
+      <BottomNavBar />
     </main>
   );
 }
