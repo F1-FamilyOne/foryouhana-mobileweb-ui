@@ -28,7 +28,7 @@ export default async function PlanEdit({ params }: PageProps) {
   //연금저축펀드 사용 여부 불러오기
   const account = await prisma.account.findFirst({
     where: {
-      child_id: childIdNumber,
+      user_id: childIdNumber,
       acc_type: account_acc_type.PENSION,
     },
   });
@@ -36,7 +36,7 @@ export default async function PlanEdit({ params }: PageProps) {
   const isPension = !!account;
 
   //유기정기금 사용 여부, 증여 방식, 기간, 월 증여액  불러오기
-  const child = await prisma.child.findUnique({
+  const child = await prisma.user.findUnique({
     where: {
       id: childIdNumber,
     },
@@ -50,6 +50,9 @@ export default async function PlanEdit({ params }: PageProps) {
     start_date: startDate,
     end_date: endDate,
   } = child;
+
+  if (isFixedGift === null) notFound();
+
   const method =
     monthlyMoney !== null && goalMoney !== null
       ? GIFT_METHOD.REGULAR

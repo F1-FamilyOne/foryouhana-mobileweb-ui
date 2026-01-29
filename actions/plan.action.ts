@@ -32,7 +32,7 @@ export const saveEditPlan = async ({ childId, form }: Prop) => {
     goalMoney = BigInt(amount) * BigInt(period);
   }
 
-  await prisma.child.update({
+  await prisma.user.update({
     where: { id: childId },
     data: {
       is_promise_fixed: fixed,
