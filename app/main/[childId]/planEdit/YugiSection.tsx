@@ -2,7 +2,12 @@
 import { CustomButton } from '@/components/cmm/CustomButton';
 import { HometaxReportCard } from '@/components/cmm/HometaxSupportCard';
 import TitlePlanSelect from '@/components/cmm/TitlePlanSelect';
-import { BLOCK_STATUS, YUGI_STATUS } from './MainSection';
+import {
+  BLOCK_STATUS,
+  type BlockStatus,
+  YUGI_STATUS,
+  type YugiStatus,
+} from '@/constants/gift';
 
 export default function YugiSection({
   isFixed,
@@ -13,11 +18,11 @@ export default function YugiSection({
   setYugi,
 }: {
   isFixed: boolean;
-  yugi: YUGI_STATUS;
+  yugi: YugiStatus;
   onChange: (v: boolean) => void;
   prev: boolean;
-  onBlockedChange: (v: BLOCK_STATUS) => void;
-  setYugi: (y: YUGI_STATUS) => void;
+  onBlockedChange: (v: BlockStatus) => void;
+  setYugi: (y: YugiStatus) => void;
 }) {
   return (
     <div>
@@ -28,7 +33,7 @@ export default function YugiSection({
             <CustomButton
               preset="redlong"
               onClick={() => {
-                // onChange(!isFixed);
+                onChange(!isFixed);
                 onBlockedChange(BLOCK_STATUS.BLOCK);
               }}
             >
@@ -39,7 +44,7 @@ export default function YugiSection({
               <CustomButton
                 preset="greenlong"
                 onClick={() => {
-                  // onChange(!isFixed);
+                  onChange(!isFixed);
                   onBlockedChange(BLOCK_STATUS.REVERT);
                 }}
               >

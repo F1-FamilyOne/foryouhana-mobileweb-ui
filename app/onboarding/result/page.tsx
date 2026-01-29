@@ -2,6 +2,7 @@
 
 import { Check, Info } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import Header from '@/components/cmm/Header';
 import {
@@ -50,23 +51,25 @@ export const EMPTY_DRAFT_PLAN: DraftPlanPayload = {
 };
 export default function AnalysisResult() {
   const router = useRouter();
-  let data: DraftPlanPayload;
-  try {
-    const raw = sessionStorage.getItem('giftPlan');
-    if (raw) {
-      const parsedData = JSON.parse(raw);
-      if (parsedData.plan?.child_birth) {
-        data = parsedData;
-      } else {
-        throw new Error('Invalid plan data in sessionStorage');
+  const [data, setData] = useState<DraftPlanPayload>(EMPTY_DRAFT_PLAN);
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem('giftPlan');
+      if (raw) {
+        const parsedData = JSON.parse(raw);
+        if (parsedData.plan?.child_birth) {
+          setData(parsedData);
+          return;
+        }
+        throw new Error('Invalid plan data');
       }
-    } else {
-      data = EMPTY_DRAFT_PLAN;
+    } catch {
+      sessionStorage.removeItem('giftPlan');
     }
-  } catch {
-    sessionStorage.removeItem('giftPlan');
-    data = EMPTY_DRAFT_PLAN;
-  }
+
+    setData(EMPTY_DRAFT_PLAN);
+  }, []);
 
   return (
     <div className="h-full items-center bg-white">

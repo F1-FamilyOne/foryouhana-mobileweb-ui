@@ -3,17 +3,23 @@ import { BinaryToggle } from '@/components/cmm/BinaryToggle';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import ShowPlanInput from '@/components/cmm/ShowPlanInput';
 import TitlePlanSelect from '@/components/cmm/TitlePlanSelect';
+import {
+  type BlockStatus,
+  GIFT_METHOD,
+  type GiftMethod,
+  YUGI_STATUS,
+  type YugiStatus,
+} from '@/constants/gift';
 import { formatWonNatural } from '@/lib/utils';
-import { type BLOCK_STATUS, GIFT_METHOD, YUGI_STATUS } from './MainSection';
 
 type Props = {
   isRegular: boolean;
-  onChange: (v: GIFT_METHOD) => void;
+  onChange: (v: GiftMethod) => void;
   isFixed: boolean;
   period: number;
   amount: number;
-  yugi: YUGI_STATUS;
-  blockStatus: BLOCK_STATUS;
+  yugi: YugiStatus;
+  blockStatus: BlockStatus;
   onChangeAmount: (value: number | null) => void;
   onChangePeriod: (value: number | null) => void;
 };

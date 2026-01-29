@@ -1,18 +1,24 @@
 'use client';
+import {
+  BLOCK_STATUS,
+  type BlockStatus,
+  GIFT_METHOD,
+  type GiftMethod,
+  type YugiStatus,
+} from '@/constants/gift';
 import FixedPlanSection from './FixedPlanSection';
 import GeneralPlanSection from './GeneralPlanSection';
-import { BLOCK_STATUS, GIFT_METHOD, type YUGI_STATUS } from './MainSection';
 
 type Props = {
-  yugi: YUGI_STATUS;
-  method: GIFT_METHOD;
+  yugi: YugiStatus;
+  method: GiftMethod;
   period: number | null;
   newPeriod: number | null;
   amount: number | null;
   newAmount: number | null;
   isFixed: boolean;
-  blockStatus: BLOCK_STATUS;
-  onMethodChange: (v: GIFT_METHOD) => void;
+  blockStatus: BlockStatus;
+  onMethodChange: (v: GiftMethod) => void;
   onAmountChange: (v: number | null) => void;
   onPeriodChange: (v: number | null) => void;
 };

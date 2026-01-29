@@ -78,13 +78,13 @@ export default function ChildFundSection({ childId, fundList }: Props) {
               새로운 펀드를 시작해보세요!
             </p>
           )}
-
+          {/* 
           <Link
             href={`/main/product-list`}
             className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-xl bg-hana-pastel-green py-2.5 font-bold text-gray-600 text-sm transition-colors hover:bg-hana-pastel-mint"
           >
             <Plus size={18} className="text-gray-500" />새 상품 가입하기
-          </Link>
+          </Link> */}
         </div>
 
         {/* 펀드 통계 섹션: 펀드가 있을 때만 노출 */}

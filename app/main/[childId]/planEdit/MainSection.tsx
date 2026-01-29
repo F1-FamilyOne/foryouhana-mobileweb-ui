@@ -2,31 +2,21 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { CustomButton } from '@/components/cmm/CustomButton';
+import {
+  BLOCK_STATUS,
+  type BlockStatus,
+  GIFT_METHOD,
+  type GiftMethod,
+  YUGI_STATUS,
+  type YugiStatus,
+} from '@/constants/gift';
 import PensionSelection from './PensionSelection';
 import PlanSection from './PlanSection';
 import YugiSection from './YugiSection';
 
-export enum GIFT_METHOD {
-  REGULAR = 'REGULAR', // 정기 이체
-  FLEXIBLE = 'FLEXIBLE', //자유 이제
-}
-
-export enum YUGI_STATUS {
-  STOP = 'STOP',
-  CHANGE = 'CHANGE',
-  SAME = 'SAME',
-}
-
-export enum BLOCK_STATUS {
-  BLOCK = 'BLOCK',
-  NONBLOCK = 'NONBLOCK',
-  AFTERHOMETAX = 'AFTERHOMETAX',
-  REVERT = 'REVERT',
-}
-
 type Props = {
   isPension: boolean;
-  method: GIFT_METHOD;
+  method: GiftMethod;
   period: number;
   isFixedGift: boolean;
   monthlyMoney: number;
@@ -38,7 +28,7 @@ type Props = {
       amount: number;
       period: number;
       pension: boolean;
-      method: GIFT_METHOD;
+      method: GiftMethod;
     };
   }) => Promise<void>;
 };
@@ -52,12 +42,12 @@ export default function MainSection({
   monthlyMoney,
   onSave,
 }: Props) {
-  const [giftMethod, setGiftMethod] = useState<GIFT_METHOD>(
+  const [giftMethod, setGiftMethod] = useState<GiftMethod>(
     isFixedGift ? GIFT_METHOD.REGULAR : method,
   );
-  const [blocked, setBlocked] = useState<BLOCK_STATUS>(BLOCK_STATUS.NONBLOCK);
+  const [blocked, setBlocked] = useState<BlockStatus>(BLOCK_STATUS.NONBLOCK);
   const [fixed, setFixed] = useState<boolean>(isFixedGift);
-  const [yugi, setYugi] = useState<YUGI_STATUS>(YUGI_STATUS.SAME);
+  const [yugi, setYugi] = useState<YugiStatus>(YUGI_STATUS.SAME);
   const router = useRouter();
   const [newPension, setNewPension] = useState<boolean>(isPension);
   const [newAmount, setNewAmount] = useState<number | null>(
@@ -125,7 +115,8 @@ export default function MainSection({
             });
 
             if (isPension === false && newPension === true) {
-              router.push('/main/product-list');
+              router.push(`/main/${childId}/product-list`);
+              console.log(childId);
             } else {
               router.back();
             }

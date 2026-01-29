@@ -1,10 +1,11 @@
 import { notFound } from 'next/navigation';
 import { saveEditPlan } from '@/actions/plan.action';
 import Header from '@/components/cmm/Header';
+import { GIFT_METHOD } from '@/constants/gift';
 import { account_acc_type } from '@/lib/generated/prisma/enums';
 import { prisma } from '@/lib/prisma';
 import { getGiftPeriodMonths } from '@/lib/utils';
-import MainSection, { GIFT_METHOD } from './MainSection';
+import MainSection from './MainSection';
 
 /**
  * @page: 증여 플랜 수정 페이지
@@ -54,9 +55,6 @@ export default async function PlanEdit({ params }: PageProps) {
       ? GIFT_METHOD.REGULAR
       : GIFT_METHOD.FLEXIBLE;
 
-  console.log('method : ', method);
-  console.log('MONTHLYMOney : ', monthlyMoney);
-  console.log('MONTHLYMOney : ', goalMoney);
   const period = getGiftPeriodMonths(startDate, endDate);
 
   return (

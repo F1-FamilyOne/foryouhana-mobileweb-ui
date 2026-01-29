@@ -227,29 +227,29 @@ export default async function home({ params }: Props) {
   return (
     <main className="flex flex-col gap-4 bg-hana-white-50">
       {/* 상단: 자녀 선택 및 전체 통계 */}
-      <HomeClientWrapper
+      {/* <HomeClientWrapper
         initialChildId={currentChildId}
         kidsProfiles={kidsProfilesForToggle}
         kidsChartData={kidsDataForChart}
         is_promise_fixed={childInfo?.is_promise_fixed || false}
         hasPensionAccount={hasPensionAccount}
-      />
+      /> */}
 
       {/* 중단: 현재 선택된 자녀의 증여 현황 카드 */}
-      {currentChildData && (
+      {/* {currentChildData && (
         <GiftStatusSection accumulatedAmount={currentChildData.giftamount} />
-      )}
+      )} */}
 
-      <ChildAccountInfoCard
+      {/* <ChildAccountInfoCard
         childId={childId}
         deposit={Number(giftAccount?.deposit || 0)}
         thisMonthAmount={thisMonthInputAmount}
-      />
+      /> */}
 
       {/* 하단: 이후 추가될 입출금 통장/펀드 상세 카드들... */}
-      {childInfo && <GiftTaxSection childInfo={childTaxInfo} />}
+      {/* {childInfo && <GiftTaxSection childInfo={childTaxInfo} />} */}
 
-      <ChildFundSection childId={currentChildId} fundList={formattedFundList} />
+      {/* <ChildFundSection childId={currentChildId} fundList={formattedFundList} /> */}
     </main>
   );
 }

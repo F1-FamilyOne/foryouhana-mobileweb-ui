@@ -1,4 +1,5 @@
 'use server';
+import { GIFT_METHOD, type GiftMethod } from '@/constants/gift';
 /**
  * @page: plan.action.ts
  * @description: 플랜 수정 로직에서 사용되는 server actions를 모아놓은 파일입니다.
@@ -6,7 +7,6 @@
  * @date: 2026-01-28
  */
 
-import { GIFT_METHOD } from '@/app/main/[childId]/planEdit/MainSection';
 import { prisma } from '@/lib/prisma';
 
 type Prop = {
@@ -16,7 +16,7 @@ type Prop = {
     amount: number;
     period: number;
     pension: boolean;
-    method: GIFT_METHOD;
+    method: GiftMethod;
   };
 };
 
