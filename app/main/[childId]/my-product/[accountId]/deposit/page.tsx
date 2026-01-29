@@ -33,7 +33,10 @@ export default async function DepositPage({ params }: Props) {
   }
 
   // 입금 대상은 FUND 또는 PENSION 계좌만 허용
-  if (targetAccount.acc_type === 'DEPOSIT' || targetAccount.acc_type === 'GIFT_DEPOSIT') {
+  if (
+    targetAccount.acc_type === 'DEPOSIT' ||
+    targetAccount.acc_type === 'GIFT_DEPOSIT'
+  ) {
     notFound();
   }
 
