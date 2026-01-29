@@ -19,8 +19,6 @@ type Props = {
   period: number;
   amount: number;
   blockStatus: BlockStatus;
-  startDate: string;
-  endDate: string;
   newStart: string;
   newEnd: string;
   onChangeStart: (v: string | null) => void;
@@ -36,8 +34,6 @@ export default function FixedPlanSection({
   period,
   amount,
   blockStatus,
-  startDate,
-  endDate,
   newStart,
   newEnd,
   onChangeEnd,

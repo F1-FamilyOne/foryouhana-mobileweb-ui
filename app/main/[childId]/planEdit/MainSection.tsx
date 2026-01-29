@@ -86,8 +86,6 @@ export default function MainSection({
             onMethodChange={setGiftMethod}
             newAmount={newAmount}
             newPeriod={newPeriod}
-            startDate={startDate}
-            endDate={endDate}
             newStart={newStart}
             newEnd={newEnd}
             onChangeStart={setNewStart}

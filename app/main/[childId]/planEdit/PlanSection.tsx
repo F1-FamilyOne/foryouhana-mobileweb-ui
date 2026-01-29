@@ -18,8 +18,6 @@ type Props = {
   newAmount: number | null;
   isFixed: boolean;
   blockStatus: BlockStatus;
-  startDate: string;
-  endDate: string;
   newStart: string | null;
   newEnd: string | null;
   onMethodChange: (v: GiftMethod) => void;
@@ -38,8 +36,6 @@ export default function PlanSection({
   newPeriod,
   newAmount,
   blockStatus,
-  startDate,
-  endDate,
   newStart,
   newEnd,
   onChangeStart,
@@ -61,8 +57,6 @@ export default function PlanSection({
           }
           method={method}
           blockStatus={blockStatus}
-          startDate={startDate}
-          endDate={endDate}
           newStart={newStart ?? ''}
           newEnd={newEnd ?? ''}
           onChangeStart={onChangeStart}
@@ -78,8 +72,6 @@ export default function PlanSection({
           isRegular={method === GIFT_METHOD.REGULAR}
           onChange={onMethodChange}
           isFixed={isFixed}
-          // startDate={startDate}
-          // endDate={endDate}
           newStart={newStart ?? ''}
           newEnd={newEnd ?? ''}
           onChangeStart={onChangeStart}
