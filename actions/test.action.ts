@@ -9,7 +9,7 @@ export async function setRandomInvestTypeForChild(childId: number) {
   const randomType = types[Math.floor(Math.random() * types.length)];
 
   // 2. Prisma를 통해 DB 저장
-  const updatedChild = await prisma.child.update({
+  const updatedChild = await prisma.user.update({
     where: { id: childId },
     data: {
       invest_type: randomType,
@@ -21,5 +21,5 @@ export async function setRandomInvestTypeForChild(childId: number) {
 }
 
 export async function getChild(childId: number) {
-  return await prisma.child.findUnique({ where: { id: childId } });
+  return await prisma.user.findUnique({ where: { id: childId } });
 }

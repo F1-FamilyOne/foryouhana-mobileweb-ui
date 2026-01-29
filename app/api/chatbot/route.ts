@@ -1,6 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import { prisma } from '@/lib/prisma'; // 로그 저장용
 
 // ✅ Enum 정의
 enum AccountAccType {
@@ -16,22 +15,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { childId, userInput, parentIncome, parentAssets, childAge } = body;
-
-    // 🛡️ [안전장치 1] 사용자 질문 로그 저장 (실패 시 무시)
-    if (childId) {
-      try {
-        await prisma.chatlog.create({
-          data: {
-            child_id: childId,
-            log: userInput.slice(0, 500),
-            is_sent: false,
-          },
-        });
-      } catch (logError) {
-        console.warn('⚠️ 채팅 로그 저장 실패 (무시):', logError);
-      }
-    }
+    const { userInput, parentIncome, parentAssets, childAge } = body;
 
     const isAdult = childAge >= 19;
     const giftLimit = isAdult ? 50000000 : 20000000;
@@ -136,21 +120,6 @@ ${userInput}
     if (data.error) {
       const errorMsg = data.error.slice(0, 500);
 
-      // 🛡️ [안전장치 2] 에러 로그 저장 (실패 시 무시)s
-      if (childId) {
-        try {
-          await prisma.chatlog.create({
-            data: {
-              child_id: childId,
-              log: errorMsg,
-              is_sent: true,
-            },
-          });
-        } catch (logError) {
-          console.warn('⚠️ 에러 로그 저장 실패 (무시):', logError);
-        }
-      }
-
       return NextResponse.json({ error: errorMsg }, { status: 400 });
     }
 
@@ -162,26 +131,10 @@ ${userInput}
       ? AccountAccType.PENSION
       : AccountAccType.DEPOSIT;
 
-    // 🔥 정기/자유 적립 로직 (유기정기금이면 무조건 정기적립식이어야 함)
-    // AI가 실수로 useYugi: true인데 isRegular: false를 줬을 경우를 대비한 방어 코드
+    //유기정기금은 정기적립식이어야 하므로, AI 응답이 달라도 `true`로 강제합니다.
     const inType = data.useYugi ? true : data.isRegular;
 
-    // 🛡️ [안전장치 3] AI 답변 로그 저장 (실패 시 무시)
-    try {
-      if (childId) {
-        await prisma.chatlog.create({
-          data: {
-            child_id: childId,
-            log: explanation,
-            is_sent: true,
-          },
-        });
-      }
-    } catch (logError) {
-      console.warn('⚠️ 답변 로그 저장 실패 (무시):', logError);
-    }
-
-    // ✅ 7. 프론트로 결과 반환
+    // 6. 프론트로 결과 반환
     return NextResponse.json({
       ...data,
       explanation,
@@ -197,7 +150,6 @@ ${userInput}
     });
   } catch (e) {
     console.error('Gift Plan Error:', e);
-    // 상세 에러 내용을 반환해서 디버깅 돕기
     return NextResponse.json(
       {
         error:

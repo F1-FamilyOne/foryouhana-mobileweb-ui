@@ -4,13 +4,6 @@ import { randomBytes, randomInt } from 'node:crypto';
 import { account_acc_type, invest_type } from '@/lib/generated/prisma/enums';
 import { prisma } from '@/lib/prisma';
 
-/**
- * @page: 자녀 & 자녀 입출금 계좌 생성
- * @description: 자녀 및 목표/원천 계좌를 트랜잭션으로 생성하며, 중복 계좌 생성을 방지합니다.
- * @author: 승빈
- * @date: 2026-01-28
- */
-
 export type BirthInput = {
   year: number;
   month: number;
@@ -30,7 +23,7 @@ export type DraftPlanPayload = {
     is_promise_fixed: boolean;
     in_month: number;
     in_type: boolean;
-    acc_type: 'PENSION' | 'DEPOSIT';
+    acc_type: 'PENSION' | 'DEPOSIT' | 'GIFT_DEPOSIT';
   };
 };
 
@@ -52,7 +45,7 @@ export async function createChildAndAccount(
   parentId: number,
 ) {
   try {
-    // 0. 기초 데이터 및 parentId 유효성 검사
+    // 0. 유효성 검사
     if (!sessionData || !sessionData.plan) {
       throw new Error('전달된 플랜 데이터가 유효하지 않습니다.');
     }
@@ -80,22 +73,19 @@ export async function createChildAndAccount(
       endDate.setMonth(startDate.getMonth() + in_month);
     }
 
-    // 생일 날짜 객체 안전 생성
     const bornDate = new Date(
       child_birth.year,
       child_birth.month - 1,
       child_birth.day,
-      0,
-      0,
-      0,
     );
 
     const identityHash =
       sessionData.child_id?.toString() || randomBytes(16).toString('hex');
 
+    // DB 트랜잭션 시작
     const result = await prisma.$transaction(async (tx) => {
-      // 1. 자녀 생성/업데이트 (Upsert)
-      const child = await tx.child.upsert({
+      // 1. 자녀 유저 생성/업데이트 (User 모델 통합 버전)
+      const child = await tx.user.upsert({
         where: { identity_hash: identityHash },
         update: {
           name: finalName,
@@ -107,7 +97,6 @@ export async function createChildAndAccount(
           end_date: endDate,
         },
         create: {
-          parent_id: parentId, // 🚀 전달받은 parentId 사용
           name: finalName,
           born_date: bornDate,
           goal_money: goal_money ? BigInt(goal_money) : 0n,
@@ -116,49 +105,71 @@ export async function createChildAndAccount(
           identity_hash: identityHash,
           start_date: startDate,
           end_date: endDate,
-          account: {
-            create: {
+        },
+      });
+
+      // 2. 증여 원천 계좌(GIFT_DEPOSIT) 존재 여부 확인 및 생성
+      const existingGiftAccount = await tx.account.findFirst({
+        where: {
+          user_id: child.id,
+          acc_type: account_acc_type.GIFT_DEPOSIT,
+        },
+      });
+
+      if (!existingGiftAccount) {
+        await tx.account.create({
+          data: {
+            user_id: child.id,
+            acc_num: generateSecureAccNum('1002-888'),
+            acc_type: account_acc_type.GIFT_DEPOSIT,
+            opened_at: new Date(),
+            deposit: generateSecureDeposit(),
+            in_type: false, // 정기
+            status: 'ACTIVE',
+          },
+        });
+      }
+
+      // 3. 특정 플랜 계좌(PENSION 등) 생성 (타입이 다를 경우에만)
+      if (acc_type !== 'GIFT_DEPOSIT') {
+        const existingPlanAccount = await tx.account.findFirst({
+          where: {
+            user_id: child.id,
+            acc_type: acc_type as account_acc_type,
+          },
+        });
+
+        if (!existingPlanAccount) {
+          await tx.account.create({
+            data: {
+              user_id: child.id,
               acc_num: generateSecureAccNum(),
-              acc_type:
-                acc_type === 'PENSION'
-                  ? account_acc_type.PENSION
-                  : account_acc_type.DEPOSIT,
+              acc_type: acc_type as account_acc_type,
               opened_at: startDate,
               in_month: in_month,
               in_type: in_type,
               deposit: 0n,
             },
+          });
+        }
+      }
+
+      // 4. 부모-자녀 관계 설정 (read_auth) - reader: 부모 ID, provider: 자녀 ID
+      await tx.read_auth.upsert({
+        where: {
+          reader_id_provider_id: {
+            reader_id: parentId,
+            provider_id: child.id,
           },
+        },
+        update: {}, // 이미 관계가 있으면 업데이트할 내용 없음
+        create: {
+          reader_id: parentId,
+          provider_id: child.id,
         },
       });
 
-      // 2. [수정부] 기존 원천 계좌(gift_account_id)가 있는지 체크하여 고아 데이터 방지
-      let finalChild = child;
-
-      if (!child.gift_account_id) {
-        // 원천 계좌가 없을 때만 새로 생성
-        const sourceAccount = await tx.account.create({
-          data: {
-            child_id: child.id,
-            acc_num: generateSecureAccNum('1002-888'),
-            acc_type:
-              acc_type === 'PENSION'
-                ? account_acc_type.PENSION
-                : account_acc_type.DEPOSIT,
-            opened_at: new Date('2024-01-01'),
-            deposit: generateSecureDeposit(),
-            in_type: false,
-          },
-        });
-
-        // 생성된 계좌를 자녀 정보에 연결
-        finalChild = await tx.child.update({
-          where: { id: child.id },
-          data: { gift_account_id: sourceAccount.id },
-        });
-      }
-
-      return finalChild;
+      return child;
     });
 
     return { success: true, childId: result.id };
@@ -167,9 +178,7 @@ export async function createChildAndAccount(
     return {
       success: false,
       error:
-        error instanceof Error
-          ? error.message
-          : '데이터 저장 중 오류가 발생했습니다.',
+        error instanceof Error ? error.message : '데이터 저장 중 오류 발생',
     };
   }
 }

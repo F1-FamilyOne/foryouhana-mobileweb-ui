@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function getChildAge(childId: number) {
   try {
-    const child = await prisma.child.findUnique({
+    const child = await prisma.user.findUnique({
       where: { id: childId },
       select: { born_date: true }, // 날짜만 쏙 가져오기
     });

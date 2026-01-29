@@ -91,11 +91,12 @@ model history {
   id                                         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
   created_at                                 DateTime @default(now()) @db.DateTime(6)
   money                                      BigInt   @db.UnsignedBigInt
-  source_account_id                          Int      @db.UnsignedInt
+  source_account_id                          Int?      @db.UnsignedInt
   target_account_id                          Int      @db.UnsignedInt
-  account_history_source_account_idToaccount account  @relation("history_source_account_idToaccount", fields: [source_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_history_source")
+  account_history_source_account_idToaccount account?  @relation("history_source_account_idToaccount", fields: [source_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_history_source")
   account_history_target_account_idToaccount account  @relation("history_target_account_idToaccount", fields: [target_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_history_target")
-
+  etc               String?  @db.VarChar(30) //타 은행에서 송금한 경우 etc에 명시
+  
   @@index([source_account_id], map: "fk_history_source")
   @@index([target_account_id], map: "fk_history_target")
 }
