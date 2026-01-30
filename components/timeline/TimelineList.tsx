@@ -1,8 +1,8 @@
 'use client';
 
+import { saveTimelineMessage } from '@/actions/timeline';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { saveTimelineMessage } from '@/actions/timeline';
 import { FinancialHistoryGiftModal } from './FinancialHistoryGiftModal';
 import TimelineMsg from './TimelineMsg';
 import TimelineRow from './TimelineRow';
@@ -85,12 +85,11 @@ export default function TimelineList({
     <>
       {/* 1. 타임라인 리스트 */}
       <section className="flex flex-col">
-        {items.map((item) => (
+        {items.map((item, index) => (
           <TimelineRow
             key={item.id}
             icon={item.icon}
             variant={item.variant}
-            isLast={item.isLast}
             cardData={{
               date: item.date,
               title: item.title,
@@ -101,6 +100,7 @@ export default function TimelineList({
             }}
             // 클릭 시 핸들러 호출
             onMessageClick={() => handleOpenMsgModal(item.id)}
+            isLast={index === items.length - 1}
           />
         ))}
       </section>
