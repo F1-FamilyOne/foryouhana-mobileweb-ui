@@ -62,12 +62,10 @@ export const saveEditPlan = async ({ childId, form }: Prop) => {
     endDate = null;
   } else {
     if (start === null || end === null) {
-      alert('올바른 날짜를 선택해주세요.');
-      return;
+      throw new Error('올바른 날짜를 선택해주세요.');
     }
     monthlyMoney = BigInt(amount);
     goalMoney = totalAmount;
-    console.log(start, end);
     startDate = yearMonthToDateWithTodayDay(start);
     endDate = yearMonthToDateWithTodayDay(end);
   }
