@@ -1,41 +1,58 @@
 'use client';
 
-import { ChevronRight, Info } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import AccGiftCard from '../cmm//AccGiftCard';
 import { CustomMoneyProgress } from '../cmm/CustomMoneyProgress';
 
 type Props = {
   accumulatedAmount: number; // 연저펀, 또는 펀드 납입 금액
+  bornDate: Date;
+  isPromiseFixed: boolean;
 };
 
-export default function GiftStatusSection({ accumulatedAmount }: Props) {
-  // 1. 세율 구간 로직 정의 (비과세 한도 2천만 원 기준)
-  const FREE_LIMIT = 20000000;
+export default function GiftStatusSection({
+  accumulatedAmount,
+  bornDate,
+  isPromiseFixed,
+}: Props) {
+  // 1. 비과세 한도 설정  const FREE_LIMIT = age >= 19 ? 50000000 : 20000000;
+  const calculateFullAge = (birth: Date | string) => {
+    const today = new Date();
+    const birthDate = new Date(birth);
 
-  // 현재 적용 세율 및 다음 구간 계산
-  let currentTaxRate = 0;
-  let nextLimit = FREE_LIMIT;
-  let description = '20,000,000원 초과 시 10% 세율로 변경됩니다';
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
 
-  if (accumulatedAmount <= FREE_LIMIT) {
-    currentTaxRate = 0;
-    nextLimit = FREE_LIMIT;
-    description = '20,000,000원 초과 시 10% 세율로 변경됩니다';
-  } else {
-    // 2천만 원 초과 시 로직 (필요 시 더 확장 가능하오)
-    currentTaxRate = 10;
-    nextLimit = 120000000; // 공제액 2천 + 1억 구간
-    description = '1억 2천만 원 초과 시 20% 세율로 변경됩니다';
-  }
+    // 생일이 지나지 않았으면 1살을 뺌
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+    return age;
+  };
 
-  const remainingAmount = Math.max(nextLimit - accumulatedAmount, 0);
+  const age = calculateFullAge(bornDate);
+  const FREE_LIMIT = age >= 19 ? 50000000 : 20000000;
+  const isExceeded = accumulatedAmount > FREE_LIMIT;
+  const remainingAmount = isExceeded ? 0 : FREE_LIMIT - accumulatedAmount;
+  const exceededAmount = isExceeded ? accumulatedAmount - FREE_LIMIT : 0;
 
+  const description = isPromiseFixed
+    ? `* 자녀 증여용 계좌에 정기 이체를 설정한 계좌의 입금 내역만 반영한 결과입니다.`
+    : `* 이 증여액은 지난 10년 동안의 증여액만 반영했습니다.`;
   return (
     <div className="flex flex-col gap-2 rounded-3xl border border-hana-gray-150 bg-white p-6 font-hana-cm shadow-sm">
       {/* 헤더 영역 */}
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="font-bold text-gray-800 text-lg">증여 현황</h2>
+        {isPromiseFixed ? (
+          <h2 className="font-bold text-gray-800 text-lg">유기정기금 현황</h2>
+        ) : (
+          <h2 className="font-bold text-gray-800 text-lg">증여 현황</h2>
+        )}
+
         <Link
           href="https://www.hometax.go.kr"
           target="_blank"
@@ -54,30 +71,31 @@ export default function GiftStatusSection({ accumulatedAmount }: Props) {
           value={`${accumulatedAmount.toLocaleString()}원`}
           highlight={true}
         />
-        <AccGiftCard
-          title="세율 변경까지"
-          value={`${remainingAmount.toLocaleString()}원`}
-        />
+
+        {isPromiseFixed ? (
+          <AccGiftCard
+            title={isExceeded ? '목표금액 초과' : '목표금액 도달까지'}
+            value={
+              isExceeded
+                ? `${exceededAmount.toLocaleString()}원`
+                : `${remainingAmount.toLocaleString()}원`
+            }
+          />
+        ) : (
+          <AccGiftCard
+            title={isExceeded ? '공제 초과금액' : '공제 한도까지'}
+            value={
+              isExceeded
+                ? `${exceededAmount.toLocaleString()}원`
+                : `${remainingAmount.toLocaleString()}원`
+            }
+          />
+        )}
       </div>
 
       {/* 프로그레스 바 영역 */}
       <div className="mb-6">
-        <CustomMoneyProgress current={accumulatedAmount} total={nextLimit} />
-      </div>
-
-      {/* 세율 알림 영역 */}
-      <div className="mb-2 flex items-center justify-between rounded-2xl bg-hana-badge-yellow p-4">
-        <div className="flex items-center gap-2">
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-hana-orange/20">
-            <Info size={14} className="text-hana-badge-orange" />
-          </div>
-          <span className="font-medium text-[15px] text-hana-dark-navy">
-            현재 적용 세율
-          </span>
-        </div>
-        <span className="text-2xl text-hana-badge-orange">
-          {currentTaxRate}%
-        </span>
+        <CustomMoneyProgress current={accumulatedAmount} total={FREE_LIMIT} />
       </div>
 
       {/* 안내 문구 */}

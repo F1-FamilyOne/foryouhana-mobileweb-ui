@@ -4,18 +4,19 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import ModalAllChart, {
-  type KidGiftAmount,
+  type KidFundAmount,
 } from '@/components/home/ModalAllChart';
 import ToggleChildProfile, {
   type KidProfile,
 } from '@/components/home/ToggleChildProfile';
+import { BottomNavBar } from '../cmm/NavBar';
 import { Badge } from '../ui/badge';
 import MainCute from './MainCute';
 
 type Props = {
   initialChildId: number;
   kidsProfiles: KidProfile[];
-  kidsChartData: KidGiftAmount[];
+  kidsChartData: KidFundAmount[];
   is_promise_fixed: boolean;
   hasPensionAccount: boolean; // 연금저축계좌 존재 여부
 };
@@ -69,8 +70,8 @@ export default function HomeClientWrapper({
         </div>
 
         <CustomButton
-          // 스타일: 배경색 적용, 글자 크기 축소, 너비 자동 조절
-          className="size-1.0 rounded-2xl bg-hana-light-gray px-3 py-1.5 text-hana-gray-600 text-xs shadow-sm"
+          // 스타일: 마우스 올렸을때 바뀌는 색까리 너무 진한데 조금만 연하게
+          className="size-1.0 rounded-2xl bg-hana-light-gray px-3 py-1.5 text-hana-gray-600 text-xs shadow-sm hover:bg-hana-gray-200/50"
           onClick={() => setIsChartOpen(true)}
         >
           전체 통계보기
@@ -84,6 +85,8 @@ export default function HomeClientWrapper({
           kids={kidsChartData}
         />
       )}
+
+      <BottomNavBar />
     </div>
   );
 }

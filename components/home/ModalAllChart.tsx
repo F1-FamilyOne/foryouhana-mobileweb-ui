@@ -15,15 +15,15 @@ import { CustomButton } from '../cmm/CustomButton';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export type KidGiftAmount = {
+export type KidFundAmount = {
   name: string;
-  giftamount: number;
+  depositAmount: number;
   profitAmount: number;
 };
 
 type ModalAllChartProps = {
   onClose: () => void;
-  kids: KidGiftAmount[];
+  kids: KidFundAmount[];
 };
 
 const backgroundColor = [
@@ -37,8 +37,8 @@ export default function ModalAllChart({ onClose, kids }: ModalAllChartProps) {
   const [activeTab, setActiveTab] = useState<'ratio' | 'contribution'>('ratio');
 
   // 전체 금액 합산
-  const totalGiftAmount: number = kids.reduce(
-    (acc, cur) => acc + cur.giftamount,
+  const totalDepositAmount: number = kids.reduce(
+    (acc, cur) => acc + cur.depositAmount,
     0,
   );
   const totalProfitAmount: number = kids.reduce(
@@ -53,7 +53,7 @@ export default function ModalAllChart({ onClose, kids }: ModalAllChartProps) {
       {
         data:
           activeTab === 'ratio'
-            ? kids.map((kid) => kid.giftamount)
+            ? kids.map((kid) => kid.depositAmount)
             : kids.map((kid) => kid.profitAmount),
         backgroundColor,
         hoverOffset: 10,
@@ -86,7 +86,9 @@ export default function ModalAllChart({ onClose, kids }: ModalAllChartProps) {
           {/* 헤더 */}
           <div className="flex items-center gap-3">
             <ChartPie className="text-hana-main" />
-            <h1 className="font-bold text-hana-black text-xl">전체 통계</h1>
+            <h1 className="font-bold text-hana-black text-xl">
+              펀드 현황 통계
+            </h1>
           </div>
 
           {/* 탭 버튼 */}
@@ -126,7 +128,7 @@ export default function ModalAllChart({ onClose, kids }: ModalAllChartProps) {
               }`}
             >
               {activeTab === 'ratio'
-                ? `${totalGiftAmount.toLocaleString()}원`
+                ? `${totalDepositAmount.toLocaleString()}원`
                 : `${totalProfitAmount.toLocaleString()}원`}
             </div>
           </div>
@@ -141,9 +143,11 @@ export default function ModalAllChart({ onClose, kids }: ModalAllChartProps) {
             <ul className="grid gap-4">
               {kids.map((kid, idx) => {
                 const currentVal =
-                  activeTab === 'ratio' ? kid.giftamount : kid.profitAmount;
+                  activeTab === 'ratio' ? kid.depositAmount : kid.profitAmount;
                 const totalVal =
-                  activeTab === 'ratio' ? totalGiftAmount : totalProfitAmount;
+                  activeTab === 'ratio'
+                    ? totalDepositAmount
+                    : totalProfitAmount;
                 const percentage =
                   totalVal > 0 ? Math.round((currentVal / totalVal) * 100) : 0;
 
