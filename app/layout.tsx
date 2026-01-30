@@ -1,16 +1,14 @@
 import type { Metadata, Viewport } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { UserContextProvider } from '@/hooks/UserContextProvider';
+import {
+  HanaBold,
+  HanaCM,
+  HanaHeavy,
+  HanaLight,
+  HanaMedium,
+  HanaRegular,
+} from './fonts/fonts';
 import './globals.css';
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -20,6 +18,9 @@ export const metadata: Metadata = {
 /**
  * Viewport 설정
  * 2026.01.22
+ *
+ * UserContext설정
+ * 2026.01.26 seonukim
  */
 export const viewport: Viewport = {
   width: 'device-width',
@@ -33,15 +34,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className={`${HanaLight.variable} ${HanaRegular.variable} ${HanaMedium.variable} ${HanaBold.variable} ${HanaHeavy.variable} ${HanaCM.variable}`}
+    >
       <body
-        className={`${geistSans.variable} ${geistMono.variable} flex h-dvh w-screen items-center justify-center overflow-hidden bg-gray-100 antialiased`}
+        className={`flex h-dvh w-full items-center justify-center overflow-hidden bg-gray-100 antialiased`}
       >
-        <div className="scrollbar-hide h-full max-h-[852px] w-full max-w-[393px] overflow-y-auto rounded-4xl bg-white p-3 shadow-md">
-          {children}
-        </div>
+        <UserContextProvider>
+          <div className="scrollbar-hide h-full max-h-[852px] w-full max-w-[393px] overflow-y-auto rounded-4xl bg-white p-3 shadow-md">
+            {children}
+          </div>
+        </UserContextProvider>
       </body>
     </html>
   );
 }
-0;

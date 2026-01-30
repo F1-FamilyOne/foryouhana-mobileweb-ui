@@ -3,11 +3,78 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
 @theme inline {
+  /* ========== Red ========== */
+  --color-hana-red: #cd0037;
+  --color-hana-point-red: #ff0000;
+  --color-hana-badge-red: #e7000b;
+  --color-hana-fade-red: #faeaec;
+
+  /* ========== Pink ========== */
+  --color-hana-pink: #e90061;
+  --color-hana-pastel-pink: #ff9999;
+
+  /* ========== Green ========== */
+  --color-hana-mint: #008485;
+  --color-hana-main: #1ea698;
+  --color-hana-light-mint: #0b9c97;
+  --color-hana-text-bold-green: #008e71;
+  --color-hana-badge-green: #007a55;
+  --color-hana-fade-green: #dff2e7;
+  --color-hana-light-green: #e0f2f1;
+  --color-hana-complete: #00c177;
+  --color-hana-complete-bg: #e8fff6;
+  --color-hana-linear-green: #ecfdf5;
+  --color-hana-linear-deep-green: #01716D;
+  --color-hana-linear-green-end: #f0fdf4;
+  --color-hana-linear-deep-green-end: #0b9c97;
+  --color-hana-carousel-bg-green: #e5f5f2;
+  --color-hana-gray-green: #aacfca;
+
+  /* ========== Gray ========== */
+  --color-hana-gray-50: #eeeeef;
+  --color-hana-gray-100: #f9fafb;
+  --color-hana-gray-150: #f5f5f5;
+  --color-hana-gray-200: #ecedef;
+  --color-hana-gray-300: #e5e5e5;
+  --color-hana-gray-350: #d9d9d9;
+  --color-hana-gray-400: #b5b5b5;
+  --color-hana-gray-500: #999999;
+  --color-hana-gray-600: #666666;
+  --color-hana-input-bg: #f5f6fa;
+
+  /* ========== Others ========== */
+  --color-hana-badge-orange: #ff8d28;
+  --color-hana-badge-yellow: #fff8d6;
+  --color-hana-light-purple: #f0e2ff;
+  --color-hana-brown: #ad9a5f;
+  --color-hana-black: #000000;
+  --color-hana-dark-navy: #3b4259;
+  --color-hana-white: #edf1f2;
+  --color-hana-light-gray: #e4e9ee;
+  --color-hana-blue: #0062be;
+  --color-hana-white-yellow: #fcf8f1;
+  --color-hana-white-mint: #e8fff6;
+
+  /* ========== Pastel ========== */
+  --color-hana-pastel-yellow: #f4edde;
+  --color-hana-pastel-blue: #e0e8f3;
+  --color-hana-pastel-purple: #f1e7f3;
+  --color-hana-pastel-orange: #f6e8e5;
+  --color-hana-pastel-green: #e1f4e1;
+  --color-hana-pastel-mint: #14b8a6;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-hana-regular);
+  --font-mono: var(--font-hana-regular);
+  --font-hana-light: var(--font-hana-light);
+  --font-hana-regular: var(--font-hana-regular);
+  --font-hana-medium: var(--font-hana-medium);
+  --font-hana-bold: var(--font-hana-bold);
+  --font-hana-heavy: var(--font-hana-heavy);
+  --font-hana-cm: var(--font-hana-cm);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -47,23 +114,6 @@
 }
 
 :root {
-  --hana-light-green: #1ea698;
-  --hana-mint: #008485;
-  --hana-pink: #e90061;
-  --hana-brown: #ad9a5f;
-  --hana-gray: #b5b5b5;
-  --hana-black: #000000;
-  --hana-dark-navy: #3b4259;
-  --hana-white: #edf1f2;
-  --hana-light-mint: #0b9c97;
-  --hana-light-gray: #e4e9ee;
-  --hana-pastel-red: #faeaec;
-  --hana-pastel-mint: #dff2e7;
-  --hana-pastel-yellow: #f4edde;
-  --hana-pastel-blue: #e0e8f3;
-  --hana-pastel-purple: #f1e7f3;
-  --hana-pastel-orange: #f6e8e5;
-  --hana-pastel-green: #e1f4e1;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -144,5 +194,31 @@
     height: 100%;
     overflow: hidden; /* 전체 페이지 스크롤 방지 (앱처럼 보이게) */
     touch-action: manipulation; /* 더블탭 줌 방지 */
+  }
+}
+
+
+@layer utilities {
+  /* AI 분석 화면 애니메이션 */
+  @keyframes hanabot-float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+
+  .animate-hanabot-float {
+    animation: hanabot-float 1.8s ease-in-out infinite;
+    will-change: transform;
+  }
+  
+/* 크롬, 사파리, 오페라 */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
