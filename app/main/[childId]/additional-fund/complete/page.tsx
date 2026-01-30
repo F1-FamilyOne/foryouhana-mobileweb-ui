@@ -24,7 +24,7 @@ export default function AdditionalFundCompletePage() {
   };
 
   return (
-    <div className="h-full bg-white">
+    <div className="flex h-full flex-col bg-white">
       <Header content="가입 완료" />
 
       <main className="flex flex-1 flex-col items-center justify-center px-3">
@@ -51,8 +51,12 @@ export default function AdditionalFundCompletePage() {
       </main>
 
       {/* 하단 버튼 */}
-      <div className="mt-auto flex justify-center pb-6">
-        <CustomButton preset="greenlong" onClick={handleGoHome}>
+      <div className="flex shrink-0 flex-col gap-2 px-3 pb-4">
+        <CustomButton
+          preset="greenlong"
+          onClick={handleGoHome}
+          className="h-[40px]"
+        >
           홈으로
         </CustomButton>
       </div>

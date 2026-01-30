@@ -210,8 +210,8 @@ export default function ChildInfoPage() {
           checked={serviceAgree}
           onCheckedChange={(checked) => setServiceAgree(checked === true)}
         />
-        <span className="font-hana-light text-[14px]">
-          [필수] "아이앞으로" 서비스를 통한 자녀관리를 위한 동의
+        <span className="font-hana-light text-[14px] leading-normal">
+          [필수] "아이앞으로" 서비스를 통한 자녀관리를 위한 <br /> 동의
         </span>
       </Label>
       <p className="mx-3.5 mt-2 font-hana-light text-[12px] text-hana-gray-600">
@@ -223,12 +223,12 @@ export default function ChildInfoPage() {
           checked={thirdPartyAgree}
           onCheckedChange={(checked) => setThirdPartyAgree(checked === true)}
         />
-        <span className="font-hana-light text-[14px]">
+        <span className="font-hana-light text-[14px] leading-normal">
           [필수] 개인정보 및 금융거래 정보 제 3자 제공 동의서
           (아이앞으로_자녀등록용)
         </span>
       </Label>
-      <div className="mx-3.5 mt-3">
+      <div className="mx-3.5 mt-5">
         <CustomButton
           preset="greenlong"
           onClick={handleNext}

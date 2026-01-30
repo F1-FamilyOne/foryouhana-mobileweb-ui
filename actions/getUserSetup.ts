@@ -136,3 +136,62 @@ export async function getAllChildWithIsHaveFund(
     })),
   };
 }
+
+export type UserAndChildWithFixed =
+  | { exists: false }
+  | {
+      exists: true;
+      isValidChild: false; // 부모-자녀 관계 유효?
+    }
+  | {
+      exists: true;
+      isValidChild: true;
+      isPromiseFixed: boolean; // 자녀 is_promise_fixed
+    };
+
+export async function getUserAndChildWithFixed(
+  parentId: number,
+  childId: number,
+): Promise<UserAndChildWithFixed> {
+  const parent = await prisma.user.findUnique({
+    where: { id: parentId },
+    select: {
+      reading_list: {
+        where: {
+          provider_id: childId,
+        },
+        select: {
+          provider_id: true,
+        },
+      },
+    },
+  });
+
+  if (!parent) {
+    return { exists: false };
+  }
+
+  const isValidChild = parent.reading_list.length > 0;
+
+  if (!isValidChild) {
+    return {
+      exists: true,
+      isValidChild: false,
+    };
+  }
+
+  const child = await prisma.user.findUnique({
+    where: { id: childId },
+    select: {
+      is_promise_fixed: true,
+    },
+  });
+
+  const isPromiseFixed = child?.is_promise_fixed ?? false;
+
+  return {
+    exists: true,
+    isValidChild: true,
+    isPromiseFixed: isPromiseFixed,
+  };
+}

@@ -111,7 +111,7 @@ export function SetupForm({
       });
 
       if (result.success) {
-        router.push(
+        router.replace(
           `/main/${childId}/additional-fund/complete?accountNumber=${result.accountNumber}`,
         );
       } else {

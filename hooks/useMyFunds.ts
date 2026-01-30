@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 
 export type FundCardItem = {
   id: string;
+  fundId: string;
   variant: 'active' | 'canceled';
   title: string;
   tags?: [string?, string?, string?];

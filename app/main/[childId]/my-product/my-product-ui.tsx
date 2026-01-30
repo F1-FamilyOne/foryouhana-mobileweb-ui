@@ -118,7 +118,6 @@ export function MyProductUi({ childId }: Props) {
 
   return (
     <main className="mx-auto w-full max-w-md px-4 pt-4 pb-24">
-      {/* 상단: 상품 리스트 + 플러스 버튼 */}
       <div className="flex items-center gap-2">
         <h2 className="font-hana-medium text-[25px]">상품 리스트</h2>
 
@@ -145,7 +144,6 @@ export function MyProductUi({ childId }: Props) {
         </div>
       ) : (
         <section className="mt-6 space-y-6">
-          {/* 운용중 */}
           <div className="space-y-3">
             <SectionTitleLine title={`운용중 (${activeCount}종)`} />
 
@@ -164,17 +162,30 @@ export function MyProductUi({ childId }: Props) {
                 </div>
 
                 <div className="space-y-3">
-                  {activeFiltered.map((card) => (
-                    <MyFundDetailCard
-                      key={card.id}
-                      variant="active"
-                      title={card.title}
-                      tags={card.tags}
-                      totalAmountWonText={card.totalAmountWonText}
-                      profitRateText={card.profitRateText}
-                      monthlyPayWonText={card.monthlyPayWonText}
-                    />
-                  ))}
+                  {activeFiltered.map((card) => {
+                    const detailHref =
+                      `/main/${childId}/product-list/${card.fundId}` as Route;
+
+                    return (
+                      <Link
+                        key={`${card.id}-${card.fundId}`}
+                        href={detailHref}
+                        className="block"
+                        aria-label="펀드 상품 상세로 이동"
+                      >
+                        <MyFundDetailCard
+                          accountId={card.id}
+                          fundId={card.fundId}
+                          variant="active"
+                          title={card.title}
+                          tags={card.tags}
+                          totalAmountWonText={card.totalAmountWonText}
+                          profitRateText={card.profitRateText}
+                          monthlyPayWonText={card.monthlyPayWonText}
+                        />
+                      </Link>
+                    );
+                  })}
                 </div>
               </>
             ) : (
@@ -182,25 +193,36 @@ export function MyProductUi({ childId }: Props) {
             )}
           </div>
 
-          {/* 해지 */}
           <div className="space-y-3">
             <SectionTitleLine title={`해지 (${canceledCount}종)`} />
 
             <div className="space-y-3">
-              {canceledCards.map((card) => (
-                <MyFundDetailCard
-                  key={card.id}
-                  variant="canceled"
-                  title={card.title}
-                  tags={card.tags}
-                  totalAmountWonText={card.totalAmountWonText}
-                  profitRateText={card.profitRateText}
-                  monthlyPayWonText={card.monthlyPayWonText}
-                />
-              ))}
+              {canceledCards.map((card) => {
+                const detailHref =
+                  `/main/${childId}/product-list/${card.fundId}` as Route;
+
+                return (
+                  <Link
+                    key={`${card.id}-${card.fundId}`}
+                    href={detailHref}
+                    className="block"
+                    aria-label="펀드 상품 상세로 이동"
+                  >
+                    <MyFundDetailCard
+                      accountId={card.id}
+                      fundId={card.fundId}
+                      variant="canceled"
+                      title={card.title}
+                      tags={card.tags}
+                      totalAmountWonText={card.totalAmountWonText}
+                      profitRateText={card.profitRateText}
+                      monthlyPayWonText={card.monthlyPayWonText}
+                    />
+                  </Link>
+                );
+              })}
             </div>
 
-            {/* 운용중 카드가 있을 때만 하단 버튼 보임 */}
             {hasActive ? (
               <div className="flex justify-center pt-2">
                 <GoProductsButton

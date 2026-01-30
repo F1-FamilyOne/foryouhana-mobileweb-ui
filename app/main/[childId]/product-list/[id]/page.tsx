@@ -1,5 +1,9 @@
 import Header from '@/components/cmm/Header';
-import type { fund_danger, fund_type } from '@/lib/generated/prisma/enums';
+import {
+  account_status,
+  type fund_danger,
+  type fund_type,
+} from '@/lib/generated/prisma/enums';
 import { prisma } from '@/lib/prisma';
 import { FundHeaderSection } from './fund-header-section';
 import { FundKeyPointsSection } from './fund-key-points-section';
@@ -74,6 +78,19 @@ export default async function ProductDetailPage({ params }: Props) {
         });
 
   const ok = !isInvalidChildId && !isInvalidFundId && fund;
+
+  const joinedAccount = ok
+    ? await prisma.account.findFirst({
+        where: {
+          user_id: parsedChildId,
+          fund_id: fundId,
+          status: account_status.ACTIVE,
+        },
+        select: { id: true },
+      })
+    : null;
+
+  const isJoined = Boolean(joinedAccount);
 
   let content: React.ReactNode = null;
 
@@ -160,7 +177,16 @@ export default async function ProductDetailPage({ params }: Props) {
           {content}
         </main>
 
-        {ok ? <JoinButton childId={parsedChildId} fundId={fundId} /> : <div />}
+        {ok ? (
+          <JoinButton
+            childId={parsedChildId}
+            fundId={fundId}
+            mode={isJoined ? 'cancel' : 'join'}
+            accountId={joinedAccount?.id ?? null}
+          />
+        ) : (
+          <div />
+        )}
       </div>
     </div>
   );
