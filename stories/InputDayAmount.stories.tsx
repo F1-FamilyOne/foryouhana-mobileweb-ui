@@ -1,6 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
-import { InputAmount, InputDay, InputMonth } from '../components/cmm/InputDayAmount';
+import {
+  InputAmount,
+  InputDay,
+  InputMonth,
+} from '../components/cmm/InputDayAmount';
 
 /**
  * @page: InputDayAmount Stories
@@ -40,7 +44,11 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const InputDayWithState = (args: { value?: number; unit: string; placeholder?: string }) => {
+const InputDayWithState = (args: {
+  value?: number;
+  unit: string;
+  placeholder?: string;
+}) => {
   const [value, setValue] = useState(args.value);
   return <InputDay {...args} value={value} onChange={(v) => setValue(v)} />;
 };
