@@ -14,8 +14,8 @@
 
 export const IMAGES_PATH = {
   STAR_BG: '/timeline/star_bg.png',
-  STAR_ICON: '/timeline/icon/star.png',
-  POPUP_ILLUSTRATION: '/timeline/timeline_popupImg.png',
+  STAR_ICON: '/timeline/icon/star.svg',
+  POPUP_ILLUSTRATION: '/timeline/momAndMe.svg',
   HOMETAX_STARTSPRING: '/hometax/starSpringSeed.svg',
   HOMETAX_TREEIMG: '/hometax/tree.svg',
   REGIST_STARBOT_ICON: '/chatbot/icon/regist_starbot.svg',
