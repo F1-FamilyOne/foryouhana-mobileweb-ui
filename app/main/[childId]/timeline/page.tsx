@@ -1,14 +1,13 @@
 import type { Route } from 'next';
 import { redirect } from 'next/navigation';
+
 import Header from '@/components/cmm/Header';
 import { BottomNavBar } from '@/components/cmm/NavBar';
-
 import type { KidProfile } from '@/components/home/ToggleChildProfile';
 import TimelineChildToggle from '@/components/timeline/TimelineChildToggle';
 import TimelineFooter from '@/components/timeline/TimelineFooter';
 import TimelineList from '@/components/timeline/TimelineList';
 import TimelineSummary from '@/components/timeline/TimelineSummary';
-
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
@@ -31,8 +30,9 @@ export default async function TimelinePage({
 
   const LOGGED_IN_PARENT_ID = 1;
 
-  const [targetChild, myChildren, timelines] = await Promise.all([
-    // 현재 보고 있는 자녀 정보 조회
+  // 👇 [수정 1] Promise.all 배열에 'firstAccount' 조회 추가
+  const [targetChild, myChildren, timelines, firstAccount] = await Promise.all([
+    // 1. 현재 보고 있는 자녀 정보 조회
     prisma.user.findFirst({
       where: {
         id: childIdInt,
@@ -44,7 +44,7 @@ export default async function TimelinePage({
       },
     }),
 
-    // 토글 바에 표시할 "내 자녀들" 목록 조회
+    // 2. 토글 바에 표시할 "내 자녀들" 목록 조회
     prisma.user.findMany({
       where: {
         provided_to: {
@@ -53,14 +53,22 @@ export default async function TimelinePage({
           },
         },
       },
-      orderBy: { born_date: 'asc' },
+      orderBy: { born_date: 'asc' }, // 첫째, 둘째 순서
     }),
 
+    // 3. 타임라인 목록 조회
     prisma.timeline.findMany({
       where: {
         user_id: childIdInt,
       },
       orderBy: { date: 'desc' },
+    }),
+
+    // 4. ✨ [New] 자녀의 가장 오래된 계좌 조회 (개설일 확인용)
+    prisma.account.findFirst({
+      where: { user_id: childIdInt },
+      orderBy: { opened_at: 'asc' }, // 가장 옛날 계좌 순서
+      select: { opened_at: true }, // 날짜만 가져오기
     }),
   ]);
 
@@ -71,7 +79,7 @@ export default async function TimelinePage({
 
   const kidProfiles: KidProfile[] = myChildren.map((child) => ({
     id: child.id,
-    avatarUrl: child.profile_pic || '',
+    avatarUrl: child.profile_pic || '', // profile_pic이 null일 경우 대비
   }));
 
   const timelineItems = timelines.map((item) => {
@@ -92,35 +100,59 @@ export default async function TimelinePage({
 
   const depositCount = timelines.filter((t) => t.type.includes('입금')).length;
 
+  // 👇 [수정 2] 개월 수 계산 로직 추가
+  let monthsPassed = 0;
+
+  if (firstAccount?.opened_at) {
+    const start = new Date(firstAccount.opened_at);
+    const now = new Date();
+
+    // 연도 차이 * 12 + 월 차이
+    const yearsDiff = now.getFullYear() - start.getFullYear();
+    const monthsDiff = now.getMonth() - start.getMonth();
+
+    monthsPassed = yearsDiff * 12 + monthsDiff;
+
+    // 혹시 미래 날짜라 음수가 나오면 0으로 처리
+    if (monthsPassed < 0) monthsPassed = 0;
+  }
+
   return (
-    // 1. 가장 바깥쪽 main에 'relative'와 'min-h-screen'을 적용하여 기준점으로 만듭니다.
-    <main className="relative min-h-screen bg-white font-hana-regular">
-      {/* 고정 상단 헤더 */}
-      <Header content="타임라인" />
+    <div className="relative h-full w-full bg-white font-hana-regular">
+      <div className="grid h-full grid-rows-[auto_1fr_auto] overflow-hidden">
+        {/* [Row 1] Header */}
+        <div className="flex justify-center">
+          <Header content="타임라인" />
+        </div>
 
-      {/* 2. 컨텐츠 영역: 하단바 높이만큼(약 80px) 패딩을 주어 내용이 가려지지 않게 합니다. */}
-      <div className="p-6 pb-[80px]">
-        {/* 상단 자녀 선택 토글 */}
-        <TimelineChildToggle kids={kidProfiles} selectedKidId={childIdInt} />
+        {/* [Row 2] Main */}
+        <main
+          className="overflow-y-auto p-6 pb-10 [::-webkit-scrollbar]:hidden"
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+          }}
+        >
+          <TimelineChildToggle kids={kidProfiles} selectedKidId={childIdInt} />
 
-        {/* 요약 카드 */}
-        <TimelineSummary monthsPassed={0} depositCount={depositCount} />
+          {/* 👇 [수정 3] 계산된 monthsPassed 전달 */}
+          <TimelineSummary
+            monthsPassed={monthsPassed}
+            depositCount={depositCount}
+          />
 
-        {/* 타임라인 리스트 */}
-        <TimelineList
-          items={timelineItems}
-          childName={targetChild.name}
-          bornDate={targetChild.born_date}
-        />
+          <TimelineList
+            items={timelineItems}
+            childName={targetChild.name}
+            bornDate={targetChild.born_date}
+          />
 
-        <TimelineFooter />
+          <TimelineFooter />
+        </main>
+
+        {/* [Row 3] BottomNavBar */}
+        <BottomNavBar />
       </div>
-
-      {/* 3. 하단 네비게이션: 복잡한 위치 설정 제거하고 컴포넌트 자체 속성 사용 */}
-
-      {/* 가이드대로 부모가 relative이므로, BottomNavBar 내부의 fixed/absolute가 이 영역 기준(또는 뷰포트)으로 잡히게 됩니다. */}
-
-      <BottomNavBar />
-    </main>
+    </div>
   );
 }

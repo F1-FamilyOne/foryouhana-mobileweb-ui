@@ -1,5 +1,5 @@
 import { TimelineIcon } from '@/components/cmm/TimelineIcon';
-import CardTimeline from '../cmm/CardTimeline'; // 경로가 맞는지 확인해주세요
+import CardTimeline from '../cmm/CardTimeline';
 
 type TimelineRowProps = {
   icon: 'gift' | 'bell' | 'business' | 'trending';
@@ -33,7 +33,6 @@ export default function TimelineRow({
 
       {/* 2. 실제 내용 카드 */}
       <div className="min-w-0 flex-1 pb-6">
-        {/* 2. 받아온 함수를 그대로 전달 */}
         <CardTimeline {...cardData} onMessageClick={onMessageClick} />
       </div>
     </div>
