@@ -28,7 +28,7 @@ export default function HomeTaxReportPage() {
   const params = useParams();
 
   const handleNext = () => {
-    router.push(`/main/${params.childId}/home`);
+    router.push(`/main/${params.childId}/beforeJoin/nofund-status`);
   };
 
   return (
@@ -84,7 +84,7 @@ export default function HomeTaxReportPage() {
           disabled={!isReported}
           onClick={handleNext}
         >
-          홈 화면으로 이동
+          다음
         </CustomButton>
       </div>
     </div>
