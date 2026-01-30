@@ -15,6 +15,7 @@ export type DraftPlanPayload = {
   child_id: string | number | null;
   child_name: string | { name: string };
   isSigned: boolean;
+  isChatbot: boolean;
   updated_at: string;
   plan: {
     child_birth: BirthInput;

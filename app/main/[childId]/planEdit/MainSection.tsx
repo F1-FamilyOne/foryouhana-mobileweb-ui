@@ -1,6 +1,9 @@
 'use client';
+import type { Route } from 'next';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { DraftPlanPayload } from '@/actions/child.action';
+import { reloadPlan } from '@/actions/plan.action';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import {
   BLOCK_STATUS,
@@ -10,6 +13,7 @@ import {
   YUGI_STATUS,
   type YugiStatus,
 } from '@/constants/gift';
+import { addMonthsToYearMonth, getMonthDiff } from '@/lib/utils';
 import PensionSelection from './PensionSelection';
 import PlanSection from './PlanSection';
 import YugiSection from './YugiSection';
@@ -21,14 +25,23 @@ type Props = {
   isFixedGift: boolean;
   monthlyMoney: number;
   childId: number;
+  startDate: string;
+  currentDate: string;
+  endDate: string;
+  totalDeposit: bigint;
   onSave: (params: {
     childId: number;
     form: {
       fixed: boolean;
       amount: number;
       period: number;
+      prevAmount: number;
+      prevPeriod: number;
       pension: boolean;
       method: GiftMethod;
+      start: string | null;
+      end: string | null;
+      totalDeposit: bigint;
     };
   }) => Promise<void>;
 };
@@ -40,6 +53,9 @@ export default function MainSection({
   period,
   isFixedGift,
   monthlyMoney,
+  endDate,
+  totalDeposit,
+  currentDate,
   onSave,
 }: Props) {
   const [giftMethod, setGiftMethod] = useState<GiftMethod>(
@@ -54,14 +70,83 @@ export default function MainSection({
     Number(monthlyMoney),
   );
   const [newPeriod, setNewPeriod] = useState<number | null>(period);
+  const [newStart, setNewStart] = useState<string | null>(currentDate);
+  const [newEnd, setNewEnd] = useState<string | null>(endDate);
+  const [draft, setDraft] = useState<DraftPlanPayload | null>(null);
+  const [totalMoney, setTotalMoney] = useState(totalDeposit);
+
+  useEffect(() => {
+    if (newStart && newEnd) {
+      const month = getMonthDiff(newStart, newEnd);
+      setNewPeriod(month);
+    }
+  }, [newStart, newEnd]);
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem('giftPlan');
+      if (!raw) return;
+
+      const parsed = JSON.parse(raw) as DraftPlanPayload;
+      if (parsed.isChatbot) {
+        setDraft(parsed);
+        setGiftMethod(
+          parsed.plan.in_type ? GIFT_METHOD.FLEXIBLE : GIFT_METHOD.REGULAR,
+        );
+        setFixed(parsed.plan.is_promise_fixed);
+        setNewPension(parsed.plan.acc_type === 'PENSION');
+        setNewAmount(parsed.plan.monthly_money);
+        setNewPeriod(parsed.plan.in_month);
+        setNewEnd(
+          addMonthsToYearMonth(currentDate ?? '', parsed.plan.in_month),
+        );
+      } else {
+        setDraft(null);
+      }
+    } catch {
+      sessionStorage.removeItem('giftPlan');
+    }
+  }, [currentDate]);
+
+  const onReload = async ({ childId }: { childId: number }) => {
+    return await reloadPlan(childId);
+  };
 
   return (
     <div>
       <main className="flex-1">
-        <div className="grid w-92.25 gap-3">
+        <div className="flex w-92.25 items-end justify-between gap-3">
           <h1 className="font-hana-light">
             원하는 대로 증여 계획을 조정해보세요.
           </h1>
+          {draft !== null && (
+            <button
+              type="button"
+              className="relative text-hana-blue text-xs hover:underline"
+              onClick={async () => {
+                const {
+                  isPension,
+                  currentDateString,
+                  endDateString,
+                  isFixedGift,
+                  monthlyMoney,
+                  period,
+                  method,
+                  totalDeposit,
+                } = await onReload({ childId });
+                setNewPension(isPension);
+                setFixed(isFixedGift);
+                setNewAmount(Number(monthlyMoney));
+                setGiftMethod(isFixedGift ? GIFT_METHOD.REGULAR : method);
+                setNewPeriod(period);
+                setNewStart(currentDateString);
+                setNewEnd(endDateString);
+                setTotalMoney(totalDeposit);
+              }}
+            >
+              내 플랜 불러오기
+            </button>
+          )}
         </div>
         <div className="my-2 grid justify-center gap-2 rounded-2xl border border-hana-gray-300 p-4">
           <PensionSelection
@@ -79,8 +164,13 @@ export default function MainSection({
             onMethodChange={setGiftMethod}
             newAmount={newAmount}
             newPeriod={newPeriod}
+            newStart={newStart}
+            newEnd={newEnd}
+            onChangeStart={setNewStart}
+            onChangeEnd={setNewEnd}
             onAmountChange={setNewAmount}
             onPeriodChange={setNewPeriod}
+            totalDeposit={totalMoney}
           />
           <hr className="my-4 border-hana-gray-400" />
           <YugiSection
@@ -109,16 +199,21 @@ export default function MainSection({
                 fixed,
                 amount: newAmount ?? monthlyMoney,
                 period: newPeriod ?? period,
+                start: newStart,
+                end: newEnd,
                 pension: newPension,
                 method: giftMethod,
+                totalDeposit: totalMoney,
+                prevAmount: monthlyMoney,
+                prevPeriod: period,
               },
             });
-
+            sessionStorage.removeItem('giftPlan');
             if (isPension === false && newPension === true) {
-              router.push(`/main/${childId}/product-list`);
+              router.push(`/main/${childId}/product-list` as Route);
               console.log(childId);
             } else {
-              router.back();
+              router.push(`/main/${childId}/home`);
             }
           }}
           disabled={blocked === BLOCK_STATUS.BLOCK}

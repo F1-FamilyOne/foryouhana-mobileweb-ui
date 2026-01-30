@@ -1,10 +1,6 @@
-import { notFound } from 'next/navigation';
-import { saveEditPlan } from '@/actions/plan.action';
+import { getPrevPlanFromDB, saveEditPlan } from '@/actions/plan.action';
 import Header from '@/components/cmm/Header';
-import { GIFT_METHOD } from '@/constants/gift';
-import { account_acc_type } from '@/lib/generated/prisma/enums';
-import { prisma } from '@/lib/prisma';
-import { getGiftPeriodMonths } from '@/lib/utils';
+import type { GiftMethod } from '@/constants/gift';
 import MainSection from './MainSection';
 
 /**
@@ -21,44 +17,33 @@ type PageProps = {
   };
 };
 
+export type ReloadProps = {
+  isPension: boolean;
+  currentDateString: string;
+  endDateString: string;
+  startDateString: string;
+  isFixedGift: boolean;
+  monthlyMoney: number;
+  period: number | null;
+  method: GiftMethod;
+  totalDeposit: bigint;
+};
+
 export default async function PlanEdit({ params }: PageProps) {
   const { childId } = await params;
   const childIdNumber = Number(childId);
 
-  //연금저축펀드 사용 여부 불러오기
-  const account = await prisma.account.findFirst({
-    where: {
-      user_id: childIdNumber,
-      acc_type: account_acc_type.PENSION,
-    },
-  });
-
-  const isPension = !!account;
-
-  //유기정기금 사용 여부, 증여 방식, 기간, 월 증여액  불러오기
-  const child = await prisma.user.findUnique({
-    where: {
-      id: childIdNumber,
-    },
-  });
-  if (child === null) notFound();
-
   const {
-    is_promise_fixed: isFixedGift,
-    monthly_money: monthlyMoney,
-    goal_money: goalMoney,
-    start_date: startDate,
-    end_date: endDate,
-  } = child;
-
-  if (isFixedGift === null) notFound();
-
-  const method =
-    monthlyMoney !== null && goalMoney !== null
-      ? GIFT_METHOD.REGULAR
-      : GIFT_METHOD.FLEXIBLE;
-
-  const period = getGiftPeriodMonths(startDate, endDate);
+    isPension,
+    currentDateString,
+    endDateString,
+    startDateString,
+    isFixedGift,
+    monthlyMoney,
+    period,
+    method,
+    totalDeposit,
+  } = await getPrevPlanFromDB({ childId: childIdNumber });
 
   return (
     <div className="flex flex-col">
@@ -71,6 +56,10 @@ export default async function PlanEdit({ params }: PageProps) {
         isPension={isPension}
         onSave={saveEditPlan}
         childId={childIdNumber}
+        currentDate={currentDateString}
+        startDate={startDateString}
+        endDate={endDateString}
+        totalDeposit={totalDeposit}
       />
     </div>
   );

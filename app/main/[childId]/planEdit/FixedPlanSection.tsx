@@ -1,6 +1,7 @@
+import AmountChangeInput from '@/components/cmm/AmountChangeInput';
 import { BinaryToggle } from '@/components/cmm/BinaryToggle';
 import { CustomButton } from '@/components/cmm/CustomButton';
-import ShowPlanInput from '@/components/cmm/ShowPlanInput';
+import PlanChangeInput from '@/components/cmm/PlanChangeInput';
 import TitlePlanSelect from '@/components/cmm/TitlePlanSelect';
 import {
   BLOCK_STATUS,
@@ -18,6 +19,13 @@ type Props = {
   period: number;
   amount: number;
   blockStatus: BlockStatus;
+  totalDeposit: bigint;
+  newStart: string;
+  newEnd: string;
+  prevAmount: number | null;
+  prevPeriod: number | null;
+  onChangeStart: (v: string | null) => void;
+  onChangeEnd: (v: string | null) => void;
   onMethodChange: (v: GiftMethod) => void;
   onChangeAmount: (value: number) => void;
   onChangePeriod: (value: number) => void;
@@ -29,10 +37,28 @@ export default function FixedPlanSection({
   period,
   amount,
   blockStatus,
+  newEnd,
+  totalDeposit,
+  prevAmount,
+  prevPeriod,
+  onChangeEnd,
   onMethodChange,
   onChangeAmount,
   onChangePeriod,
 }: Props) {
+  const hasPrevPlan =
+    prevAmount !== null &&
+    prevPeriod !== null &&
+    prevAmount > 0 &&
+    prevPeriod > 0;
+
+  const baseTotal = BigInt((period ?? 0) * (amount ?? 0)) + totalDeposit;
+
+  const prevPlanTotal =
+    prevAmount !== null && prevPeriod !== null
+      ? BigInt(prevAmount * prevPeriod)
+      : 0n;
+  const totalAmount = baseTotal + prevPlanTotal;
   return (
     <div>
       <TitlePlanSelect title="증여 방식" />
@@ -55,13 +81,21 @@ export default function FixedPlanSection({
                         유기정기금 운용 중
                       </span>
                     </CustomButton>
-                    <ShowPlanInput
-                      amount={amount}
-                      onChangeAmount={onChangeAmount}
-                      period={period}
-                      onChangePeriod={onChangePeriod}
-                      disabled={true}
-                    />
+                    <div>
+                      <PlanChangeInput
+                        period={period}
+                        endDate={newEnd}
+                        onChangePeriod={onChangePeriod}
+                        disabledMonth={true}
+                        disabledEnd={true}
+                        handleChangeEnd={onChangeEnd}
+                      />
+                      <AmountChangeInput
+                        amount={amount}
+                        onChangeAmount={onChangeAmount}
+                        disabled={true}
+                      />
+                    </div>
                   </div>
                 ) : (
                   <div>
@@ -77,12 +111,17 @@ export default function FixedPlanSection({
                             );
                           }}
                         />
-
-                        <ShowPlanInput
+                        <PlanChangeInput
+                          period={period}
+                          endDate={newEnd}
+                          onChangePeriod={onChangePeriod}
+                          disabledMonth={true}
+                          disabledEnd={false}
+                          handleChangeEnd={onChangeEnd}
+                        />
+                        <AmountChangeInput
                           amount={amount}
                           onChangeAmount={onChangeAmount}
-                          period={period}
-                          onChangePeriod={onChangePeriod}
                           disabled={false}
                         />
                       </div>
@@ -104,11 +143,17 @@ export default function FixedPlanSection({
                     유기정기금 운용 중
                   </span>
                 </CustomButton>
-                <ShowPlanInput
+                <PlanChangeInput
+                  period={period}
+                  endDate={newEnd}
+                  onChangePeriod={onChangePeriod}
+                  disabledMonth={true}
+                  disabledEnd={true}
+                  handleChangeEnd={onChangeEnd}
+                />
+                <AmountChangeInput
                   amount={amount}
                   onChangeAmount={onChangeAmount}
-                  period={period}
-                  onChangePeriod={onChangePeriod}
                   disabled={true}
                 />
               </div>
@@ -124,11 +169,17 @@ export default function FixedPlanSection({
                 onMethodChange(v ? GIFT_METHOD.REGULAR : GIFT_METHOD.FLEXIBLE);
               }}
             />
-            <ShowPlanInput
+            <PlanChangeInput
+              period={period}
+              endDate={newEnd}
+              onChangePeriod={onChangePeriod}
+              disabledMonth={true}
+              disabledEnd={false}
+              handleChangeEnd={onChangeEnd}
+            />
+            <AmountChangeInput
               amount={amount}
               onChangeAmount={onChangeAmount}
-              period={period}
-              onChangePeriod={onChangePeriod}
               disabled={false}
             />
           </div>
@@ -136,13 +187,20 @@ export default function FixedPlanSection({
 
         <div className="grid gap-2 pt-3">
           <TitlePlanSelect title="총 증여액" />
-          <div className="grid justify-center rounded-xl bg-hana-light-green px-10 py-5">
+          <div className="grid justify-center gap-2 rounded-xl bg-hana-light-green px-10 py-5">
             <h4 className="text-center text-hana-badge-green">
-              {formatWonNatural((period ?? 0) * (amount ?? 0))}
+              {formatWonNatural(totalAmount)}
             </h4>
             <h4 className="text-hana-gray-500 text-xs">
-              약 {formatWonNatural(amount ?? 0)} X {period ?? 0}
-              개월
+              현재 총 증여액 {formatWonNatural(totalDeposit)}{' '}
+              {hasPrevPlan && (
+                <span>
+                  {' '}
+                  + 기존 플랜 적용 {formatWonNatural(prevAmount * prevPeriod)}
+                </span>
+              )}
+              + 변경 플랜 (약 {formatWonNatural(amount ?? 0)} X {period ?? 0}
+              개월)
             </h4>
           </div>
           <h4 className="pt-2 font-hana-light text-[10px] text-hana-gray-400">
