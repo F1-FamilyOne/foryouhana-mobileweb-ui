@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
@@ -16,6 +16,7 @@ type Variant = 'active' | 'canceled';
 
 type Props = {
   accountId: number | string;
+  fundId: number | string;
   variant?: Variant;
   title: string;
   tags?: [string?, string?, string?];
@@ -41,6 +42,7 @@ function getTagClassName(variant: Variant) {
 
 export function MyFundDetailCard({
   accountId,
+  fundId,
   variant = 'active',
   title,
   tags = [],
@@ -49,32 +51,52 @@ export function MyFundDetailCard({
   monthlyPayWonText,
   className,
 }: Props) {
+  const router = useRouter();
+  const params = useParams<{ childId: string }>();
+  const childId = String(params.childId);
+
   const visibleTags = tags.filter(
     (t) => typeof t === 'string' && t.trim().length > 0,
   );
 
-  const params = useParams<{ childId: string }>();
-  const childId = String(params.childId);
-
   const depositHref =
     `/main/${childId}/my-product/${accountId}/deposit` as const;
+  const detailHref = `/main/${childId}/product-list/${fundId}` as const;
+
+  const isDisabled = variant === 'canceled';
+
+  const handleMoveDetail = () => {
+    if (isDisabled) {
+      return;
+    }
+    router.push(detailHref);
+  };
 
   return (
-    <article
+    <button
+      type="button"
+      aria-label={isDisabled ? '해지된 펀드 카드' : '펀드 상품 상세로 이동'}
+      onClick={handleMoveDetail}
+      disabled={isDisabled}
       className={cn(
-        'w-full rounded-2xl border border-hana-gray-300 p-3 shadow-md',
+        'w-full rounded-2xl border border-hana-gray-300 p-3 text-left shadow-md',
+        isDisabled ? 'cursor-not-allowed' : 'cursor-pointer',
         getCardClassName(variant),
         className,
       )}
-      aria-label="내 펀드 상세 카드"
     >
       {/* 제목 */}
-      <div className={cn('flex justify-between font-hana-regular text-[15px]')}>
-        {title}
+      <div className="flex justify-between font-hana-regular text-[15px]">
+        <span>{title}</span>
+
         {variant === 'active' ? (
           <Link
             href={depositHref}
             className="font-hana-light hover:text-hana-main"
+            aria-label="입금하기"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
           >
             입금하기
           </Link>
@@ -100,7 +122,7 @@ export function MyFundDetailCard({
       ) : null}
 
       {/* 정보 */}
-      <div className={cn('mt-2')}>
+      <div className="mt-2">
         <div className="flex items-center justify-between font-hana-regular text-[15px]">
           <span>평가금</span>
           <span>{totalAmountWonText} 원</span>
@@ -108,7 +130,7 @@ export function MyFundDetailCard({
 
         <div className="mt-2 flex items-center justify-between font-hana-regular text-[15px]">
           <span>수익률</span>
-          <span className={cn('text-hana-point-red')}>+{profitRateText}%</span>
+          <span className="text-hana-point-red">+{profitRateText}%</span>
         </div>
 
         {monthlyPayWonText ? (
@@ -118,6 +140,6 @@ export function MyFundDetailCard({
           </div>
         ) : null}
       </div>
-    </article>
+    </button>
   );
 }
