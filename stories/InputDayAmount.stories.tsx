@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   InputAmount,
   InputDay,
@@ -48,9 +48,15 @@ const InputDayWithState = (args: {
   value?: number;
   unit: string;
   placeholder?: string;
+  onChange?: (v: number | undefined) => void;
 }) => {
   const [value, setValue] = useState(args.value);
-  return <InputDay {...args} value={value} onChange={(v) => setValue(v)} />;
+  useEffect(() => setValue(args.value), [args.value]);
+  const handleChange = (v: number | undefined) => {
+    setValue(v);
+    args.onChange?.(v);
+  };
+  return <InputDay {...args} value={value} onChange={handleChange} />;
 };
 
 export const DayDefault: Story = {
@@ -76,9 +82,15 @@ const InputMonthWithState = (args: {
   unit?: string;
   placeholder?: string;
   disabled?: boolean;
+  onChange?: (v?: number) => void;
 }) => {
   const [value, setValue] = useState(args.value);
-  return <InputMonth {...args} value={value} onChange={(v) => setValue(v)} />;
+  useEffect(() => setValue(args.value), [args.value]);
+  const handleChange = (v?: number) => {
+    setValue(v);
+    args.onChange?.(v);
+  };
+  return <InputMonth {...args} value={value} onChange={handleChange} />;
 };
 
 export const MonthDefault: StoryObj = {
@@ -115,9 +127,15 @@ const InputAmountWithState = (args: {
   label?: string;
   showLabel?: boolean;
   disabled?: boolean;
+  onChange?: (v: number | undefined) => void;
 }) => {
   const [value, setValue] = useState(args.value);
-  return <InputAmount {...args} value={value} onChange={(v) => setValue(v)} />;
+  useEffect(() => setValue(args.value), [args.value]);
+  const handleChange = (v: number | undefined) => {
+    setValue(v);
+    args.onChange?.(v);
+  };
+  return <InputAmount {...args} value={value} onChange={handleChange} />;
 };
 
 export const AmountDefault: StoryObj = {
