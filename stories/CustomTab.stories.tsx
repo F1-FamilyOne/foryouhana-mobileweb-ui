@@ -37,8 +37,14 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Wrapper 컴포넌트로 상태 관리
-const CustomTabWithState = (args: any) => {
+type Props = {
+  tabs: { label: string; value: string }[];
+  value: string;
+  onChange: (value: string) => void;
+  variant?: 'big' | 'small';
+};
+
+const CustomTabWithState = (args: Props) => {
   const [value, setValue] = useState(args.value);
 
   return (
@@ -68,7 +74,6 @@ export const BigVariant: Story = {
   render: (args) => <CustomTabWithState {...args} />,
 };
 
-// Small 변형 - 펀드 수익률 도표용
 export const SmallVariant: Story = {
   args: {
     variant: 'small',
@@ -84,7 +89,6 @@ export const SmallVariant: Story = {
   render: (args) => <CustomTabWithState {...args} />,
 };
 
-// 2개 탭 예제
 export const TwoTabs: Story = {
   args: {
     variant: 'big',
@@ -98,7 +102,6 @@ export const TwoTabs: Story = {
   render: (args) => <CustomTabWithState {...args} />,
 };
 
-// 많은 탭 예제
 export const ManyTabs: Story = {
   args: {
     variant: 'small',
