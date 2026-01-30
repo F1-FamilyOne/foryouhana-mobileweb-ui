@@ -1,12 +1,9 @@
 'use client';
 
-import { notFound } from 'next/navigation';
+import type { Route } from 'next';
+import { useRouter } from 'next/navigation';
 import { use, useEffect, useState } from 'react';
-import {
-  type AllChildWithIsHaveFundReturn,
-  getAllChildWithIsHaveFund,
-} from '@/actions/getUserSetup';
-import BeforeJoinFund from '@/components/beforeJoin/BeforeJoinFund';
+import { getUserAndChildWithFixed } from '@/actions/getUserSetup';
 import { useUserContext } from '@/hooks/useUserContext';
 
 /**
@@ -21,58 +18,47 @@ export default function Page({
 }: {
   params: Promise<{ childId: string }>;
 }) {
+  const router = useRouter();
   const { childId } = use(params);
   const { userId, ready } = useUserContext();
-  const [result, setResult] = useState<AllChildWithIsHaveFundReturn | null>(
-    null,
-  );
   const [isLoading, setIsLoading] = useState(true);
+  const [isError, setError] = useState(false);
 
   useEffect(() => {
     if (!ready || !userId) return;
 
     (async () => {
       try {
-        setIsLoading(true);
-        const res = await getAllChildWithIsHaveFund(Number(userId));
-        console.log(res);
-        setResult(res);
-      } catch (error) {
-        console.error('Failed to fetch children:', error);
-        setResult(null);
+        const res = await getUserAndChildWithFixed(
+          Number(userId),
+          Number(childId),
+        );
+
+        if (!res.exists || !res.isValidChild) {
+          setError(true);
+          return;
+        }
+
+        const targetUrl = res.isPromiseFixed
+          ? `/main/${childId}/beforeJoin/hometax-report`
+          : `/main/${childId}/beforeJoin/nofund-status`;
+
+        router.push(targetUrl as Route);
       } finally {
         setIsLoading(false);
       }
     })();
-  }, [ready, userId]);
-
-  if (!ready || isLoading) {
-    return (
-      <div className="flex min-h-full items-center justify-center">
-        <p>로딩 중...</p>
-      </div>
-    );
-  }
-
-  if (!result) return null;
-
-  if (!result.exists) notFound();
-
-  const childIdNum = Number(childId);
-  const childExists = result.children.some(
-    (child) => child.childId === childIdNum,
-  );
-
-  if (!childExists) {
-    notFound();
-  }
+  }, [ready, userId, childId, router]);
 
   return (
-    <div className="min-h-full overflow-y-scroll">
-      <BeforeJoinFund
-        initialChildId={Number(childId)}
-        childList={result.children}
-      />
+    <div className="flex min-h-full items-center justify-center">
+      {isLoading ? (
+        <p>체크중...</p>
+      ) : isError ? (
+        <p>자녀를 찾을 수 없습니다</p>
+      ) : (
+        <p>체크중입니다...</p>
+      )}
     </div>
   );
 }
