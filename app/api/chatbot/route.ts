@@ -148,7 +148,7 @@ export async function POST(req: NextRequest) {
   "updatedIncome": number,   // 업데이트된 부모 연소득
   "updatedAssets": number,   // 업데이트된 부모 총 자산
   "useYugi": boolean,
-  "isRegular": boolean,   // true: 정기적립식, false: 자유적립식
+  "isRegular": boolean,   // false: 정기적립식, true: 자유적립식
   "usePensionFund": boolean,
   "explanation": string   // 상세 분석 및 제안 내용
 }
@@ -222,7 +222,7 @@ ${userInput}
 3. 세액공제 전환특례, 유기정기금 할인, 연금저축펀드 복리 등 구체적인 혜택을 설명하세요.
 4. 위험 사항(신고 미이행, 차명 투자 등)을 명확히 안내하세요.
 5. JSON 형식으로 답변하되, explanation 필드에서 따뜻하고 부드러운 톤을 유지하세요.
-5. ai 답변은 꼭 500자 이내로 축약해서 제시해주세요, 하지만 문단별 띄어쓰기, 엔터는 꼭 지켜주세요.
+6. ai 답변은 꼭 500자 이내로 축약해서 제시해주세요, 하지만 문단별 띄어쓰기, 엔터는 꼭 지켜주세요.
 `;
 
     // 3. AI 호출

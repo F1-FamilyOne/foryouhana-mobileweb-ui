@@ -24,48 +24,44 @@ export default function Menu() {
   const { ready, userId } = useUserContext();
 
   // 1. URL에서 childId 파싱 및 유효성 검사 헬퍼
-  const childId = Number(params.childId);
-  const isValidChildId = !Number.isNaN(childId) && childId > 0;
+  const childIdFromParams = Number(params.childId);
+  const isValidParamId =
+    !Number.isNaN(childIdFromParams) && childIdFromParams > 0;
 
   const [kidsProfile, setKidsProfile] = useState<ChildProfile[]>([]);
+  const [selectedKidId, setSelectedKidId] = useState<number>(0);
 
-  const [selectedKidId, setSelectedKidId] = useState<number>(() => {
-    return isValidChildId ? childId : 0;
-  });
-
+  // 통합된 useEffect: 데이터 로드 및 선택 ID 동기화
   useEffect(() => {
     if (!ready || !userId) return;
 
-    const fetchKids = async () => {
+    const fetchAndSyncKids = async () => {
       const PARENT_ID = Number(userId);
-
-      // ID가 유효하지 않으면 요청 보내지 않음 (NaN 방지)
       if (Number.isNaN(PARENT_ID)) return;
 
-      const kids = await getLinkedChildren(PARENT_ID);
-      setKidsProfile(kids);
+      try {
+        const kids = await getLinkedChildren(PARENT_ID);
+        setKidsProfile(kids);
 
-      // 자녀 목록을 가져왔는데, 현재 선택된 ID가 없거나 유효하지 않다면 첫째로 자동 설정
-      if (kids.length > 0) {
-        if (!isValidChildId) {
-          setSelectedKidId(kids[0].id);
+        if (kids.length > 0) {
+          // 1. URL 파라미터가 유효하고, 불러온 목록에 해당 ID가 있는지 확인
+          const hasMatch = kids.some((k) => k.id === childIdFromParams);
+
+          if (isValidParamId && hasMatch) {
+            // URL ID가 유효하면 해당 ID로 설정
+            setSelectedKidId(childIdFromParams);
+          } else {
+            // URL ID가 유효하지 않거나 목록에 없으면 첫 번째 자녀로 설정
+            setSelectedKidId(kids[0].id);
+          }
         }
+      } catch (error) {
+        console.error('Failed to fetch kids:', error);
       }
     };
 
-    fetchKids();
-  }, [isValidChildId, ready, userId]);
-
-  // 3. URL 동기화 로직 보강
-  useEffect(() => {
-    if (isValidChildId) {
-      // 유효한 ID가 URL에 있으면 상태 동기화
-      setSelectedKidId((prev) => (prev !== childId ? childId : prev));
-    } else if (kidsProfile.length > 0 && selectedKidId === 0) {
-      // URL 파라미터가 없고 데이터가 로드된 경우 첫 번째 자녀로 설정
-      setSelectedKidId(kidsProfile[0].id);
-    }
-  }, [childId, isValidChildId, kidsProfile, selectedKidId]);
+    fetchAndSyncKids();
+  }, [ready, userId, childIdFromParams, isValidParamId]);
 
   return (
     <div className="relative min-h-full">
