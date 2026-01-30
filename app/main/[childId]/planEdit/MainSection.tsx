@@ -57,7 +57,6 @@ export default function MainSection({
   totalDeposit,
   currentDate,
   onSave,
-  // onReload,
 }: Props) {
   const [giftMethod, setGiftMethod] = useState<GiftMethod>(
     isFixedGift ? GIFT_METHOD.REGULAR : method,
@@ -74,6 +73,7 @@ export default function MainSection({
   const [newStart, setNewStart] = useState<string | null>(currentDate);
   const [newEnd, setNewEnd] = useState<string | null>(endDate);
   const [draft, setDraft] = useState<DraftPlanPayload | null>(null);
+  const [totalMoney, setTotalMoney] = useState(totalDeposit);
 
   useEffect(() => {
     if (newStart && newEnd) {
@@ -112,7 +112,6 @@ export default function MainSection({
     return await reloadPlan(childId);
   };
 
-  let totalMoney = totalDeposit;
   return (
     <div>
       <main className="flex-1">
@@ -142,7 +141,7 @@ export default function MainSection({
                 setNewPeriod(period);
                 setNewStart(currentDateString);
                 setNewEnd(endDateString);
-                totalMoney = totalDeposit;
+                setTotalMoney(totalDeposit);
               }}
             >
               내 플랜 불러오기
