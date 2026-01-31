@@ -9,7 +9,9 @@ import ToggleChildProfile, {
   type KidProfile,
 } from '@/components/home/ToggleChildProfile';
 
-(Image as any).defaultProps = {
+(
+  Image as unknown as { defaultProps?: { unoptimized?: boolean } }
+).defaultProps = {
   unoptimized: true,
 };
 
