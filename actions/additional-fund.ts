@@ -57,6 +57,18 @@ export async function createFundAccount(
 
   try {
     const result = await prisma.$transaction(async (tx) => {
+      // 동일 펀드 중복 가입 방지
+      const existingAccount = await tx.account.findFirst({
+        where: {
+          user_id: childId,
+          fund_id: fundId,
+          status: 'ACTIVE',
+        },
+      });
+      if (existingAccount) {
+        throw new Error('DUPLICATE_FUND_ACCOUNT');
+      }
+
       // 중복되지 않는 계좌번호 생성 (재시도 로직)
       let accNum = '';
       for (let attempt = 0; attempt < MAX_RETRY_COUNT; attempt++) {
@@ -108,14 +120,19 @@ export async function createFundAccount(
       accountNumber: result.accountNumber,
     };
   } catch (error) {
-    if (
-      error instanceof Error &&
-      error.message === 'ACCOUNT_NUMBER_GENERATION_FAILED'
-    ) {
-      return {
-        success: false,
-        error: '계좌번호 생성에 실패했습니다. 잠시 후 다시 시도해주세요.',
-      };
+    if (error instanceof Error) {
+      if (error.message === 'DUPLICATE_FUND_ACCOUNT') {
+        return {
+          success: false,
+          error: '이미 가입된 펀드 상품입니다.',
+        };
+      }
+      if (error.message === 'ACCOUNT_NUMBER_GENERATION_FAILED') {
+        return {
+          success: false,
+          error: '계좌번호 생성에 실패했습니다. 잠시 후 다시 시도해주세요.',
+        };
+      }
     }
     console.error('펀드 계좌 생성 실패:', error);
     return {

@@ -111,7 +111,7 @@ export function SetupForm({
       });
 
       if (result.success) {
-        router.push(
+        router.replace(
           `/main/${childId}/additional-fund/complete?accountNumber=${result.accountNumber}`,
         );
       } else {
@@ -133,7 +133,7 @@ export function SetupForm({
         </h1>
 
         {/* 설정 카드 - 정기적립식 기준 고정 높이 */}
-        <div className="mt-4 h-[388px] rounded-[15px] bg-hana-gray-100 p-4">
+        <div className="mt-4 h-[375px] rounded-[15px] bg-hana-gray-100 p-4">
           {/* 납입 방식 */}
           <div className="mb-4">
             <p className="mb-3 font-medium text-[14px] text-hana-gray-700">

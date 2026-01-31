@@ -41,7 +41,7 @@ export default function InvestTestAnalysis() {
       const elapsed = timestamp - startTimeRef.current;
       const ratio = Math.min(elapsed / TOTAL_DURATION, 1);
 
-      const elasticProgress = // 프로그레스바 속도 조절 로직
+      const elasticProgress =
         ratio < 0.25
           ? ratio * 140
           : ratio < 0.5
@@ -158,7 +158,7 @@ export default function InvestTestAnalysis() {
           <div className="w-full max-w-[300px]">
             <div className="relative h-2 w-full overflow-hidden rounded-full bg-gray-100 shadow-inner">
               <div
-                className="h-full animate-shimmer bg-[length:200%_100%] bg-gradient-to-r from-hana-main via-[#4ADE80] to-hana-main shadow-[0_0_10px_rgba(74,222,128,0.5)] transition-all duration-500 ease-out"
+                className="h-full animate-shimmer bg-[length:200%_100%] bg-gradient-to-r from-hana-main via-[#4ADE80] to-hana-main shadow-[0_0_10px_rgba(74,222,128,0.5)]"
                 style={{ width: `${progress}%` }}
               />
             </div>

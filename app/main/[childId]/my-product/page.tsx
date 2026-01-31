@@ -21,10 +21,22 @@ export default async function MyProductPage({ params }: Props) {
     Number.isFinite(childIdNum) && childIdNum > 0 ? childIdNum : 1;
 
   return (
-    <div className="relative min-h-full bg-white">
-      <Header content="현재 가입 상품" />
-      <MyProductUi childId={parsedChildId} />
-      <BottomNavBar />
+    <div className="relative h-full w-full bg-white">
+      <div className="grid h-full grid-rows-[auto_1fr_auto] overflow-hidden">
+        <Header content="현재 가입 상품" />
+
+        <main
+          className="overflow-y-auto pb-24 [::-webkit-scrollbar]:hidden"
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+          }}
+        >
+          <MyProductUi childId={parsedChildId} />
+        </main>
+
+        <BottomNavBar />
+      </div>
     </div>
   );
 }

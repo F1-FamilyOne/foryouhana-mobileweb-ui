@@ -17,7 +17,7 @@ export default function PensionSelection({
       <TitlePlanSelect title="연금 저축 펀드" />
       <div>
         {prev === true ? (
-          <CustomButton disabled preset="lightgraylong">
+          <CustomButton disabled preset="mintlong">
             운용 중
           </CustomButton>
         ) : (

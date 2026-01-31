@@ -151,7 +151,7 @@ export default function InvestChartCard() {
         <Line data={data} options={options} />
       </div>
 
-      <div className="pointer-events-none absolute top-35 left-6.5 text-left">
+      <div className="pointer-events-none absolute top-32 left-11 text-left">
         <div className="font-hana-light text-[8px]">투자 원금</div>
         <div className="font-hana-medium text-[13px] text-hana-main">
           4,860만원

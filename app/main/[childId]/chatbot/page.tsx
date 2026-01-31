@@ -23,9 +23,16 @@ export default function ChatbotSignProcess() {
   const params = useParams();
   const childId = Number(params.childId);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [hasPlan, setHasPlan] = useState(false);
 
   const [showInput, setShowInput] = useState(false);
   const [dbChildAge, setDbChildAge] = useState<number>(0);
+
+  // 1. 자산/수입 상태를 추적하기 위한 State 추가 (기본값 설정)
+  const [parentFinance, setParentFinance] = useState({
+    income: 60000000,
+    assets: 300000000,
+  });
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -99,7 +106,7 @@ export default function ChatbotSignProcess() {
 • 가족 여행 경비, 자녀 독립 자금과 같이 고정적인 지출 외에 추가적인 지출
 
 💡 **주의 사항**
-• 되대로 확실한 정보만 입력해 주세요.
+• 되도록 확실한 정보만 입력해 주세요.
 • 분석 결과는 참고용으로 사용해 주세요.
 `.trim(),
           isScenario: false,
@@ -122,14 +129,15 @@ export default function ChatbotSignProcess() {
     setLoading(true);
 
     try {
+      // 2.  API 호출 시 고정값 대신 parentFinance 상태값을 전달
       const res = await fetch('/api/chatbot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           childId,
           userInput: text,
-          parentIncome: 60000000,
-          parentAssets: 300000000,
+          parentIncome: parentFinance.income,
+          parentAssets: parentFinance.assets,
           childAge: dbChildAge,
         }),
       });
@@ -149,6 +157,12 @@ export default function ChatbotSignProcess() {
         ]);
       } else {
         if (data.dbData) {
+          // 3. AI가 계산해준 새로운 자산/수입 정보를 상태에 업데이트
+          setParentFinance({
+            income: data.dbData.updatedIncome,
+            assets: data.dbData.updatedAssets,
+          });
+
           let prevPlan = {};
           const rawData = sessionStorage.getItem('giftPlan');
 
@@ -169,7 +183,8 @@ export default function ChatbotSignProcess() {
             plan: { ...prevPlan, ...data.dbData },
           };
           sessionStorage.setItem('giftPlan', JSON.stringify(sessionData));
-          console.log('✅ 플랜 데이터 저장 완료:', sessionData);
+          setHasPlan(true);
+          console.log('✅ 플랜 데이터 및 자산 정보 갱신 완료:', sessionData);
         }
 
         const summaryText = `
@@ -263,7 +278,8 @@ ${data.usePensionFund ? '💸 연금저축펀드: 추천' : ''}
             <div ref={messagesEndRef} />
           </div>
         </div>
-        {!loading && (
+        {/* 플랜 값이 저장되어야 버튼 나옴 */}
+        {hasPlan && !loading && (
           <div className="mt-6 flex w-full justify-center">
             <CustomButton
               preset="maingreenshort"

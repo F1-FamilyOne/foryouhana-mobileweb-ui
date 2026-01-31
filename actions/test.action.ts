@@ -5,14 +5,15 @@ import { prisma } from '@/lib/prisma';
 
 export async function setRandomInvestTypeForChild(childId: number) {
   // 1. Enum에서 랜덤하게 하나 선택
-  const types = Object.values(invest_type);
-  const randomType = types[Math.floor(Math.random() * types.length)];
+  // const types = Object.values(invest_type);
+  // const randomType = types[Math.floor(Math.random() * types.length)];
 
   // 2. Prisma를 통해 DB 저장
   const updatedChild = await prisma.user.update({
     where: { id: childId },
     data: {
-      invest_type: randomType,
+      // invest_type: randomType,
+      invest_type: invest_type.DEFENSIVE,
     },
   });
 

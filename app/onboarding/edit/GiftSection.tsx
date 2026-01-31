@@ -12,7 +12,7 @@ import { BinaryToggle } from '../../../components/cmm/BinaryToggle';
  * @page: GiftSection
  * @description: GiftSection은 온보딩 내의 플랜 수정 페이지에서 증여 관련 선택 부분을 나타내는 컴포넌트입니다.
  * 유기정기금 사용 여부, 정기 이제 / 자유 이체 방식 선택이 담겨있습니다.
- * @author: 작성자명
+ * @author: 이정수
  * @date: 2026-01-26
  */
 

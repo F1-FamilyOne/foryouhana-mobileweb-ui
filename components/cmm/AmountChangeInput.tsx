@@ -3,35 +3,31 @@ import TitlePlanSelect from './TitlePlanSelect';
 
 type Props = {
   disabled?: boolean;
-  period: number;
   amount: number;
-  onChangePeriod: (v: number) => void;
   onChangeAmount: (v: number) => void;
 };
 
-export default function ShowPlanInput({
+export default function AmountChangeInput({
   disabled,
-  period,
   amount,
-  onChangePeriod,
   onChangeAmount,
 }: Props) {
   return (
     <div className="flex justify-between pt-4">
-      <div>
+      {/* <div>
         <TitlePlanSelect title="증여 기간" />
         <InputMonth
-          disabled={disabled}
+          disabled={disabled ?? disabledMonth}
           value={period ?? undefined}
           unit="개월"
           className={
-            disabled
+            disabledMonth
               ? 'h-[42px] w-[155px] bg-hana-gray-300 font-hana-regular'
               : 'h-[42px] w-[155px] bg-hana-light-green font-hana-regular'
           }
           onChange={(v) => onChangePeriod(v ?? 0)}
         />
-      </div>
+      </div> */}
       <div>
         <TitlePlanSelect title="월 증여액" />
         <InputMonth
@@ -40,8 +36,8 @@ export default function ShowPlanInput({
           unit="원"
           className={
             disabled
-              ? 'h-[42px] w-[155px] bg-hana-gray-300 font-hana-regular'
-              : 'h-[42px] w-[155px] bg-hana-light-green font-hana-regular'
+              ? 'h-[42px] w-[342px] bg-hana-gray-300 font-hana-regular'
+              : 'h-[42px] w-[342px] bg-hana-light-green font-hana-regular'
           }
           onChange={(v) => onChangeAmount(v ?? 0)}
         />

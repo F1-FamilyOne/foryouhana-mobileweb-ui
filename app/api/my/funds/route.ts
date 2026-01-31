@@ -85,6 +85,7 @@ export async function GET(req: Request) {
 
     return {
       id: String(a.id),
+      fundId: a.fund ? String(a.fund.id) : String(a.fund_id ?? ''),
       variant: isCanceled ? 'canceled' : 'active',
       title: a.fund?.name ?? '상품명 없음',
       tags,

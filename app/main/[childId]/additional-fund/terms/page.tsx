@@ -81,7 +81,7 @@ export default function AdditionalFundTermsPage() {
   };
 
   return (
-    <div className="h-full bg-white">
+    <div className="flex h-full flex-col bg-white">
       <Header content="약관 동의하기" />
 
       <main className="flex flex-1 flex-col px-3">
@@ -105,11 +105,12 @@ export default function AdditionalFundTermsPage() {
       </main>
 
       {/* 하단 버튼 */}
-      <div className="mt-auto flex justify-center pb-6">
+      <div className="flex shrink-0 flex-col gap-2 px-3 pb-4">
         <CustomButton
           preset="greenlong"
           onClick={handleConfirm}
           disabled={!allAgreed}
+          className="h-[40px]"
         >
           확인
         </CustomButton>

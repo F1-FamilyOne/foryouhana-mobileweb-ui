@@ -41,7 +41,7 @@ export default function BeforeJoinFund({
     const target = (
       selectedChild.hasFundAccount
         ? `/main/${selectedChild.childId}/home`
-        : `/main/${selectedChild.childId}/beforeJoin`
+        : `/main/${selectedChild.childId}/beforeJoin/nofund-status`
     ) as Route;
 
     if (pathname !== target) {

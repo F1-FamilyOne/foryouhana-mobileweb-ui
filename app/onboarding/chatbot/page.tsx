@@ -30,6 +30,12 @@ export default function chatbotSignProcess() {
   const route = useRouter();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // 1. 자산/수입 상태를 추적하기 위한 State 추가
+  const [parentFinance, setParentFinance] = useState({
+    income: 60000000,
+    assets: 300000000,
+  });
+
   // 초기 메시지
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -72,15 +78,15 @@ export default function chatbotSignProcess() {
         currentChildAge = parsed.plan?.child_birth?.age ?? 0;
       }
 
-      // 2. API 호출
+      // 2. API 호출 시 고정값 대신 parentFinance 상태값을 전달
       const res = await fetch('/api/chatbot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           childId: null,
           userInput: text,
-          parentIncome: 60000000,
-          parentAssets: 300000000,
+          parentIncome: parentFinance.income,
+          parentAssets: parentFinance.assets,
           childAge: currentChildAge,
         }),
       });
@@ -97,11 +103,16 @@ export default function chatbotSignProcess() {
             role: 'ai',
             mainTitle: '앗, 답변하기 어려워요 😅',
             content: data.error,
-            isScenario: false, // 에러일 때도 버튼 숨김
+            isScenario: false,
           },
         ]);
       } else {
         if (data.dbData) {
+          setParentFinance({
+            income: data.dbData.updatedIncome,
+            assets: data.dbData.updatedAssets,
+          });
+
           const raw = sessionStorage.getItem('giftPlan');
           const prevData: DraftPlanPayload = raw
             ? JSON.parse(raw)
@@ -118,10 +129,7 @@ export default function chatbotSignProcess() {
           };
 
           sessionStorage.setItem('giftPlan', JSON.stringify(sessionData));
-          console.log(
-            '✅ 플랜 데이터 저장 완료 (isSigned: false):',
-            sessionData,
-          );
+          console.log('✅ 플랜 데이터 및 자산 정보 갱신 완료:', sessionData);
         }
 
         const summaryText = `

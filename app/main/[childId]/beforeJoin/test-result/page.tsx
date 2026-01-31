@@ -87,6 +87,9 @@ export default function InvestTestResult() {
     ? INVEST_MAP[result as keyof typeof INVEST_MAP]
     : null;
 
+  // 시연을 위해 안정형으로 고정
+  // const currentInvest = INVEST_MAP.DEFENSIVE;
+
   return (
     <>
       <Header content="자녀 펀드 만들기" />

@@ -1,7 +1,8 @@
 import { InfoIcon } from 'lucide-react';
+import AmountChangeInput from '@/components/cmm/AmountChangeInput';
 import { BinaryToggle } from '@/components/cmm/BinaryToggle';
 import { CustomButton } from '@/components/cmm/CustomButton';
-import ShowPlanInput from '@/components/cmm/ShowPlanInput';
+import PlanChangeInput from '@/components/cmm/PlanChangeInput';
 import TitlePlanSelect from '@/components/cmm/TitlePlanSelect';
 import {
   type BlockStatus,
@@ -19,6 +20,13 @@ type Props = {
   period: number;
   amount: number;
   yugi: YugiStatus;
+  newStart: string;
+  newEnd: string;
+  prevAmount: number | null;
+  prevPeriod: number | null;
+  totalDeposit: bigint;
+  onChangeEnd: (v: string | null) => void;
+  onChangeStart: (v: string | null) => void;
   blockStatus: BlockStatus;
   onChangeAmount: (value: number | null) => void;
   onChangePeriod: (value: number | null) => void;
@@ -30,9 +38,20 @@ export default function GeneralPlanSection({
   onChange,
   period,
   amount,
+  newEnd,
+  prevAmount,
+  prevPeriod,
+  totalDeposit,
+  onChangeEnd,
   onChangeAmount,
   onChangePeriod,
 }: Props) {
+  const hasPrevPlan =
+    isRegular &&
+    prevAmount !== null &&
+    prevPeriod !== null &&
+    prevAmount > 0 &&
+    prevPeriod > 0;
   return (
     <div>
       {yugi === YUGI_STATUS.CHANGE ? (
@@ -75,25 +94,43 @@ export default function GeneralPlanSection({
       {yugi === YUGI_STATUS.CHANGE ? (
         <div>
           {isRegular && (
-            <ShowPlanInput
-              amount={amount}
-              onChangeAmount={onChangeAmount}
-              period={period}
-              onChangePeriod={onChangePeriod}
-              disabled={true}
-            />
+            <div>
+              <PlanChangeInput
+                period={period}
+                endDate={newEnd}
+                onChangePeriod={onChangePeriod}
+                disabledMonth={true}
+                disabledEnd={true}
+                handleChangeEnd={onChangeEnd}
+              />
+              <AmountChangeInput
+                amount={amount}
+                onChangeAmount={onChangeAmount}
+                disabled={true}
+              />
+              {/* TODO 논의 필요
+              중간에 유기정기금으로 바꿀 시에 날짜와 금액을 어떻게 입력받을것인지? */}
+            </div>
           )}
         </div>
       ) : (
         <div>
           {isRegular && (
-            <ShowPlanInput
-              amount={amount}
-              onChangeAmount={onChangeAmount}
-              period={period}
-              onChangePeriod={onChangePeriod}
-              disabled={false}
-            />
+            <div>
+              <PlanChangeInput
+                period={period}
+                endDate={newEnd}
+                onChangePeriod={onChangePeriod}
+                disabledMonth={true}
+                disabledEnd={false}
+                handleChangeEnd={onChangeEnd}
+              />
+              <AmountChangeInput
+                amount={amount}
+                onChangeAmount={onChangeAmount}
+                disabled={false}
+              />
+            </div>
           )}
         </div>
       )}
@@ -104,13 +141,22 @@ export default function GeneralPlanSection({
             <h2 className="font-hana-light text-xs">총 증여액</h2>
             <InfoIcon className="h-4 w-4 text-hana-gray-400" />
           </div>
-          <div className="grid justify-center rounded-xl bg-hana-light-green px-10 py-5">
+          <div className="grid justify-center gap-2 rounded-xl bg-hana-light-green px-10 py-5">
             <h4 className="text-center text-hana-badge-green">
-              {formatWonNatural((period ?? 0) * (amount ?? 0))}
+              {formatWonNatural(
+                BigInt((period ?? 0) * (amount ?? 0)) + totalDeposit,
+              )}
             </h4>
             <h4 className="text-hana-gray-500 text-xs">
-              약 {formatWonNatural(amount ?? 0)} X {period ?? 0}
-              개월
+              현재 총 증여액 {formatWonNatural(totalDeposit)}{' '}
+              {hasPrevPlan && (
+                <span>
+                  {' '}
+                  + 기존 플랜 적용 {formatWonNatural(prevAmount * prevPeriod)}
+                </span>
+              )}
+              + 변경 플랜 (약 {formatWonNatural(amount ?? 0)} X {period ?? 0}
+              개월)
             </h4>
           </div>
           <h4 className="pt-2 font-hana-light text-[10px] text-hana-gray-400">
