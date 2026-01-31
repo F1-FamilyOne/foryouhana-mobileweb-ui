@@ -36,11 +36,6 @@ function generateSecureAccNum(prefix?: string): string {
     : `${timestamp}${secureRandom}`;
 }
 
-function generateSecureDeposit(): bigint {
-  const amount = randomInt(10, 101) * 10000;
-  return BigInt(amount);
-}
-
 export async function createChildAndAccount(
   sessionData: DraftPlanPayload,
   parentId: number,
@@ -124,8 +119,9 @@ export async function createChildAndAccount(
             acc_num: generateSecureAccNum('1002-888'),
             acc_type: account_acc_type.GIFT_DEPOSIT,
             opened_at: new Date(),
-            deposit: generateSecureDeposit(),
+            deposit: 0n,
             in_type: false, // 정기
+            in_month: in_month,
             status: 'ACTIVE',
           },
         });
@@ -150,6 +146,7 @@ export async function createChildAndAccount(
               in_month: in_month,
               in_type: in_type,
               deposit: 0n,
+              status: 'ACTIVE',
             },
           });
         }
