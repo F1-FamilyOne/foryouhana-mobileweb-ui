@@ -15,7 +15,7 @@ export default async function home({ params }: Props) {
   const { childId } = await params;
   const currentChildId = Number(childId);
   Number(childId);
-  // const PARENT_ID = 1;
+  const PARENT_ID = 1;
 
   // 1. 이번 달 시작일 계산 (예: 2026-01-01 00:00:00)
   const now = new Date();
@@ -223,7 +223,7 @@ export default async function home({ params }: Props) {
           | 'irregular',
         rate: Number(f.plus_rate || 0),
         plusMoney: Number(f.plus_money || 0),
-        title: f.fund?.name || '하나은행',
+        title: f.fund?.name || '하나 연금저축펀드',
         deposit: Number(f.deposit),
         totalValue: Number(f.deposit) + Number(f.plus_money || 0),
         autoTransferAmount: autoTransferAmount, // 계산된 이번 달 금액 적용
