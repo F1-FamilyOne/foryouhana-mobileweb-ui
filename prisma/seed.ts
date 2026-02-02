@@ -1,3 +1,4 @@
+import { True } from './../lib/generated/prisma/internal/prismaNamespace';
 import {
   account_acc_type,
   account_status,
@@ -289,9 +290,11 @@ async function main() {
       born_date: new Date('2018-05-05'),
       identity_hash: 'child1_hash',
       invest_type: invest_type.OFFENSIVE,
-      goal_money: 50000000n,
-      monthly_money: 300000n,
+      is_promise_fixed: true,
+      goal_money: 24000000n,
+      monthly_money: 200000n,
       start_date: new Date('2024-01-01'),
+      end_date: new Date('2034-01-01'),
     },
   });
 
@@ -423,6 +426,11 @@ async function main() {
     },
   });
 
+  // (1) 부모 -> 첫째 정기 증여
+  await prisma.auto_transfer.create({
+    data: { source_account_id: parentDeposit.id, target_account_id: child1Deposit.id, transfer_day: 10, transfer_count: 12, amount: 200000n },
+  });
+  
   // 자녀 1 자동이체
   await prisma.auto_transfer.create({
     data: { source_account_id: child1Deposit.id, target_account_id: c1SubEtfSp500.id, transfer_day: 10, transfer_count: 12, amount: 100000n },
@@ -500,12 +508,27 @@ async function main() {
   // -------------------------------------------------------
 
   // 1) 부모 -> 자녀 증여
-  await prisma.history.create({
-    data: { money: 2000000n, source_account_id: parentDeposit.id, target_account_id: child1Deposit.id, created_at: new Date('2024-01-01T09:00:00') },
-  });
-  await prisma.history.create({
-    data: { money: 5000000n, source_account_id: parentDeposit.id, target_account_id: child2Deposit.id, created_at: new Date('2020-01-01T09:00:00') },
-  });
+  await prisma.history.createMany({
+    data: [
+      // 부모(1) -> 첫째(2) 정기 증여 이력
+      { created_at: new Date('2024-01-10'), money: 200000n, source_account_id: parentDeposit.id, target_account_id: child1Deposit.id },
+      { created_at: new Date('2024-02-10'), money: 200000n, source_account_id: parentDeposit.id, target_account_id: child1Deposit.id },
+      { created_at: new Date('2024-03-10'), money: 200000n, source_account_id: parentDeposit.id, target_account_id: child1Deposit.id },
+      { created_at: new Date('2024-04-10'), money: 200000n, source_account_id: parentDeposit.id, target_account_id: child1Deposit.id },
+      { created_at: new Date('2026-01-10'), money: 200000n, source_account_id: parentDeposit.id, target_account_id: child1Deposit.id },
+      { created_at: new Date('2026-01-20'), money: 80000n,  source_account_id: parentDeposit.id, target_account_id: child1Deposit.id },
+    ]});
+
+  await prisma.history.createMany({
+    data: [
+      { created_at: new Date('2024-10-31'), money: 9000000n, source_account_id: parentDeposit.id, target_account_id: child2Deposit.id },
+      { created_at: new Date('2024-10-31'), money: 100000n,  source_account_id: parentDeposit.id, target_account_id: child2Deposit.id },
+      { created_at: new Date('2024-10-31'), money: 80000n,   source_account_id: parentDeposit.id, target_account_id: child2Deposit.id },
+      { created_at: new Date('2025-10-31'), money: 90000n,   source_account_id: parentDeposit.id, target_account_id: child2Deposit.id },
+      { created_at: new Date('2025-11-08'), money: 10000n,   source_account_id: parentDeposit.id, target_account_id: child2Deposit.id },
+      { created_at: new Date('2025-12-02'), money: 50000n,   source_account_id: parentDeposit.id, target_account_id: child2Deposit.id },
+      { created_at: new Date('2026-01-02'), money: 70000n,   source_account_id: parentDeposit.id, target_account_id: child2Deposit.id },
+  ]});
 
   // 2) [자녀 1] 입출금 -> 연금 Root (투자금 이동)
   await prisma.history.create({
