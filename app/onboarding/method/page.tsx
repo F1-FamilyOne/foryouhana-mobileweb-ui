@@ -84,7 +84,7 @@ export default function analysisMethodPage() {
         <PlanFeatureCard
           icon={IMAGES_PATH.REGIST_PROTECT_ICON}
           title="절세 전략"
-          description="세금을 최소화하는 분할 증여 시점과 금액을 추천해줘요 => 증여 방법을 추천해줘요"
+          description="세금을 최소화하는 분할 증여 시점과 금액을 추천해줘요"
         />
       </div>
 

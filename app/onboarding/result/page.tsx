@@ -1,7 +1,6 @@
 'use client';
 
-import { Title } from 'chart.js';
-import { Check, Info } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { CustomButton } from '@/components/cmm/CustomButton';
@@ -183,10 +182,6 @@ export default function AnalysisResult() {
                   title="연금저축펀드"
                   description="연금저축펀드는 매년 세액공제를 받으면서 투자하고, 은퇴 후에는 낮은 세율로 연금을 받을 수 있어요."
                 />
-                {/* <span className="text-[13px] text-gray-600">
-                  연금저축펀드 신청
-                </span>
-                <Info className="h-3 w-3 text-gray-400" /> */}
               </div>
               <div className="flex h-[42px] items-center justify-center gap-2 rounded-xl bg-gray-100">
                 <span className="text-[13px]">
