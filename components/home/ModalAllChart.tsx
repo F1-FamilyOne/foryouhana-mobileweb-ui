@@ -73,7 +73,7 @@ export default function ModalAllChart({ onClose, kids }: ModalAllChartProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-100 flex items-center justify-center">
       <button
         type="button"
         onClick={onClose}

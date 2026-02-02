@@ -122,7 +122,10 @@ export default function GiftTaxSection({ childInfo }: GiftTaxSectionProps) {
         label: '조회 기간',
         value: `${formatCleanDate(threeMonthsAgo)} ~ ${formatCleanDate(now)}`,
       },
-      { label: '총 증여 금액', value: `${in_money_sum?.toLocaleString()}원` },
+      {
+        label: '총 증여 금액',
+        value: `${(in_money_sum ?? 0).toLocaleString()}원`,
+      },
     ];
   }
 
