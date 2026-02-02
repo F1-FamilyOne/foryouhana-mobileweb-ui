@@ -14,7 +14,10 @@ export default function PensionSelection({
 }) {
   return (
     <div>
-      <TitlePlanSelect title="연금 저축 펀드" />
+      <TitlePlanSelect
+        title="연금저축펀드"
+        description="연금저축펀드는 매년 세액공제를 받으면서 투자하고, 은퇴 후에는 낮은 세율로 연금을 받을 수 있어요."
+      />{' '}
       <div>
         {prev === true ? (
           <CustomButton disabled preset="mintlong">

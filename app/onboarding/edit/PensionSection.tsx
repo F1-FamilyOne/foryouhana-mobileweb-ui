@@ -1,4 +1,5 @@
 import { InfoIcon } from 'lucide-react';
+import TitlePlanSelect from '@/components/cmm/TitlePlanSelect';
 import { BinaryToggle } from '../../../components/cmm/BinaryToggle';
 
 /**
@@ -19,10 +20,10 @@ export default function PensionSection({
 }) {
   return (
     <div>
-      <div className="flex items-center gap-1 pb-2">
-        <h2 className="font-hana-light text-xs">연금 저축 펀드</h2>
-        <InfoIcon className="h-4 w-4 text-hana-gray-400" />
-      </div>
+      <TitlePlanSelect
+        title="연금저축펀드"
+        description="연금저축펀드는 매년 세액공제를 받으면서 투자하고, 은퇴 후에는 낮은 세율로 연금을 받을 수 있어요."
+      />{' '}
       <div className="flex flex-row justify-between">
         <BinaryToggle
           value={select}

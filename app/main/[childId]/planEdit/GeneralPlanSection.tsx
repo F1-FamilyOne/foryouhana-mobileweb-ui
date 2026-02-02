@@ -139,7 +139,6 @@ export default function GeneralPlanSection({
         <div className="grid gap-2 pt-3">
           <div className="flex gap-1">
             <h2 className="font-hana-light text-xs">총 증여액</h2>
-            <InfoIcon className="h-4 w-4 text-hana-gray-400" />
           </div>
           <div className="grid justify-center gap-2 rounded-xl bg-hana-light-green px-10 py-5">
             <h4 className="text-center text-hana-badge-green">

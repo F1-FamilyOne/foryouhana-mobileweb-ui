@@ -43,7 +43,10 @@ export default function GiftSection({
   return (
     <div className="pt-2">
       <div className="flex items-center gap-1 pb-2">
-        <TitlePlanSelect title="유기정기금" />
+        <TitlePlanSelect
+          title="유기정기금"
+          description="유기 정기금을 이용하면 기간을 정해 매월 일정 금액을 납입하고, 미리 증여세를 신고해 절세 혜택을 받을 수 있어요."
+        />{' '}
         <h2 className="text-[12px]">
           약{' '}
           {formatWonDetail(
@@ -71,7 +74,6 @@ export default function GiftSection({
           <div>
             <div className="flex items-center gap-1 pb-2">
               <h2 className="font-hana-light text-xs">증여 방식 선택</h2>
-              <InfoIcon className="h-4 w-4 text-hana-gray-400" />
             </div>
             <BinaryToggle
               value={regular}
@@ -91,7 +93,6 @@ export default function GiftSection({
               <div>
                 <div className="flex items-center gap-1 pb-2">
                   <h2 className="font-hana-light text-xs">증여 기간</h2>
-                  <InfoIcon className="h-4 w-4 text-hana-gray-400" />
                 </div>
                 <div className="flex flex-row justify-between">
                   <InputMonth
@@ -108,7 +109,6 @@ export default function GiftSection({
               <div>
                 <div className="flex items-center gap-1 pb-2">
                   <h2 className="font-hana-light text-xs">월 증여액</h2>
-                  <InfoIcon className="h-4 w-4 text-hana-gray-400" />
                 </div>
                 <div className="flex flex-row justify-between">
                   <InputAmount
@@ -128,7 +128,6 @@ export default function GiftSection({
             <div className="grid gap-2">
               <div className="flex gap-1">
                 <h2 className="font-hana-light text-xs">총 증여액</h2>
-                <InfoIcon className="h-4 w-4 text-hana-gray-400" />
               </div>
               <div className="grid justify-center rounded-xl bg-hana-light-green px-10 py-5">
                 <h4 className="text-center text-hana-badge-green">

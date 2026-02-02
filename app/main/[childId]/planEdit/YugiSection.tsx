@@ -26,7 +26,10 @@ export default function YugiSection({
 }) {
   return (
     <div>
-      <TitlePlanSelect title="유기정기금" />
+      <TitlePlanSelect
+        title="유기정기금"
+        description="유기 정기금을 이용하면 기간을 정해 매월 일정 금액을 납입하고, 미리 증여세를 신고해 절세 혜택을 받을 수 있어요."
+      />{' '}
       {prev ? (
         <div>
           {isFixed ? (
