@@ -168,10 +168,13 @@ export function MyProductUi({ childId }: Props) {
                         key={`${card.id}-${card.fundId}`}
                         accountId={card.id}
                         fundId={card.fundId}
+                        accNum={card.accNum}
                         variant="active"
                         title={card.title}
                         tags={card.tags}
+                        depositWonText={card.depositWonText}
                         totalAmountWonText={card.totalAmountWonText}
+                        profitWonText={card.profitWonText}
                         profitRateText={card.profitRateText}
                         monthlyPayWonText={card.monthlyPayWonText}
                       />
@@ -194,10 +197,13 @@ export function MyProductUi({ childId }: Props) {
                     key={`${card.id}-${card.fundId}`}
                     accountId={card.id}
                     fundId={card.fundId}
+                    accNum={card.accNum}
                     variant="canceled"
                     title={card.title}
                     tags={card.tags}
+                    depositWonText={card.depositWonText}
                     totalAmountWonText={card.totalAmountWonText}
+                    profitWonText={card.profitWonText}
                     profitRateText={card.profitRateText}
                     monthlyPayWonText={card.monthlyPayWonText}
                   />

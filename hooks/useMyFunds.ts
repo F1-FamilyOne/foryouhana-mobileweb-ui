@@ -12,10 +12,13 @@ import { useEffect, useState } from 'react';
 export type FundCardItem = {
   id: string;
   fundId: string;
+  accNum: string;
   variant: 'active' | 'canceled';
   title: string;
   tags?: [string?, string?, string?];
   totalAmountWonText: string;
+  depositWonText: string;
+  profitWonText: string;
   profitRateText: string;
   monthlyPayWonText?: string;
   inType?: boolean;

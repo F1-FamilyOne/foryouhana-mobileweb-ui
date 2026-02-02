@@ -17,10 +17,13 @@ type Variant = 'active' | 'canceled';
 type Props = {
   accountId: number | string;
   fundId: number | string;
+  accNum: string;
   variant?: Variant;
   title: string;
   tags?: [string?, string?, string?];
   totalAmountWonText: string;
+  depositWonText: string;
+  profitWonText: string;
   profitRateText: string;
   monthlyPayWonText?: string;
   className?: string;
@@ -43,10 +46,13 @@ function getTagClassName(variant: Variant) {
 export function MyFundDetailCard({
   accountId,
   fundId,
+  accNum,
   variant = 'active',
   title,
   tags = [],
   totalAmountWonText,
+  depositWonText,
+  profitWonText,
   profitRateText,
   monthlyPayWonText,
   className,
@@ -103,6 +109,10 @@ export function MyFundDetailCard({
         ) : null}
       </div>
 
+      <div className="mt-1 font-hana-light text-[13px] text-hana-gray-600">
+        {accNum}
+      </div>
+
       {/* 태그 */}
       {visibleTags.length > 0 ? (
         <div className="mt-2.5 flex flex-wrap gap-2">
@@ -127,15 +137,18 @@ export function MyFundDetailCard({
           <span>평가금</span>
           <span>{totalAmountWonText} 원</span>
         </div>
+
         <div className="flex items-center justify-between font-hana-regular text-[15px]">
           <span>원금</span>
-          <span>{totalAmountWonText} 원</span>
+          <span>{depositWonText} 원</span>
         </div>
+
         <div className="flex items-center justify-between font-hana-regular text-[15px]">
           <span>수익금</span>
-          <span>{totalAmountWonText} 원</span>
+          <span>{profitWonText} 원</span>
         </div>
-        <div className="mt-2 flex items-center justify-between font-hana-regular text-[15px]">
+
+        <div className="flex items-center justify-between font-hana-regular text-[15px]">
           <span>수익률</span>
           <span className="text-hana-point-red">+{profitRateText}%</span>
         </div>
