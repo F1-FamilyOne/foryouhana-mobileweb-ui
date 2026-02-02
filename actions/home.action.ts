@@ -59,11 +59,28 @@ export async function getChildTaxInfo(childId: number, giftAccountId?: number) {
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
     threeMonthsAgo.setDate(1);
 
+    // 1. 자녀의 모든 계좌 ID를 조회 (본인 이체 제외용)
+    const childAccountIds = await prisma.account
+      .findMany({
+        where: { user_id: childId },
+        select: { id: true },
+      })
+      .then((accs) => accs.map((a) => a.id));
+
     const recentHistory = await prisma.history.aggregate({
       where: {
         target_account_id: giftAccountId,
         created_at: { gte: threeMonthsAgo },
-        // 타인 입금 조건: 본인 계좌 리스트 제외 로직 추가 가능
+        AND: [
+          {
+            OR: [
+              // 하나은행 내 타인 계좌에서 온 경우
+              { source_account_id: { notIn: childAccountIds } },
+              // 타행에서 입금된 경우 (source_account_id가 없음)
+              { source_account_id: null },
+            ],
+          },
+        ],
       },
       _sum: { money: true },
     });
@@ -247,11 +264,11 @@ async function getFixedTermGiftStatus(
     throw new Error('증여 플랜 정보가 없음.');
   }
 
-  // 2. 자녀 계좌로 들어오는 정기이체 설정 가져오기 (부모 -> 자녀)
+  // 2. 자녀 계좌로 들어오는 정기이체 설정 가져오기 (로그인한 사용자 -> 자녀)
   // 자녀의 모든 계좌(GIFT_DEPOSIT, FUND 등)를 대상으로 함
   const transferSetting = await prisma.auto_transfer.findFirst({
     where: {
-      source_account: { user_id: parentId },
+      source_account: { user_id: parentId }, //parentId는 부모, 조부모 모두 가능
       target_account_id: giftAccountId,
       amount: childPlan.monthly_money,
     },
@@ -263,7 +280,7 @@ async function getFixedTermGiftStatus(
   });
 
   if (!transferSetting) {
-    return { message: '설정된 정기이체 정보 없음.' };
+    return BigInt(0);
   }
 
   // 3. 증여 시작일부터 현재까지의 history 조회
