@@ -142,7 +142,9 @@ export async function getFormattedFundList(childId: number) {
   );
 
   return fundList.map((f) => ({
-    paymentType: (f.in_month ? 'regular' : 'irregular') as 'regular' | 'irregular',
+    paymentType: (f.in_month ? 'regular' : 'irregular') as
+      | 'regular'
+      | 'irregular',
     rate: Number(f.plus_rate || 0),
     plusMoney: Number(f.plus_money || 0),
     title: f.fund?.name || '하나 연금저축펀드',
