@@ -20,21 +20,19 @@ export default function ChildAccountInfoCard({
   thisMonthAmount = 0,
 }: Props) {
   return (
-    <div className="flex flex-col gap-4 rounded-3xl border border-hana-gray-150 bg-white p-6 font-hana-cm shadow-sm">
+    <div className="flex flex-col gap-2 rounded-3xl border border-hana-gray-150 bg-white p-6 font-hana-cm shadow-sm">
       {/* 상단 계좌 정보 */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="text-gray-500 text-sm">하나 123-456789-01234</span>
-
+        <div className="flex items-center gap-2">
+          <span className="text-gray-500 text-xs">하나 123-456789-01234</span>
           <Button
             title="복사"
             onClick={() => navigator.clipboard.writeText('123-456789-01234')}
-            className="rounded-md bg-gray-100 px-2 py-1 font-medium text-gray-600 text-xs transition hover:bg-gray-200 active:scale-95"
+            className="h-5 rounded bg-gray-100 px-1.5 py-0.5 font-medium text-[11px] text-gray-600 transition hover:bg-gray-200 active:scale-95"
           >
             복사
           </Button>
         </div>
-
         <Link
           href={`/main/${childId}/timeline`}
           className="flex items-center font-medium text-hana-main text-sm transition-opacity hover:opacity-70"
@@ -63,14 +61,25 @@ export default function ChildAccountInfoCard({
         </span>
       </div>
 
-      {/* 지원 요청 버튼 */}
-      <Button
-        title="지원 요청 버튼"
-        onClick={() => {}}
-        className="w-fit rounded-full border border-hana-main px-4 py-1 font-bold text-[12px] text-hana-main transition hover:bg-hana-main hover:text-white"
-      >
-        지원 요청
-      </Button>
+      <div className="flex items-center gap-2">
+        {/* 입금하기 (Primary) */}
+        <Button
+          title="입금하기"
+          onClick={() => {}}
+          className="rounded-full bg-hana-main px-4 py-1 text-[12px] text-white transition hover:bg-hana-main/90 active:scale-95"
+        >
+          입금하기
+        </Button>
+
+        {/* 지원 요청 (Secondary) */}
+        <Button
+          title="지원 요청"
+          onClick={() => {}}
+          className="rounded-full bg-hana-main px-4 py-1 text-[12px] text-white transition hover:bg-hana-main/90 active:scale-95"
+        >
+          지원 요청
+        </Button>
+      </div>
 
       {/* 경고 메시지 */}
       {monthlyMoney < thisMonthAmount && (
