@@ -143,7 +143,7 @@ export const AmountDefault: StoryObj = {
     unit: '만원',
     placeholder: '금액 입력',
   },
-  render: (args) => <InputAmountWithState {...args} />,
+  render: (args) => <InputAmountWithState unit={''} {...args} />,
 };
 
 export const AmountWithValue: StoryObj = {
@@ -152,7 +152,7 @@ export const AmountWithValue: StoryObj = {
     unit: '만원',
     label: '월 증여액',
   },
-  render: (args) => <InputAmountWithState {...args} />,
+  render: (args) => <InputAmountWithState unit={''} {...args} />,
 };
 
 export const AmountNoLabel: StoryObj = {
@@ -161,7 +161,7 @@ export const AmountNoLabel: StoryObj = {
     unit: '만원',
     showLabel: false,
   },
-  render: (args) => <InputAmountWithState {...args} />,
+  render: (args) => <InputAmountWithState unit={''} {...args} />,
 };
 
 export const AmountDisabled: StoryObj = {
@@ -170,5 +170,5 @@ export const AmountDisabled: StoryObj = {
     unit: '만원',
     disabled: true,
   },
-  render: (args) => <InputAmountWithState {...args} />,
+  render: (args) => <InputAmountWithState unit={''} {...args} />,
 };
