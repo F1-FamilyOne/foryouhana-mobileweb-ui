@@ -1,10 +1,12 @@
 'use client';
 
+import { Title } from 'chart.js';
 import { Check, Info } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { CustomButton } from '@/components/cmm/CustomButton';
 import Header from '@/components/cmm/Header';
+import TitlePlanSelect from '@/components/cmm/TitlePlanSelect';
 import {
   formatMonthToYearMonth,
   formatWon,
@@ -134,7 +136,6 @@ export default function AnalysisResult() {
           <div className="mt-4">
             <div className="mb-1 flex items-center gap-1">
               <span className="text-[13px] text-gray-600">총 증여액</span>
-              <Info className="h-4 w-4 text-gray-400" />
             </div>
             <div className="rounded-xl bg-hana-light-green p-4 text-center">
               <div className="font-bold text-[26px] text-hana-main">
@@ -160,10 +161,10 @@ export default function AnalysisResult() {
             {/* 유기정기금 신청 */}
             <div className="flex-1">
               <div className="mb-1 flex items-center gap-1">
-                <span className="text-[13px] text-gray-600">
-                  유기정기금 신청
-                </span>
-                <Info className="h-3 w-3 text-gray-400" />
+                <TitlePlanSelect
+                  title="유기정기금"
+                  description="유기 정기금을 이용하면 기간을 정해 매월 일정 금액을 납입하고, 미리 증여세를 신고해 절세 혜택을 받을 수 있어요."
+                />
               </div>
               <div className="flex h-[42px] items-center justify-center gap-2 rounded-xl bg-gray-100">
                 <span className="text-[13px]">
@@ -178,10 +179,14 @@ export default function AnalysisResult() {
             {/* 연금저축펀드 신청 */}
             <div className="flex-1">
               <div className="mb-1 flex items-center gap-1">
-                <span className="text-[13px] text-gray-600">
+                <TitlePlanSelect
+                  title="연금저축펀드"
+                  description="연금저축펀드는 매년 세액공제를 받으면서 투자하고, 은퇴 후에는 낮은 세율로 연금을 받을 수 있어요."
+                />
+                {/* <span className="text-[13px] text-gray-600">
                   연금저축펀드 신청
                 </span>
-                <Info className="h-3 w-3 text-gray-400" />
+                <Info className="h-3 w-3 text-gray-400" /> */}
               </div>
               <div className="flex h-[42px] items-center justify-center gap-2 rounded-xl bg-gray-100">
                 <span className="text-[13px]">
