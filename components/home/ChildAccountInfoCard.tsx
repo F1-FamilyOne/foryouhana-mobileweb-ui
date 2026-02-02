@@ -61,12 +61,12 @@ export default function ChildAccountInfoCard({
         </span>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-end gap-2">
         {/* 입금하기 (Primary) */}
         <Button
           title="입금하기"
           onClick={() => {}}
-          className="rounded-full bg-hana-main px-4 py-1 text-[12px] text-white transition hover:bg-hana-main/90 active:scale-95"
+          className="w-25 rounded-full bg-hana-main px-4 py-1 text-[12px] text-white transition hover:bg-hana-main/90 active:scale-95"
         >
           입금하기
         </Button>
@@ -75,7 +75,7 @@ export default function ChildAccountInfoCard({
         <Button
           title="지원 요청"
           onClick={() => {}}
-          className="rounded-full bg-hana-main px-4 py-1 text-[12px] text-white transition hover:bg-hana-main/90 active:scale-95"
+          className="w-25 rounded-full bg-hana-main px-4 py-1 text-[12px] text-white transition hover:bg-hana-main/90 active:scale-95"
         >
           지원 요청
         </Button>
