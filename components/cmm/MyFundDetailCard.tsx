@@ -127,7 +127,14 @@ export function MyFundDetailCard({
           <span>평가금</span>
           <span>{totalAmountWonText} 원</span>
         </div>
-
+        <div className="flex items-center justify-between font-hana-regular text-[15px]">
+          <span>원금</span>
+          <span>{totalAmountWonText} 원</span>
+        </div>
+        <div className="flex items-center justify-between font-hana-regular text-[15px]">
+          <span>수익금</span>
+          <span>{totalAmountWonText} 원</span>
+        </div>
         <div className="mt-2 flex items-center justify-between font-hana-regular text-[15px]">
           <span>수익률</span>
           <span className="text-hana-point-red">+{profitRateText}%</span>

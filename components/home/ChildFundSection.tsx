@@ -66,6 +66,7 @@ export default function ChildFundSection({ childId, fundList }: Props) {
                 rate={fund.rate}
                 title={fund.title}
                 amountEok={fund.totalValue.toLocaleString()}
+                plus={fund.plusMoney.toLocaleString()}
                 monthlyAmountWon={fund.autoTransferAmount.toLocaleString()}
               />
             ))}

@@ -19,6 +19,7 @@ type Props = {
   amountEok: string; // {숫자}억원
   monthlyAmountWon: string; // 매달 {숫자}원 납입
   className?: string;
+  plus?: string;
 };
 
 function getPaymentLabel(paymentType: PaymentType) {
@@ -35,6 +36,7 @@ export function MyFundCard({
   amountEok,
   monthlyAmountWon,
   className,
+  plus,
 }: Props) {
   return (
     <article
@@ -63,9 +65,12 @@ export function MyFundCard({
 
       <div className="mt-3 font-hana-cm text-[14px]">{title}</div>
 
+      <div className="pt-2">
+        <span className="text-[16px] text-hana-badge-red">+{plus}원</span>
+      </div>
       <div className="mt-3 flex items-baseline gap-1 font-hana-cm text-hana-dark-navy">
-        <span className="text-[16px]">총 {amountEok}원/</span>
-        <span className="text-[10px]"> 매달 {monthlyAmountWon}원 납입</span>
+        <span className="text-[16px]"> 총 {amountEok}원</span>
+        <span className="text-[10px]">/ 매달 {monthlyAmountWon}원 납입</span>
       </div>
     </article>
   );
