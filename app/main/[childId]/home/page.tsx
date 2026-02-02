@@ -76,6 +76,7 @@ export default async function home({ params }: Props) {
 
       {/* 중단: 현재 선택된 자녀의 증여용 계좌 현황 카드 */}
       <ChildAccountInfoCard
+        accountNum={basics.giftAccount?.acc_num || ''}
         childId={childId}
         deposit={Number(basics.giftAccount?.deposit || 0)}
         thisMonthAmount={thisMonthInputAmount}

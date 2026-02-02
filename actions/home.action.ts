@@ -10,7 +10,7 @@ export async function getAccountBasics(childId: number) {
     }),
     prisma.account.findFirst({
       where: { user_id: childId, acc_type: 'GIFT_DEPOSIT' },
-      select: { id: true, deposit: true },
+      select: { id: true, deposit: true, acc_num: true },
     }),
   ]);
 
