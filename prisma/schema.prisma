@@ -108,7 +108,7 @@ model auto_transfer {
   amount            BigInt  @db.UnsignedBigInt
   source_account_id Int     @db.UnsignedInt
   target_account_id Int     @db.UnsignedInt
-  source_account    account @relation("auto_transfer_source", fields: [source_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_auto_transfer_source")
+  source_account    account? @relation("auto_transfer_source", fields: [source_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_auto_transfer_source")
   target_account    account @relation("auto_transfer_target", fields: [target_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_auto_transfer_target")
 
   @@index([source_account_id], map: "fk_auto_transfer_source")
