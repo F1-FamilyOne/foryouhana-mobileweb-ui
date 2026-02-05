@@ -1,13 +1,36 @@
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0B9C97&fontColor=FFFFFF&height=280&text=ForYouHana&fontSize=70&fontAlignY=40&desc=Team%20F1&descSize=30&descAlignY=60&animation=fadeIn" />
+</div>
+
 # foryouhana-mobileweb-ui
 하나은행 아이앞으로 모바일 웹 프론트엔드. Next.js 16(App Router)과 React 19를 기반으로 자녀 증여/투자 흐름, 타임라인, 홈 대시보드 UI를 제공합니다.
 
-## 기술 스택
-- Next.js 16 / React 19 / TypeScript
-- Tailwind CSS v4 + PostCSS
-- Prisma(MySQL) with server actions, seed 데이터 포함
-- Biome(포맷팅 & 린트), Storybook 10
+## 👥 Team F1 Members
+| <img src="https://github.com/identicons/f1.png" width="100"> | <img src="https://github.com/identicons/f2.png" width="100"> | <img src="https://github.com/identicons/f3.png" width="100"> | <img src="https://github.com/user-attachments/assets/c4e45356-c5b7-4a4d-9556-c0cc7d61ae77" width="100"> |
+| :---: | :---: | :---: | :---: |
+| **권순범** | **김선우** | **신호림** | **유민영** |
+| <img src="https://github.com/identicons/f5.png" width="100"> | <img src="https://github.com/identicons/f6.png" width="100"> | <img src="https://github.com/identicons/f7.png" width="100"> | <img src="https://github.com/identicons/f8.png" width="100"> |
+| **유지예** | **유하임** | **이승빈** | **이정수** |
+
+## 🛠 Tech Stack
+<img src="https://img.shields.io/badge/Next.js%2016-000000?style=flat&logo=nextdotjs&logoColor=white"/></a>
+  <img src="https://img.shields.io/badge/React%2019-61DAFB?style=flat&logo=react&logoColor=black"/></a>
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Tailwind%20CSS%20v4-06B6D4?style=flat&logo=tailwindcss&logoColor=white"/></a><br>
+  <img src="https://img.shields.io/badge/PostCSS-DD3A0A?style=flat&logo=postcss&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Prisma-2D3748?style=flat&logo=prisma&logoColor=white"/>
+  <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Biome-60A5FA?style=flat&logo=biome&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Storybook%2010-FF4785?style=flat&logo=storybook&logoColor=white"/>
+
+## 🖥️ Introduce our project
+"자녀의 미래를 준비하는 가장 쉽고 편리한 한 결음" <br>
+MZ세대는 자녀의 미래를 위한 '증여'에 관심은 많지만, 복잡한 절차와 어려운 용어 때문에 망설이곤 합니다. <br>
+'아이앞으로'는 이러한 심리적·절차적 허들을 낮추어, 누구나 쉽고 명확하게 증여를 시작할 수 있도록 돕는 서비스입니다.
+<br>
 
 ## 시스템 아키텍처
+<img src="https://github.com/user-attachments/assets/e1d583f5-ccf9-47a9-9a2a-fe3987dbdf4b" width="800"/>
 ```
 [Next.js App Router (React 19)]
         ↓ Server Actions (actions/*)
@@ -83,5 +106,4 @@ stories/              # Storybook 스토리
 - Tailwind v4를 사용하므로 PostCSS 설정(`postcss.config.mjs`)과 `app/globals.css`가 함께 필요합니다.
 - `prisma/migrations`가 비어 있어도 `db:push`로 스키마를 즉시 동기화할 수 있습니다(필요 시 이후 마이그레이션 생성).
 
-## 기여 크레딧
-- 팀명/서비스: F1 · 아이앞으로 (권순범, 김선우, 신호림, 유민영, 유지예, 유하임, 이승빈, 이정수)
+Copyright © 2026 Team F1. All rights reserved.
