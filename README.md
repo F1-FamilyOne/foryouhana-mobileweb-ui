@@ -6,10 +6,10 @@
 하나은행 아이앞으로 모바일 웹 프론트엔드. Next.js 16(App Router)과 React 19를 기반으로 자녀 증여/투자 흐름, 타임라인, 홈 대시보드 UI를 제공합니다.
 
 ## 👥 Team F1 Members
-| <img src="https://github.com/identicons/f1.png" width="100"> | <img src="https://github.com/identicons/f2.png" width="100"> | <img src="https://github.com/identicons/f3.png" width="100"> | <img src="https://github.com/user-attachments/assets/c4e45356-c5b7-4a4d-9556-c0cc7d61ae77" width="100"> |
+| <img src="https://github.com/user-attachments/assets/ccc21cfd-1341-472e-9496-1816bc6a1d67" width="100"> | <img src="https://github.com/identicons/f2.png" width="100"> | <img src="https://github.com/identicons/f3.png" width="100"> | <img src="https://github.com/user-attachments/assets/c4e45356-c5b7-4a4d-9556-c0cc7d61ae77" width="100"> |
 | :---: | :---: | :---: | :---: |
 | **권순범** | **김선우** | **신호림** | **유민영** |
-| <img src="https://github.com/identicons/f5.png" width="100"> | <img src="https://github.com/identicons/f6.png" width="100"> | <img src="https://github.com/identicons/f7.png" width="100"> | <img src="https://github.com/identicons/f8.png" width="100"> |
+| <img src="https://github.com/identicons/f5.png" width="100"> | <img src="https://github.com/identicons/f6.png" width="100"> | <img src="https://github.com/identicons/f7.png" width="100"> | <img src="https://github.com/user-attachments/assets/2424a905-27f5-47db-b7a6-e0b748194f16" width="100"> |
 | **유지예** | **유하임** | **이승빈** | **이정수** |
 
 ## 🛠 Tech Stack
